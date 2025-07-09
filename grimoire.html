@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Grimoire - Digital Divination Tarot</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;700&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+</head>
+<body>
+    <canvas id="starfield-canvas"></canvas>
+
+    <header>
+        <nav class="container">
+            <a href="index.html" class="logo">Digital Divination</a>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="reading_room.html">Reading Room</a></li>
+                <li><a href="grimoire.html" class="active">Grimoire</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main id="grimoire-container" class="container">
+        <h1>The Grimoire</h1>
+        <p class="subtitle">An interactive encyclopedia of the tarot. Explore the meanings and symbolism of each card. Click any card to see its full details.</p>
+
+        <!-- Search/Filter Bar -->
+        <section id="search-section">
+            <input type="text" id="search-bar" placeholder="Search for a card (e.g., 'The Sun', 'Cups')...">
+        </section>
+
+        <!-- Card Grid -->
+        <section id="grimoire-grid" class="cards-display-area">
+            <!-- All 78 cards will be loaded here by JavaScript -->
+            <div class="card-placeholder"></div>
+            <p>Loading the deck...</p>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2025 Digital Divination. The Algorithmic Oracle.</p>
+        </div>
+    </footer>
+    
+    <!-- The same modal from the reading room will be used here -->
+    <div id="card-modal" class="modal-container hidden">
+        <div class="modal-content">
+            <button id="close-modal-btn" class="close-modal">×</button>
+            <div id="modal-card-content">
+                <!-- Detailed card info will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="main.js" defer></script>
+</body>
+</html>
