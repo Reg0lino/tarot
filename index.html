@@ -4,41 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Digital Divination Tarot</title>
+    
+    <!-- Using relative paths for CSS and JS -->
     <link rel="stylesheet" href="style.css">
+    <script src="tarot-deck.js"></script>
+    <script src="main.js" defer></script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;700&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
-    <script src="tarot-deck.js"></script>
 </head>
 <body>
     <canvas id="starfield-canvas"></canvas>
 
     <header>
         <nav class="container">
-            <a href="index.html" class="logo">Digital Divination</a>
+            <a href="#home" class="logo">Digital Divination</a>
             <ul>
-                <li><a href="index.html" class="active">Home</a></li>
-                <li><a href="reading_room.html">Reading Room</a></li>
-                <!-- <li><a href="grimoire.html">Grimoire</a></li> -->
+                <!-- Navigation now uses hashes to control the router -->
+                <li><a href="#home" class="nav-link" data-route="home">Home</a></li>
+                <li><a href="#reading-room" class="nav-link" data-route="reading-room">Reading Room</a></li>
+                <li><a href="#grimoire" class="nav-link" data-route="grimoire">Grimoire</a></li>
             </ul>
         </nav>
     </header>
 
-    <main class="container">
-        <section id="hero">
-            <h1>Welcome to Digital Divination</h1>
-            <p class="subtitle">Where ancient wisdom meets modern intention. Your personal journey into the tarot awaits.</p>
-            <a href="reading_room.html" class="glowing-btn">Enter the Reading Room</a>
-        </section>
-
-        <section id="card-of-the-day">
-            <h2>Your Card for Today</h2>
-            <div id="card-of-the-day-container" class="card-container-single">
-                <!-- Card of the Day will be loaded here by JavaScript -->
-                <div class="card-placeholder"></div>
-            </div>
-            <p id="card-of-the-day-meaning" class="card-day-description"></p>
-        </section>
+    <!-- The "Stage" - All views will be injected here by main.js -->
+    <main id="app-container" class="container">
+        <!-- App content loads here -->
     </main>
 
     <footer>
@@ -46,7 +39,91 @@
             <p>© 2025 Digital Divination. The Algorithmic Oracle.</p>
         </div>
     </footer>
+    
+    <!-- The Modal Container - Lives outside the stage -->
+    <div id="card-modal" class="modal-container hidden">
+        <div class="modal-content">
+            <button id="close-modal-btn" class="close-modal">×</button>
+            <div id="modal-card-content">
+                <!-- Detailed card info will be loaded here -->
+            </div>
+        </div>
+    </div>
 
-    <script src="main.js" defer></script>
+    <!-- --------------------- VIEW TEMPLATES --------------------- -->
+    <!-- These are inactive HTML chunks that our router will use. -->
+
+    <!-- Template for the Home View -->
+    <template id="view-home">
+        <section id="hero">
+            <h1>Welcome to Digital Divination</h1>
+            <p class="subtitle">Where ancient wisdom meets modern intention. Your personal journey into the tarot awaits.</p>
+            <a href="#reading-room" class="glowing-btn">Enter the Reading Room</a>
+        </section>
+
+        <section id="card-of-the-day">
+            <h2>Your Card for Today</h2>
+            <div id="card-of-the-day-container" class="card-container-single">
+                <div class="card-placeholder"></div>
+            </div>
+             <p id="card-of-the-day-meaning" class="card-day-description"></p>
+        </section>
+    </template>
+
+    <!-- Template for the Reading Room View -->
+    <template id="view-reading-room">
+         <h1>The Reading Room</h1>
+        <p class="subtitle">Focus your mind, set your intention, and reveal the cards meant for you.</p>
+
+        <section class="reading-step">
+            <h2>Step 1: Set Your Intention</h2>
+            <textarea id="user-intention" placeholder="Type your question or focus for this reading here..."></textarea>
+        </section>
+
+        <section class="reading-step">
+            <h2>Step 2: Choose Your Shuffling Method</h2>
+            <div id="shuffle-methods">
+                <label><input type="radio" name="shuffle-method" value="intention" checked> Seed of Intention (Uses your text above)</label>
+                <label><input type="radio" name="shuffle-method" value="number"> Number of Fate <input type="number" id="fate-number" placeholder="e.g., 1999"></label>
+                <label><input type="radio" name="shuffle-method" value="timestamp"> Pure Chance (Uses the current time)</label>
+            </div>
+            <div id="math-explanation" class="math-explanation hidden">
+                <h3>How Your Shuffle Was Randomized</h3>
+                <p id="math-text"></p>
+            </div>
+        </section>
+
+        <section class="reading-step">
+            <h2>Step 3: Choose Your Spread</h2>
+            <div id="spread-selection">
+                <button class="spread-btn" data-spread="1">One Card</button>
+                <button class="spread-btn" data-spread="3">Three Card</button>
+                <button class="spread-btn" data-spread="10">Celtic Cross</button>
+            </div>
+        </section>
+
+        <button id="draw-cards-btn" class="glowing-btn">Reveal Your Reading</button>
+
+        <section id="reading-results">
+            <h2 id="results-title"></h2>
+            <div id="cards-display-area" class="cards-display-area"></div>
+        </section>
+    </template>
+
+    <!-- Template for the Grimoire View -->
+    <template id="view-grimoire">
+        <h1>The Grimoire</h1>
+        <p class="subtitle">An interactive encyclopedia of the tarot. Explore the meanings and symbolism of each card.</p>
+
+        <section id="search-section">
+            <input type="text" id="search-bar" placeholder="Search for a card (e.g., 'The Sun', 'Cups')...">
+        </section>
+
+        <div id="grimoire-grid" class="cards-display-area">
+            <div class="card-placeholder"></div>
+            <p>Loading the deck...</p>
+        </div>
+    </template>
+
 </body>
 </html>
