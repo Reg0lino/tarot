@@ -1,4 +1,4 @@
-// main.js (Updated)
+// main.js (Updated to use local data)
 
 document.addEventListener('DOMContentLoaded', () => {
     
@@ -43,29 +43,18 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- Tarot API ---
-    const API_URL = 'https://tarot-api.onrender.com/api/v1/cards';
+    // --- Tarot Deck Data ---
     let fullDeck = [];
 
-    async function fetchDeck() {
-        // Use a cached deck if available
-        if (fullDeck.length > 0) return fullDeck;
-        try {
-            // Check if deck is in localStorage
-            const cachedDeck = localStorage.getItem('tarotDeck');
-            if (cachedDeck) {
-                fullDeck = JSON.parse(cachedDeck);
-                return fullDeck;
-            }
-            // Fetch from API if not cached
-            const response = await fetch(API_URL);
-            const data = await response.json();
-            fullDeck = data.cards;
-            // Cache the deck in localStorage for next time
-            localStorage.setItem('tarotDeck', JSON.stringify(fullDeck));
+    // MODIFIED FUNCTION: No longer fetches, just loads local data
+    async function loadDeck() {
+        if (fullDeck.length > 0) return fullDeck; // Use cache if available
+        
+        if (typeof tarotDeckData !== 'undefined') {
+            fullDeck = tarotDeckData;
             return fullDeck;
-        } catch (error) {
-            console.error("Error fetching the tarot deck:", error);
+        } else {
+            console.error("Tarot deck data not found. Make sure tarot-deck.js is loaded correctly before main.js.");
             return [];
         }
     }
@@ -73,10 +62,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Homepage Logic (Card of the Day) ---
     const cardOfTheDayContainer = document.getElementById('card-of-the-day-container');
     if (cardOfTheDayContainer) {
-        fetchDeck().then(deck => {
+        loadDeck().then(deck => {
             if (deck.length > 0) {
-                const today = new Date().toDateString(); // Get today's date as a string
-                // Simple hash function to get a consistent "random" index for the day
+                const today = new Date().toDateString(); // Get today's date
                 const seed = today.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
                 const randomIndex = seed % deck.length;
                 const card = deck[randomIndex];
@@ -109,7 +97,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const mathText = document.getElementById('math-text');
 
         let selectedSpread = 1;
-        // Set default selected button
         document.querySelector('.spread-btn[data-spread="1"]').classList.add('selected');
 
         spreadBtns.forEach(btn => {
@@ -121,9 +108,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         drawBtn.addEventListener('click', async () => {
-            const deck = await fetchDeck();
+            const deck = await loadDeck();
             if (deck.length === 0) {
-                cardsDisplayArea.innerHTML = "<p>Could not retrieve the deck. Please try again later.</p>";
+                cardsDisplayArea.innerHTML = "<p>Could not retrieve the deck. Please check the console for errors.</p>";
                 return;
             }
 
@@ -152,7 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
                      explanation = `Method: Seed of Intention (No text entered). Your shuffle defaulted to using the current timestamp as a seed: ${seed}.`;
                 } else {
                     seed = intentionText.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-                    explanation = `Method: Seed of Intention. The text you entered was converted to a number by summing the character codes. Your seed is: ${seed}.`;
+                    explanation = `Method: Seed of Intention. The text you entered was converted to a number by summing character codes. Your seed is: ${seed}.`;
                 }
                 break;
             case 'number':
@@ -196,7 +183,6 @@ document.addEventListener('DOMContentLoaded', () => {
         cards.forEach((card, index) => {
             const cardContainer = document.createElement('div');
             cardContainer.className = 'card-container';
-            cardContainer.setAttribute('data-card-name', card.name); // For potential future use
             cardContainer.innerHTML = `
                 <div class="tarot-card">
                     <div class="card-face card-back"></div>
@@ -209,7 +195,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 cardContainer.classList.add('flipped');
             }, index * 300);
 
-            cardContainer.addEventListener('click', () => openModal(card));
+            cardContainer.addEventListener('click', () => window.openModal(card));
             cardsDisplayArea.appendChild(cardContainer);
         });
     }
@@ -244,16 +230,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-
     // --- Grimoire Page Logic ---
     const grimoireGrid = document.getElementById('grimoire-grid');
     if (grimoireGrid) {
         const searchBar = document.getElementById('search-bar');
 
         async function populateGrimoire() {
-            const deck = await fetchDeck();
+            const deck = await loadDeck();
             if (deck.length === 0) {
-                grimoireGrid.innerHTML = "<p>Could not retrieve the deck. Please try again later.</p>";
+                grimoireGrid.innerHTML = "<p>Could not load the deck. Please check the console for errors.</p>";
                 return;
             }
             
@@ -261,16 +246,16 @@ document.addEventListener('DOMContentLoaded', () => {
             deck.forEach(card => {
                 const cardElement = document.createElement('div');
                 cardElement.className = 'card-container';
-                cardElement.setAttribute('data-card-name', card.name.toLowerCase()); // For searching
+                cardElement.setAttribute('data-card-name', card.name.toLowerCase());
                 cardElement.innerHTML = `
-                    <div class="tarot-card" style="transform: none;"> <!-- No flip on this page -->
+                    <div class="tarot-card" style="transform: none;">
                         <div class="card-face card-front">
                             <img src="img/cards/${card.img}" alt="${card.name}">
                         </div>
                     </div>`;
                 cardElement.addEventListener('click', () => window.openModal(card));
                 grimoireGrid.appendChild(cardElement);
-            });
+});
         }
 
         function filterCards() {
@@ -288,6 +273,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         searchBar.addEventListener('input', filterCards);
 
-        populateGrimoire(); // Initial population of the grid
+        populateGrimoire();
     }
 });
