@@ -1,4 +1,4 @@
-# tarot_scraper.py
+# scrape.py
 import requests
 import json
 import os
