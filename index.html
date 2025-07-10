@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Digital Divination Tarot</title>
+    <title>Open Tarot By Regs</title>
     
-    <!-- Using relative paths for CSS and JS -->
     <link rel="stylesheet" href="style.css">
     <script src="tarot-deck.js"></script>
     <script src="main.js" defer></script>
@@ -19,9 +18,8 @@
 
     <header>
         <nav class="container">
-            <a href="#home" class="logo">Digital Divination</a>
+            <a href="#home" class="logo">Open Tarot By Regs</a>
             <ul>
-                <!-- Navigation now uses hashes to control the router -->
                 <li><a href="#home" class="nav-link" data-route="home">Home</a></li>
                 <li><a href="#reading-room" class="nav-link" data-route="reading-room">Reading Room</a></li>
                 <li><a href="#grimoire" class="nav-link" data-route="grimoire">Grimoire</a></li>
@@ -29,101 +27,107 @@
         </nav>
     </header>
 
-    <!-- The "Stage" - All views will be injected here by main.js -->
-    <main id="app-container" class="container">
-        <!-- App content loads here -->
-    </main>
+    <main id="app-container" class="container"></main>
 
     <footer>
-        <div class="container">
-            <p>© 2025 Digital Divination. The Algorithmic Oracle.</p>
-        </div>
+        <div class="container"><p>© 2025 Open Tarot By Regs.</p></div>
     </footer>
     
-    <!-- The Modal Container - Lives outside the stage -->
     <div id="card-modal" class="modal-container hidden">
         <div class="modal-content">
             <button id="close-modal-btn" class="close-modal">×</button>
-            <div id="modal-card-content">
-                <!-- Detailed card info will be loaded here -->
-            </div>
+            <div id="modal-card-content"></div>
         </div>
     </div>
 
     <!-- --------------------- VIEW TEMPLATES --------------------- -->
-    <!-- These are inactive HTML chunks that our router will use. -->
 
-    <!-- Template for the Home View -->
     <template id="view-home">
         <section id="hero">
-            <h1>Welcome to Digital Divination</h1>
-            <p class="subtitle">Where ancient wisdom meets modern intention. Your personal journey into the tarot awaits.</p>
-            <a href="#reading-room" class="glowing-btn">Enter the Reading Room</a>
+            <h1>A Digital Tarot Toolkit</h1>
+            <p class="subtitle">An interactive tool to explore the symbolism and systems of tarot. All card shuffling is user-influenced and transparent.</p>
+            <a href="#reading-room" class="glowing-btn">Start a New Reading</a>
         </section>
-
         <section id="card-of-the-day">
-            <h2>Your Card for Today</h2>
-            <div id="card-of-the-day-container" class="card-container-single">
-                <div class="card-placeholder"></div>
+            <h2>Card of the Day</h2>
+            <p class="subtitle">A card is drawn daily from the deck. Click the card to reveal it.</p>
+            <div id="card-of-the-day-container" class="card-container-single"></div>
+            <div id="learn-more-container" class="learn-more-container">
+                 <button id="learn-more-btn" class="glowing-btn">Learn About This Card</button>
             </div>
              <p id="card-of-the-day-meaning" class="card-day-description"></p>
         </section>
     </template>
 
-    <!-- Template for the Reading Room View -->
     <template id="view-reading-room">
-         <h1>The Reading Room</h1>
-        <p class="subtitle">Focus your mind, set your intention, and reveal the cards meant for you.</p>
+        <div class="reading-room-layout">
+            <aside class="control-panel">
+                <section class="control-section">
+                    <h3>1. Select a Spread</h3>
+                    <div id="spread-selection" class="control-group"></div>
+                    <div id="custom-spread-controls" class="control-group hidden">
+                        <label>Number of Cards: <input type="number" id="custom-card-count" min="1" max="78" value="5"></label>
+                        <label>Arrange in rows of: <input type="number" id="custom-row-count" min="1" max="20" value="5"></label>
+                    </div>
+                    <p id="spread-info-text" class="spread-info-text"></p>
+                </section>
+                
+                <section class="control-section">
+                    <h3>2. Choose Options</h3>
+                    <div class="control-group checkbox-group">
+                        <label class="checkbox-label"><input type="checkbox" id="reversed-cards-checkbox" checked> Include Reversed Cards</label>
+                    </div>
+                    <div id="shuffle-methods" class="control-group">
+                        <label><input type="radio" name="shuffle-method" value="text" checked> Shuffle with Text</label>
+                        <label><input type="radio" name="shuffle-method" value="number"> Shuffle with Number</label>
+                        <label><input type="radio" name="shuffle-method" value="timestamp"> Shuffle with Timestamp</label>
+                    </div>
+                    <div class="shuffle-input-group control-group">
+                        <textarea id="shuffle-input" class="shuffle-input" placeholder="Type any text here..."></textarea>
+                        <button id="generate-btn" class="generate-btn" title="Generate Random Number">🎲</button>
+                    </div>
+                </section>
 
-        <section class="reading-step">
-            <h2>Step 1: Set Your Intention</h2>
-            <textarea id="user-intention" placeholder="Type your question or focus for this reading here..."></textarea>
-        </section>
+                <section class="control-section">
+                    <h3>3. The Shuffle Mechanism</h3>
+                    <div id="shuffle-explanation" class="shuffle-explanation">
+                        <p>A "seed" is like a unique instruction for a complex shuffle. Entering the same input will always produce the same shuffle order, which will be different from the order produced by any other input.</p>
+                        <p id="shuffle-math-text" class="shuffle-math-text"></p>
+                    </div>
+                </section>
 
-        <section class="reading-step">
-            <h2>Step 2: Choose Your Shuffling Method</h2>
-            <div id="shuffle-methods">
-                <label><input type="radio" name="shuffle-method" value="intention" checked> Seed of Intention (Uses your text above)</label>
-                <label><input type="radio" name="shuffle-method" value="number"> Number of Fate <input type="number" id="fate-number" placeholder="e.g., 1999"></label>
-                <label><input type="radio" name="shuffle-method" value="timestamp"> Pure Chance (Uses the current time)</label>
-            </div>
-            <div id="math-explanation" class="math-explanation hidden">
-                <h3>How Your Shuffle Was Randomized</h3>
-                <p id="math-text"></p>
-            </div>
-        </section>
+                <section class="control-section">
+                    <h3>4. Adjust Layout</h3>
+                     <div class="control-group slider-group">
+                        <label for="layout-size-slider">Layout Size: <span id="slider-value">100%</span></label>
+                        <div class="slider-wrapper">
+                            <input type="range" id="layout-size-slider" min="50" max="150" value="100">
+                            <button id="reset-size-btn" class="reset-btn" title="Reset Layout Size">↻</button>
+                        </div>
+                    </div>
+                </section>
 
-        <section class="reading-step">
-            <h2>Step 3: Choose Your Spread</h2>
-            <div id="spread-selection">
-                <button class="spread-btn" data-spread="1">One Card</button>
-                <button class="spread-btn" data-spread="3">Three Card</button>
-                <button class="spread-btn" data-spread="10">Celtic Cross</button>
-            </div>
-        </section>
+                <button id="deal-cards-btn" class="glowing-btn">Deal the Cards</button>
+            </aside>
 
-        <button id="draw-cards-btn" class="glowing-btn">Reveal Your Reading</button>
-
-        <section id="reading-results">
-            <h2 id="results-title"></h2>
-            <div id="cards-display-area" class="cards-display-area"></div>
-        </section>
-    </template>
-
-    <!-- Template for the Grimoire View -->
-    <template id="view-grimoire">
-        <h1>The Grimoire</h1>
-        <p class="subtitle">An interactive encyclopedia of the tarot. Explore the meanings and symbolism of each card.</p>
-
-        <section id="search-section">
-            <input type="text" id="search-bar" placeholder="Search for a card (e.g., 'The Sun', 'Cups')...">
-        </section>
-
-        <div id="grimoire-grid" class="cards-display-area">
-            <div class="card-placeholder"></div>
-            <p>Loading the deck...</p>
+            <main id="reading-canvas" class="reading-canvas">
+                <div id="reading-cloth" class="reading-cloth">
+                    <p class="canvas-placeholder-text">Select a spread from the Control Panel to begin.</p>
+                </div>
+                <div id="reveal-all-container" class="reveal-all-container hidden">
+                    <button id="reveal-all-btn" class="glowing-btn">Reveal All Cards</button>
+                </div>
+            </main>
         </div>
     </template>
 
+    <template id="view-grimoire">
+        <h1>Grimoire</h1>
+        <p class="subtitle">An interactive encyclopedia of the Rider-Waite-Smith tarot deck.</p>
+        <section id="search-section">
+            <input type="text" id="search-bar" placeholder="Search for a card (e.g., 'The Sun', 'Cups')...">
+        </section>
+        <div id="grimoire-grid" class="grimoire-grid"></div>
+    </template>
 </body>
 </html>
