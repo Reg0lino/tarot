@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const spreads = {
         'one-card': { name: 'One Card', cardCount: 1, description: 'A single card for quick insight.', layoutClass: 'layout-one-card', positions: [ { label: '1. The Card' } ] },
         'three-card': { name: 'Three Card', cardCount: 3, description: 'A simple spread for exploring a path.', layoutClass: 'layout-three-card', positions: [ { label: '1. The Past' }, { label: '2. The Present' }, { label: '3. The Future' } ] },
-        'safe-passage': { name: 'Safe Passage (Modern)', cardCount: 7, description: 'A modern, fictional spread. It has no historical basis and is provided for creative exploration.', layoutClass: 'layout-safe-passage',
+        'safe-passage': { name: 'Safe Passage (Modern)', cardCount: 7, description: 'A modern, fictional spread. It has no historical basis and is provided for creative exploration based on the pentagram layout from "Agatha All Along".', layoutClass: 'layout-safe-passage',
             positions: [ { label: '1. The Traveler' }, { label: '2. What\'s Missing' }, { label: '3. The Path Behind' }, { label: '4. The Path Ahead' }, { label: '5. Obstacles' }, { label: '6. Potential Windfall' }, { label: '7. The Destination' } ],
             overlapGroups: [[1, 7]] // [bottom, top]
         },
