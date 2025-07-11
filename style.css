@@ -162,6 +162,15 @@ header .nav-link:hover, header .nav-link.active { color: var(--accent-gold); tex
 .learn-more-container { text-align: center; margin-top: 1.5rem; opacity: 0; transform: translateY(10px); pointer-events: none; transition: opacity 0.5s ease-out, transform 0.5s ease-out; }
 .learn-more-container.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
 
+/* ANNOTATION: This new rule specifically targets the card back for the "Card of the Day"
+   and applies the celestial theme, without affecting the card backs in the Reading Room. */
+#card-of-the-day-container .card-back {
+    background-image: url('../img/backs/celestial.jpg');
+    background-size: cover;
+    background-position: center;
+    border: none; /* Remove the default border to match the theme */
+}
+
 
 /* ----------------------------------------------------------------- */
 /* |              5. READING ROOM (FULL-WIDTH DESKTOP)             | */
@@ -343,7 +352,23 @@ input[type="range"] { flex-grow: 1; }
 #drawer-close-btn { display: none; }
 #mobile-controls-trigger { display: none; }
 
+/* landmark: Add these new rules at the end of the "Card Back Selector" styles */
+.custom-color-picker-input {
+    width: 100%;
+    height: 100%;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-size: 0.8rem;
+    text-align: center;
+    background-color: transparent;
+    color: var(--text-light);
+}
 
+/* Styles for the little color swatch next to the input field */
+.clr-field .clr-preview {
+    border-radius: 4px;
+}
 /* ----------------------------------------------------------------- */
 /* |                       6. CARD STYLING                         | */
 /* ----------------------------------------------------------------- */
@@ -498,14 +523,21 @@ input[type="range"] { flex-grow: 1; }
 /* |                       8. GRIMOIRE & MODAL                     | */
 /* ----------------------------------------------------------------- */
 
-#search-section { max-width: 600px; margin: 2rem auto; }
-#search-bar { font-size: 1.2rem; padding: 12px; width: 100%; box-sizing: border-box; background-color: var(--bg-dark); border: 1px solid var(--border-light); color: var(--text-light); border-radius: 4px; text-align: center; }
-#search-bar:focus { outline: none; border-color: var(--accent-gold); box-shadow: 0 0 10px var(--accent-gold); }
+.grimoire-controls { max-width: 800px; margin: 2rem auto; display: flex; flex-direction: column; gap: 1.5rem; }
+#grimoire-search { font-size: 1.2rem; padding: 12px; width: 100%; box-sizing: border-box; background-color: var(--bg-dark); border: 1px solid var(--border-light); color: var(--text-light); border-radius: 4px; text-align: center; }
+#grimoire-search:focus { outline: none; border-color: var(--accent-gold); box-shadow: 0 0 10px var(--accent-gold); }
+.grimoire-filters { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem; }
+.grimoire-filter-btn { padding: 0.5em 1em; border: 1px solid var(--secondary-purple); background-color: transparent; color: var(--text-light); cursor: pointer; transition: all 0.3s; border-radius: 4px; }
+.grimoire-filter-btn.active, .grimoire-filter-btn:hover { background-color: var(--secondary-purple); border-color: var(--glow-blue); color: white; }
+#grimoire-results-count { text-align: center; opacity: 0.8; font-style: italic; }
+
 .grimoire-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 3rem 1.5rem; margin-top: 2rem; justify-items: center; }
-.grimoire-card { width: 150px; display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: transform 0.3s ease-out; }
-.grimoire-card:hover { transform: scale(1.05); }
-.grimoire-card img { width: 100%; height: auto; border-radius: 8px; box-shadow: 0 0 15px rgba(0,0,0,0.5); background-color: var(--primary-purple); }
-.grimoire-card .grimoire-card-name { margin-top: 0.75rem; font-family: 'Cormorant Garamond', serif; font-weight: bold; font-size: 0.9rem; color: var(--text-light); text-align: center; }
+/* ANNOTATION: Renamed from .grimoire-card to match the class being created in main.js. This is the primary fix. */
+.grimoire-card-container { width: 150px; display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: transform 0.3s ease-out; }
+.grimoire-card-container:hover { transform: scale(1.05); }
+.grimoire-card-container img { width: 100%; height: auto; border-radius: 8px; box-shadow: 0 0 15px rgba(0,0,0,0.5); background-color: var(--primary-purple); }
+.grimoire-card-container .grimoire-card-name { margin-top: 0.75rem; font-family: 'Cormorant Garamond', serif; font-weight: bold; font-size: 0.9rem; color: var(--text-light); text-align: center; }
+.no-results { grid-column: 1 / -1; text-align: center; font-size: 1.2rem; opacity: 0.7; }
 
 /* Modal Styles */
 .modal-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 100; display: flex; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.3s ease-in-out; pointer-events: none; }

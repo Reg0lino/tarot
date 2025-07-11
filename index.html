@@ -171,9 +171,20 @@
         <div class="container">
             <h1>Grimoire</h1>
             <p class="subtitle">An interactive encyclopedia of the Rider-Waite-Smith tarot deck.</p>
-            <section id="search-section">
-                <input type="text" id="search-bar" placeholder="Search for a card (e.g., 'The Sun', 'Cups')...">
+            <!-- ANNOTATION: Added a wrapper and new elements for search, filtering, and results count to match the functionality in main.js. -->
+            <section class="grimoire-controls">
+                <input type="text" id="grimoire-search" placeholder="Search by name, suit, or keyword (e.g., 'The Sun', 'Cups', 'love')...">
+                <div class="grimoire-filters">
+                    <button class="grimoire-filter-btn" data-filter="all">All</button>
+                    <button class="grimoire-filter-btn" data-filter="major">Major Arcana</button>
+                    <button class="grimoire-filter-btn" data-filter="wands">Wands</button>
+                    <button class="grimoire-filter-btn" data-filter="cups">Cups</button>
+                    <button class="grimoire-filter-btn" data-filter="swords">Swords</button>
+                    <button class="grimoire-filter-btn" data-filter="pentacles">Pentacles</button>
+                </div>
+                <p id="grimoire-results-count"></p>
             </section>
+
             <div id="grimoire-grid" class="grimoire-grid"></div>
         </div>
     </template>

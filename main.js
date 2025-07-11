@@ -552,12 +552,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
-    // landmark: Add this new code block right after the 'change' event listener
-    // --- Apply Initial Card Back Theme on Load ---
-    const initialBack = document.querySelector('input[name="card-back"]:checked');
-    if (initialBack && initialBack.value !== 'default') {
-        document.body.classList.add('card-back-theme-' + initialBack.value);
-    }
+        // landmark: Add this new code block right after the 'change' event listener
+            // --- Apply Initial Card Back Theme on Load ---
+            const initialBack = document.querySelector('input[name="card-back"]:checked');
+            if (initialBack && initialBack.value !== 'default') {
+                document.body.classList.add('card-back-theme-' + initialBack.value);
+            }
         // --- Initial View Setup ---
         document.querySelector('.spread-btn').click();
         document.querySelector('input[name="shuffle-method"]:checked').dispatchEvent(new Event('change'));
@@ -568,7 +568,80 @@ document.addEventListener('DOMContentLoaded', () => {
      * Initializes the Grimoire (encyclopedia) view.
      */
     function initGrimoireView(searchTerm = '') {
-        // This function is stable, no changes needed.
+        const grimoireGrid = document.getElementById('grimoire-grid');
+        const searchInput = document.getElementById('grimoire-search');
+        const filterButtons = document.querySelectorAll('.grimoire-filter-btn');
+        const resultsCount = document.getElementById('grimoire-results-count');
+
+        if (!grimoireGrid || !searchInput || !resultsCount) {
+            console.error("Grimoire view elements not found. Ensure your HTML template contains #grimoire-grid, #grimoire-search, and #grimoire-results-count.");
+            return;
+        }
+
+        let currentFilter = 'all';
+        let allCards = [];
+
+        async function renderCards() {
+            if (allCards.length === 0) {
+                allCards = await loadDeck();
+            }
+            if (allCards.length === 0) return;
+
+            const term = searchInput.value.toLowerCase().trim();
+            
+            const filteredCards = allCards.filter(card => {
+                const matchesSearch = term === '' || 
+                    card.name.toLowerCase().includes(term) ||
+                    card.keywords.upright.join(' ').toLowerCase().includes(term) ||
+                    card.keywords.reversed.join(' ').toLowerCase().includes(term) ||
+                    card.suit.toLowerCase().includes(term);
+
+                const matchesFilter = currentFilter === 'all' ||
+                    (currentFilter === 'major' && card.arcana === 'Major Arcana') ||
+                    (currentFilter === 'minor' && card.arcana === 'Minor Arcana') ||
+                    (card.suit.toLowerCase() === currentFilter);
+
+                return matchesSearch && matchesFilter;
+            });
+
+            grimoireGrid.innerHTML = '';
+            resultsCount.textContent = `Showing ${filteredCards.length} of ${allCards.length} cards.`;
+
+            if (filteredCards.length === 0) {
+                grimoireGrid.innerHTML = '<p class="no-results">No cards match your filter criteria.</p>';
+                return;
+            }
+
+            const fragment = document.createDocumentFragment();
+            filteredCards.forEach(card => {
+                const cardEl = document.createElement('div');
+                cardEl.className = 'grimoire-card-container';
+                cardEl.innerHTML = `
+                    <img src="img/cards/${card.img}" alt="${card.name}" loading="lazy">
+                    <span class="grimoire-card-name">${card.name}</span>`;
+                // In the Grimoire, we always show the upright meaning in the modal.
+                cardEl.addEventListener('click', () => openModal({ ...card, isReversed: false }));
+                fragment.appendChild(cardEl);
+            });
+            grimoireGrid.appendChild(fragment);
+        }
+
+        searchInput.addEventListener('input', debounce(renderCards, 250));
+        
+        filterButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                filterButtons.forEach(b => b.classList.remove('active'));
+                e.currentTarget.classList.add('active');
+                currentFilter = e.currentTarget.dataset.filter;
+                renderCards();
+            });
+        });
+
+        if (searchTerm) {
+            searchInput.value = searchTerm;
+        }
+        document.querySelector(`.grimoire-filter-btn[data-filter="${currentFilter}"]`)?.classList.add('active');
+        renderCards();
     }
 
     // -----------------------------------------------------------------
