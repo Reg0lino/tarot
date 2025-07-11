@@ -270,7 +270,8 @@ document.addEventListener('DOMContentLoaded', () => {
             revealAllBtn: document.getElementById('reveal-all-btn'),
             canvasHint: document.querySelector('.canvas-hint'),
             canvasPlaceholder: document.querySelector('.canvas-placeholder-text'),
-            cardBackSelection: document.getElementById('card-back-selection')
+            cardBackSelection: document.getElementById('card-back-selection'),
+            clothSelection: document.getElementById('cloth-selection')
             
         };
         const mobileActionBar = document.getElementById('mobile-action-bar');
@@ -328,6 +329,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 ui.readingCloth.style.gridTemplateColumns = `repeat(${rowCount > 0 ? rowCount : 1}, auto)`;
                 spread.positions = Array.from({ length: spread.cardCount }, (_, i) => ({ label: `Card ${i + 1}` }));
             }
+
+            // ANNOTATION: Activate "Blueprint Mode" to show a clear layout preview.
+            ui.readingCanvas.classList.add('blueprint-mode');
             
             ui.readingCloth.innerHTML = '';
             if (ui.canvasPlaceholder) ui.canvasPlaceholder.style.display = 'block';
@@ -485,6 +489,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         ui.dealBtn.addEventListener('click', async () => {
+            // ANNOTATION: Deactivate "Blueprint Mode" as the cards are dealt.
+            ui.readingCanvas.classList.remove('blueprint-mode');
+
             ui.controlPanel.classList.remove('is-open');
             if (ui.canvasPlaceholder) ui.canvasPlaceholder.style.display = 'none';
 
@@ -558,6 +565,30 @@ document.addEventListener('DOMContentLoaded', () => {
             if (initialBack && initialBack.value !== 'default') {
                 document.body.classList.add('card-back-theme-' + initialBack.value);
             }
+
+        // --- Cloth Selection Listener ---
+        ui.clothSelection.addEventListener('change', (e) => {
+            if (e.target.name === 'cloth-pattern') {
+                const selectedTheme = e.target.value;
+                const themePrefix = 'cloth-theme-';
+
+                // Remove any existing theme classes from the reading canvas
+                for (const className of ui.readingCanvas.classList) {
+                    if (className.startsWith(themePrefix)) {
+                        ui.readingCanvas.classList.remove(className);
+                    }
+                }
+
+                // Add the new theme class if it's not the default
+                if (selectedTheme !== 'default') {
+                    ui.readingCanvas.classList.add(themePrefix + selectedTheme);
+                }
+            }
+        });
+        const initialCloth = document.querySelector('input[name="cloth-pattern"]:checked');
+        if (initialCloth && initialCloth.value !== 'default') {
+            ui.readingCanvas.classList.add('cloth-theme-' + initialCloth.value);
+        }
         // --- Initial View Setup ---
         document.querySelector('.spread-btn').click();
         document.querySelector('input[name="shuffle-method"]:checked').dispatchEvent(new Event('change'));
