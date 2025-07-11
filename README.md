@@ -4,6 +4,8 @@ An interactive, web-based digital toolkit for the exploration and study of tarot
 
 ---
 
+[**View the Live Application &raquo;**](https://reg0lino.github.io/tarot/)
+
 ## Core Mission & Guiding Philosophy
 
 **Open Tarot By Regs** is an educational tool, not a spiritual or fortune-telling device.

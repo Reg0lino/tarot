@@ -66,6 +66,7 @@
     </template>
 
 
+    <!-- landmark: Replace the entire contents of your view-reading-room template -->
     <template id="view-reading-room">
         <div class="reading-room-layout">
             <aside class="control-panel">
@@ -105,66 +106,70 @@
                     </details>
                 </section>
 
+                <!-- ANNOTATION: The customization sections are now collapsible <details> elements. -->
                 <section class="control-section">
-                    <h3>3. Select a Card Back</h3>
-                    <!-- landmark: Replace the entire card-back-selection div with this block -->
-                    <div id="card-back-selection" class="card-back-selection-grid">
-                        <div class="card-back-option">
-                            <input type="radio" name="card-back" id="back-artdeco" value="artdeco">
-                            <label for="back-artdeco" class="card-back-thumbnail">
-                                <img src="img/backs/artdeco.jpg" alt="Art Deco Style Back">
-                            </label>
+                    <details open> <!-- "open" attribute makes it expanded by default -->
+                        <summary>3. Select a Card Back</summary>
+                        <div id="card-back-selection" class="card-back-selection-grid control-group">
+                            <div class="card-back-option">
+                                <input type="radio" name="card-back" id="back-artdeco" value="artdeco">
+                                <label for="back-artdeco" class="card-back-thumbnail">
+                                    <img src="img/backs/artdeco.jpg" alt="Art Deco Style Back">
+                                </label>
+                            </div>
+                            <div class="card-back-option">
+                                <input type="radio" name="card-back" id="back-botanical" value="botanical">
+                                <label for="back-botanical" class="card-back-thumbnail">
+                                    <img src="img/backs/botanical.jpg" alt="Botanical Style Back">
+                                </label>
+                            </div>
+                            <div class="card-back-option">
+                                <input type="radio" name="card-back" id="back-celestial" value="celestial" checked>
+                                <label for="back-celestial" class="card-back-thumbnail">
+                                    <img src="img/backs/celestial.jpg" alt="Celestial Style Back">
+                                </label>
+                            </div>
+                            <div class="card-back-option">
+                                <input type="radio" name="card-back" id="back-default" value="default">
+                                <label for="back-default" class="card-back-thumbnail default-back">
+                                    <span>Default</span>
+                                </label>
+                            </div>
                         </div>
-                        <div class="card-back-option">
-                            <input type="radio" name="card-back" id="back-botanical" value="botanical">
-                            <label for="back-botanical" class="card-back-thumbnail">
-                                <img src="img/backs/botanical.jpg" alt="Botanical Style Back">
-                            </label>
-                        </div>
-                        <div class="card-back-option">
-                            <!-- 'checked' attribute ensures this is the default -->
-                            <input type="radio" name="card-back" id="back-celestial" value="celestial" checked>
-                            <label for="back-celestial" class="card-back-thumbnail">
-                                <img src="img/backs/celestial.jpg" alt="Celestial Style Back">
-                            </label>
-                        </div>
-                        <div class="card-back-option">
-                            <!-- This option is now last -->
-                            <input type="radio" name="card-back" id="back-default" value="default">
-                            <label for="back-default" class="card-back-thumbnail default-back">
-                                <span>Color [WIP]</span>
-                            </label>
-                        </div>
-                    </div>
+                    </details>
                 </section>
 
                 <section class="control-section">
-                    <h3>4. Select a Reading Cloth</h3>
-                    <div id="cloth-selection" class="card-back-selection-grid">
-                        <div class="card-back-option">
-                            <input type="radio" name="cloth-pattern" id="cloth-default" value="default" checked>
-                            <label for="cloth-default" class="card-back-thumbnail default-back">
-                                <span>Stars</span>
-                            </label>
+                    <details> <!-- This section is collapsed by default -->
+                        <summary>4. Select a Reading Cloth</summary>
+                        <div id="cloth-selection" class="card-back-selection-grid control-group">
+                            <div class="card-back-option">
+                                <input type="radio" name="cloth-pattern" id="cloth-default" value="default" checked>
+                                <label for="cloth-default" class="card-back-thumbnail default-back">
+                                    <span>None</span>
+                                </label>
+                            </div>
+                            <div class="card-back-option">
+                                <input type="radio" name="cloth-pattern" id="cloth-pattern1" value="pattern1">
+                                <label for="cloth-pattern1" class="card-back-thumbnail">
+                                    <img src="img/cloth/pattern.png" alt="Esoteric Pattern Cloth">
+                                </label>
+                            </div>
                         </div>
-                        <div class="card-back-option">
-                            <input type="radio" name="cloth-pattern" id="cloth-pattern1" value="pattern1">
-                            <label for="cloth-pattern1" class="card-back-thumbnail">
-                                <img src="img/cloth/pattern.png" alt="Patterned Cloth">
-                            </label>
-                        </div>
-                    </div>
+                    </details>
                 </section>
 
                 <section class="control-section slider-group">
-                    <h3>5. Adjust Layout</h3>
-                    <div class="control-group">
-                        <label for="layout-size-slider">Layout Size: <span id="slider-value">100%</span></label>
-                        <div class="slider-wrapper">
-                            <input type="range" id="layout-size-slider" min="50" max="400" value="100">
-                            <button id="reset-size-btn" class="reset-btn" title="Reset Layout Size">↻</button>
+                    <details> <!-- This section is also collapsed by default -->
+                        <summary>5. Adjust Layout</summary>
+                        <div class="control-group">
+                            <label for="layout-size-slider">Layout Size: <span id="slider-value">100%</span></label>
+                            <div class="slider-wrapper">
+                                <input type="range" id="layout-size-slider" min="50" max="400" value="100">
+                                <button id="reset-size-btn" class="reset-btn" title="Reset Layout Size">↻</button>
+                            </div>
                         </div>
-                    </div>
+                    </details>
                 </section>
 
                 <button id="deal-cards-btn" class="glowing-btn">Deal the Cards</button>

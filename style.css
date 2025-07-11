@@ -74,7 +74,56 @@ h1, h2, h3 {
 
 h1 { font-size: 2.5rem; }
 h2 { font-size: 2rem; margin-top: 1em; margin-bottom: 0.5em; }
-h3 { font-size: 1.2rem; text-align: left; border-bottom: 1px solid var(--border-light); padding-bottom: 0.5rem; margin: 0 0 1rem 0; }
+/* landmark: Replace the old h3 rule with this new block */
+/* Styles for section headers, both static (h3) and collapsible (summary) */
+.control-section h3,
+.control-section summary {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-light);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+    position: relative; /* For positioning the arrow */
+    list-style: none; /* Removes default marker from summary */
+}
+
+/* Make only the summary elements clickable */
+.control-section summary {
+    cursor: pointer;
+    outline: none;
+    transition: color 0.3s;
+}
+
+.control-section summary:hover {
+    color: var(--accent-gold);
+}
+
+/* Hide the default dropdown arrow */
+.control-section summary::-webkit-details-marker {
+    display: none;
+}
+
+/* Create a custom arrow icon */
+.control-section summary::after {
+    content: '►';
+    position: absolute;
+    right: 5px;
+    font-size: 0.8rem;
+    color: var(--accent-gold);
+    transition: transform 0.3s ease-in-out;
+}
+
+/* Rotate the arrow when the section is open */
+.control-section details[open] > summary::after {
+    transform: rotate(90deg);
+}
+
+/* Add some top margin to the content inside a details block */
+.control-section details .control-group {
+    margin-top: 1rem;
+}
+
 p.subtitle { text-align: center; font-size: 1.1rem; color: var(--text-light); opacity: 0.8; max-width: 600px; margin: 0 auto 1.5em auto; }
 a { color: var(--accent-gold); text-decoration: none; }
 
