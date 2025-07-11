@@ -729,14 +729,16 @@ document.addEventListener('DOMContentLoaded', () => {
         // ANNOTATION: Finds a small group of nearby stars to form a temporary constellation.
         function createConstellation() {
             if (stars.length < 5) return;
-            const numStars = Math.floor(Math.random() * 3) + 3; // 3 to 5 stars
+            // ANNOTATION: Increased the number of stars per constellation for longer lines.
+            const numStars = Math.floor(Math.random() * 4) + 4; // 4 to 7 stars
             const startIdx = Math.floor(Math.random() * stars.length);
             let indices = [startIdx];
             let lastIdx = startIdx;
 
             for (let i = 0; i < numStars - 1; i++) {
                 let closest = -1;
-                let minDist = 150; // Max distance for a neighbor
+                // ANNOTATION: Increased search radius to allow for longer, more spread-out lines.
+                let minDist = 250; // Max distance for a neighbor
                 for (let j = 0; j < stars.length; j++) {
                     if (indices.includes(j)) continue;
                     const dist = Math.hypot(stars[lastIdx].x - stars[j].x, stars[lastIdx].y - stars[j].y);
@@ -745,12 +747,14 @@ document.addEventListener('DOMContentLoaded', () => {
                         closest = j;
                     }
                 }
-                if (closest !== -1) indices.push(closest);
+                // ANNOTATION: This is the key fix. It updates the 'lastIdx' to form a chain, ensuring lines connect star-to-star.
+                if (closest !== -1) { indices.push(closest); lastIdx = closest; }
                 else break;
             }
 
             if (indices.length > 2) {
-                constellations.push({ indices, alpha: 0, maxAlpha: Math.random() * 0.1 + 0.05, life: 600, state: 'fading-in' });
+                // ANNOTATION: Increased the maxAlpha range again to make constellations even brighter.
+                constellations.push({ indices, alpha: 0, maxAlpha: Math.random() * 0.2 + 0.3, life: 600, state: 'fading-in' });
             }
         }
 
@@ -791,8 +795,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 ctx.stroke();
             });
 
-            // --- Create and draw constellations ---
-            if (Math.random() < 0.0005 && constellations.length === 0) createConstellation();
+            // --- Create and draw constellations ---            
+            // ANNOTATION: Increased probability and max count to make constellations more numerous.
+            if (Math.random() < 0.002 && constellations.length < 3) createConstellation();
             constellations = constellations.filter(c => c.life > 0);
             constellations.forEach(c => {
                 c.life--;
