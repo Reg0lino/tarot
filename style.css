@@ -165,12 +165,11 @@ header .nav-link:hover, header .nav-link.active { color: var(--accent-gold); tex
 /* ANNOTATION: This new rule specifically targets the card back for the "Card of the Day"
    and applies the celestial theme, without affecting the card backs in the Reading Room. */
 #card-of-the-day-container .card-back {
-    background-image: url('../img/backs/celestial.jpg');
+    background-image: url('img/backs/celestial.jpg');
     background-size: cover;
     background-position: center;
     border: none; /* Remove the default border to match the theme */
 }
-
 
 /* ----------------------------------------------------------------- */
 /* |              5. READING ROOM (FULL-WIDTH DESKTOP)             | */
@@ -219,19 +218,19 @@ header .nav-link:hover, header .nav-link.active { color: var(--accent-gold); tex
     border: 2px solid var(--secondary-purple);
 }
 .card-back-theme-artdeco .card-back {
-    background-image: url('../img/backs/artdeco.jpg');
+    background-image: url('img/backs/artdeco.jpg');
     background-size: cover;
     background-position: center;
     border: none;
 }
 .card-back-theme-botanical .card-back {
-    background-image: url('../img/backs/botanical.jpg');
+    background-image: url('img/backs/botanical.jpg');
     background-size: cover;
     background-position: center;
     border: none;
 }
 .card-back-theme-celestial .card-back {
-    background-image: url('../img/backs/celestial.jpg');
+    background-image: url('img/backs/celestial.jpg');
     background-size: cover;
     background-position: center;
     border: none;
