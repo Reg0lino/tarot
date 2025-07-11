@@ -1,6 +1,6 @@
 /*
 ===================================================================
- main.js (Version 15: Starfield Resize Fix)
+ main.js 
 ===================================================================
 */
 
@@ -174,10 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
         modal.classList.remove('hidden');
     }
 
-    /**
-     * Creates a seeded pseudo-random number generator (PRNG).
-     */
-    function createPRNG(seed) {
+    window.createPRNG = function(seed) {
         let state = seed % 2147483647;
         if (state <= 0) state += 2147483646;
         return function() {
@@ -273,38 +270,37 @@ document.addEventListener('DOMContentLoaded', () => {
 
         drawCardOfTheDay();
     }
-    /**
-     * Initializes the Reading Room view.
-     */
     function initReadingRoomView() {
         // --- UI Element Cache ---
         const ui = {
+            // Existing elements
             spreadSelection: document.getElementById('spread-selection'),
             customControls: document.getElementById('custom-spread-controls'),
             spreadInfoText: document.getElementById('spread-info-text'),
             shuffleInput: document.getElementById('shuffle-input'),
-            shuffleExplanation: document.getElementById('shuffle-math-text'),
+            generateBtn: document.getElementById('generate-btn'),
+            shuffleExplanation: document.getElementById('shuffle-explanation'),
             dealBtn: document.getElementById('deal-cards-btn'),
             readingCanvas: document.getElementById('reading-canvas'),
             readingCloth: document.getElementById('reading-cloth'),
-            generateBtn: document.getElementById('generate-btn'),
-            sizeSlider: document.getElementById('layout-size-slider'),
-            sliderValue: document.getElementById('slider-value'),
-            resetSizeBtn: document.getElementById('reset-size-btn'),
-            controlPanel: document.querySelector('.control-panel'),
-            mobileControlsTrigger: document.getElementById('mobile-controls-trigger'),
-            drawerCloseBtn: document.getElementById('drawer-close-btn'),
             revealAllContainer: document.getElementById('reveal-all-container'),
             revealAllBtn: document.getElementById('reveal-all-btn'),
-            canvasHint: document.querySelector('.canvas-hint'),
             canvasPlaceholder: document.querySelector('.canvas-placeholder-text'),
-            cardBackSelection: document.getElementById('card-back-selection'),
-            clothSelection: document.getElementById('cloth-selection')
+            mobileControlsTrigger: document.getElementById('mobile-controls-trigger'),
+            controlPanel: document.querySelector('.control-panel'),
+            drawerCloseBtn: document.getElementById('drawer-close-btn'),
             
-        };
+            // Missing elements that must be added
+            cardBackSelection: document.getElementById('card-back-selection'),
+            clothSelection: document.getElementById('cloth-selection'),
+            sizeSlider: document.getElementById('layout-size-slider'),
+            sliderValue: document.getElementById('slider-value'),
+            resetSizeBtn: document.getElementById('reset-size-btn')
+};
         const mobileActionBar = document.getElementById('mobile-action-bar');
-
         let selectedSpreadKey = 'one-card';
+
+        window.openModal = openModal;
 
         // --- Pan and Zoom Logic ---
         let scale = 1, panning = false, initialPinchDistance = null;
@@ -397,32 +393,75 @@ document.addEventListener('DOMContentLoaded', () => {
             return position;
         }
 
+            //Resets the reading canvas to its initial state before a new reading.
+            function resetReadingState() {
+                ui.readingCloth.innerHTML = ''; // Clear any old cards
+                ui.revealAllContainer.classList.add('hidden');
+                if (ui.canvasPlaceholder) {
+                    ui.canvasPlaceholder.style.display = 'block';
+                }
+            }
+
         function updateShuffleExplanation() {
             const method = document.querySelector('input[name="shuffle-method"]:checked').value;
             const value = ui.shuffleInput.value;
-            let seedText = 'N/A';
-            if (value.trim()) seedText = method === 'text' ? `"${value}"` : value;
-            ui.shuffleExplanation.textContent = `METHOD: ${method.toUpperCase()} | YOUR INPUT: ${seedText}`;
+            let explanationHTML = '';
+            switch (method) {
+                case 'text':
+                    explanationHTML = `
+                        <p>Each character you type is converted to a numeric code. These codes are summed to produce a single number.</p>
+                        <strong>Example:</strong> "A" becomes 65, "B" becomes 66. "AB" results in 131.
+                    `;
+                    break;
+                case 'number':
+                    explanationHTML = '<p>The number you enter is used directly as the base for the seed.</p>';
+                    break;
+                case 'timestamp':
+                    explanationHTML = '<p>The current time, measured in milliseconds since Jan 1, 1970, is used as the base number.</p>';
+                    break;
+            }
+            explanationHTML += `
+                <p>This base number is then multiplied by Pi (≈3.14159) to create the final, unique <strong>seed</strong>.</p>
+                <p>This seed is the starting point for a Pseudo-Random Number Generator (PRNG). A PRNG creates a sequence of numbers that appears random, but is fully determined by the seed. <strong>The same seed will always produce the exact same sequence of numbers, resulting in the exact same card shuffle.</strong></p>
+            `;
+            ui.shuffleExplanation.innerHTML = explanationHTML;
         }
-        
+
         function performShuffle(deck) {
             const method = document.querySelector('input[name="shuffle-method"]:checked').value;
             const value = ui.shuffleInput.value;
-            let seed = new Date().getTime(); // Default seed
+            let seed; // Default seed
+            // --- Seed Calculation ---
             if (method === 'text' && value.trim()) {
                 seed = value.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
             } else if (method === 'number' && value.trim() && !isNaN(value)) {
                 seed = parseInt(value, 10);
+            } else {
+                // Default to timestamp if input is empty or method is 'timestamp'
+                seed = new Date().getTime();
             }
+
             const finalSeed = Math.floor(seed * Math.PI);
-            const shuffleRandom = createPRNG(finalSeed);
-            const reversalRandom = createPRNG(finalSeed + 1);
+            const shuffleRandom = window.createPRNG(finalSeed);
+
+            // --- Console Log for Transparency ---
+            console.clear();
+            console.log("%c--- SHUFFLE CALCULATION AUDIT ---", "font-weight:bold; color: #FFD700;");
+            console.log(`Shuffle Method: %c${method.toUpperCase()}`, "font-weight:bold;");
+            console.log(`User Input: %c"${value || 'N/A (Timestamp used)'}"`, "font-weight:bold;");
+            console.log(`Calculated Initial Seed: %c${seed}`, "font-weight:bold;");
+            console.log(`Final Seed (Initial × π): %c${finalSeed}`, "font-weight:bold;");
+            console.log("%cThis final seed number is the sole input for the shuffling algorithm.", "font-style:italic;");
+            console.log("%c---------------------------------", "color: #FFD700;");
+
+
+            // --- Shuffling Logic ---
             let shuffledDeck = [...deck];
             for (let i = shuffledDeck.length - 1; i > 0; i--) {
                 const j = Math.floor(shuffleRandom() * (i + 1));
                 [shuffledDeck[i], shuffledDeck[j]] = [shuffledDeck[j], shuffledDeck[i]];
             }
-            return { seed: finalSeed, shuffledDeck, reversalRandom };
+            return { seed: finalSeed, shuffledDeck };
         }
 
         // --- Mobile Action Bar Setup ---
@@ -441,7 +480,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.addEventListener("mousemove", onPointerMove);
         document.addEventListener("touchmove", onPointerMove, { passive: false });
 
-// Replace it with this updated version
         ui.readingCanvas.addEventListener("wheel", (e) => {
             e.preventDefault();
             const delta = e.deltaY > 0 ? -0.1 : 0.1;
@@ -465,16 +503,33 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         ui.spreadSelection.addEventListener('click', (e) => {
-            if (e.target.classList.contains('spread-btn')) {
-                document.querySelectorAll('.spread-btn').forEach(btn => btn.classList.remove('selected'));
-                e.target.classList.add('selected');
-                selectedSpreadKey = e.target.dataset.spreadKey;
-                ui.customControls.classList.toggle('hidden', selectedSpreadKey !== 'custom');
-                ui.spreadInfoText.textContent = spreads[selectedSpreadKey].description;
-                drawSpreadBlueprint();
-            }
-        });
-        
+        if (e.target.classList.contains('spread-btn')) {
+            resetReadingExperience();
+            document.querySelectorAll('.spread-btn').forEach(btn => btn.classList.remove('selected'));
+            e.target.classList.add('selected');
+            selectedSpreadKey = e.target.dataset.spreadKey;
+            ui.customControls.classList.toggle('hidden', selectedSpreadKey !== 'custom');
+            ui.spreadInfoText.textContent = spreads[selectedSpreadKey].description;
+            drawSpreadBlueprint();
+        }
+    });
+
+        ui.dealBtn.addEventListener('click', async () => {
+    // Step 1: Reset the board and draw a clean blueprint.
+    // The application will remain in this "Blueprint Mode" state
+    // while the shuffle modal is open.
+        resetReadingExperience();
+        drawSpreadBlueprint();
+
+        // Step 2: Perform the shuffle and start the interactive controller.
+        const deck = await loadDeck();
+        const { shuffledDeck } = performShuffle(deck);
+    
+        // The controller will now be responsible for hiding the blueprint visuals later.
+        const shuffleController = new ShuffleController(shuffledDeck, spreads[selectedSpreadKey]);
+        shuffleController.start();
+    });
+
         document.querySelectorAll('#custom-spread-controls input').forEach(input => input.addEventListener('input', drawSpreadBlueprint));
         
         document.querySelectorAll('input[name="shuffle-method"]').forEach(radio => {
@@ -496,13 +551,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         ui.shuffleInput.addEventListener('input', updateShuffleExplanation);
-        
         ui.sizeSlider.addEventListener('input', () => {
             scale = ui.sizeSlider.value / 100;
             ui.sliderValue.textContent = `${ui.sizeSlider.value}%`;
             applyTransform();
         });
-        
         ui.resetSizeBtn.addEventListener('click', () => {
             scale = 1;
             currentTranslate = { x: 0, y: 0 };
@@ -511,63 +564,18 @@ document.addEventListener('DOMContentLoaded', () => {
             ui.sizeSlider.value = 100;
             applyTransform();
         });
-        
         ui.revealAllBtn.addEventListener('click', () => {
             ui.readingCloth.querySelectorAll('.card-container:not(.flipped)').forEach(card => card.classList.add('flipped'));
         });
+        function resetReadingExperience() {
+        ui.readingCloth.innerHTML = '';
+        ui.revealAllContainer.classList.add('hidden');
+        if (ui.canvasPlaceholder) {
+            ui.canvasPlaceholder.style.display = 'block';
+        }
+        ui.readingCanvas.classList.add('blueprint-mode');
+    }
 
-        ui.dealBtn.addEventListener('click', async () => {
-            //   Deactivate "Blueprint Mode" as the cards are dealt.
-            ui.readingCanvas.classList.remove('blueprint-mode');
-
-            ui.controlPanel.classList.remove('is-open');
-            if (ui.canvasPlaceholder) ui.canvasPlaceholder.style.display = 'none';
-
-            let spread = { ...spreads[selectedSpreadKey] };
-            if (selectedSpreadKey === 'custom') {
-                spread.cardCount = parseInt(ui.customControls.querySelector('#custom-card-count').value, 10);
-                spread.positions = Array.from({ length: spread.cardCount }, (_, i) => ({ label: `Card ${i + 1}` }));
-            }
-
-            const deck = await loadDeck();
-            const { seed, shuffledDeck, reversalRandom } = performShuffle(deck);
-            const includeReversed = document.getElementById('reversed-cards-checkbox').checked;
-            const drawnCards = shuffledDeck.slice(0, spread.cardCount).map(card => ({
-                ...card,
-                isReversed: includeReversed ? reversalRandom() > 0.5 : false
-            }));
-
-            console.clear();
-            console.log(`--- SHUFFLE REPORT ---`);
-            console.log(`Final Seed Used: ${seed}`);
-            console.log("Drawn Cards (with reversal status):", drawnCards.map(c => `${c.name} ${c.isReversed ? '(R)' : ''}`));
-            console.log(`----------------------`);
-
-            drawnCards.forEach((card, index) => {
-                const cardPositionIndex = index + 1;
-                const pos = ui.readingCloth.querySelector(`.position-container.pos-${cardPositionIndex}`);
-                if (!pos) {
-                    console.error(`Could not find position container for card ${cardPositionIndex}`);
-                    return;
-                }
-                setTimeout(() => {
-                    pos.innerHTML = `
-                        <div class="card-container">
-                            <div class="tarot-card">
-                                <div class="card-face card-back"></div>
-                                <div class="card-face card-front">
-                                    <img src="img/cards/${card.img}" alt="${card.name}" class="${card.isReversed ? 'reversed' : ''}">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="position-label">${spread.positions[index]?.label || `Card ${index + 1}`}</div>`;
-
-                    pos.querySelector('.card-container').addEventListener('click', (e) => e.currentTarget.classList.add('flipped'), { once: true });
-                    pos.querySelector('.card-front').addEventListener('click', () => openModal(card));
-                }, 100 * index);
-            });
-            ui.revealAllContainer.classList.remove('hidden');
-        });
     // --- Card Back Selection Listener ---
     ui.cardBackSelection.addEventListener('change', (e) => {
         if (e.target.name === 'card-back') {
@@ -616,6 +624,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (initialCloth && initialCloth.value !== 'default') {
             ui.readingCanvas.classList.add('cloth-theme-' + initialCloth.value);
         }
+
         // --- Initial View Setup ---
         document.querySelector('.spread-btn').click();
         document.querySelector('input[name="shuffle-method"]:checked').dispatchEvent(new Event('change'));

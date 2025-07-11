@@ -6,11 +6,12 @@
     <title>Open Tarot By Regs</title>
     <!-- Link to the Coloris CSS file -->
     <link rel="stylesheet" href="css/coloris.min.css">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/style.css">
     <!--  Link to the Coloris JS file -->
     <script src="js/coloris.min.js"></script>
-    <script src="tarot-deck.js"></script>
-    <script src="main.js" defer></script>
+    <script src="js/tarot-deck.js"></script>
+    <script src="js/main.js" defer></script>
+    <script src="js/shuffle-animation.js" defer></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;700&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
@@ -37,6 +38,20 @@
             <div id="modal-card-content"></div>
         </div>
     </div>
+        <!-- ANNOTATION: This is the modal for the interactive shuffling sequence. -->
+    <div id="shuffle-zone-modal" class="modal-container hidden">
+        <div class="shuffle-zone-content">
+            <div id="visual-deck-container">
+                <!-- The visual deck will be created by JS, but this is its home -->
+            </div>
+            <div id="shuffle-controls">
+                <button id="cut-deck-btn" class="shuffle-btn">Cut</button>
+                <button id="wash-deck-btn" class="shuffle-btn">Shuffle</button>
+                <button id="begin-reading-btn" class="glowing-btn">Begin Reading</button>
+            </div>
+        </div>
+    </div>
+
     <!-- --------------------- VIEW TEMPLATES --------------------- -->
     <template id="view-home">
         <div class="container">
@@ -162,7 +177,7 @@
             </div>
         </details>
     </section>
-    <button id="deal-cards-btn" class="glowing-btn">Deal the Cards</button>
+    <button id="deal-cards-btn" class="glowing-btn">Shuffle & Deal Cards</button>
 </aside>
 
             <main id="reading-canvas" class="reading-canvas">

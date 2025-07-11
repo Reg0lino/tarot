@@ -213,7 +213,7 @@ header .nav-link:hover, header .nav-link.active { color: var(--accent-gold); tex
 /*   This new rule specifically targets the card back for the "Card of the Day"
    and applies the celestial theme, without affecting the card backs in the Reading Room. */
 #card-of-the-day-container .card-back {
-    background-image: url('img/backs/celestial.jpg');
+    background-image: url('../img/backs/celestial.jpg');
     background-size: cover;
     background-position: center;
     border: none; /* Remove the default border to match the theme */
@@ -269,19 +269,19 @@ header .nav-link:hover, header .nav-link.active { color: var(--accent-gold); tex
     border: 2px solid var(--secondary-purple);
 }
 .card-back-theme-artdeco .card-back {
-    background-image: url('img/backs/artdeco.jpg');
+    background-image: url('../img/backs/artdeco.jpg');
     background-size: cover;
     background-position: center;
     border: none;
 }
 .card-back-theme-botanical .card-back {
-    background-image: url('img/backs/botanical.jpg');
+    background-image: url('../img/backs/botanical.jpg');
     background-size: cover;
     background-position: center;
     border: none;
 }
 .card-back-theme-celestial .card-back {
-    background-image: url('img/backs/celestial.jpg');
+    background-image: url('../img/backs/celestial.jpg');
     background-size: cover;
     background-position: center;
     border: none;
@@ -382,7 +382,7 @@ input[type="range"] { flex-grow: 1; }
     top: 0; left: 0;
     width: 100%;
     height: 100%;
-    background-image: url('img/cloth/pattern.png');
+    background-image: url('../img/cloth/pattern.png');
     background-repeat: repeat;
     opacity: 0.15; /*   Lowered opacity to make it a subtle background texture. */
     z-index: 0;
@@ -577,10 +577,10 @@ input[type="range"] { flex-grow: 1; }
     transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 /* 
-    This is the new hover effect.
-  It targets the top card within the group and applies a transform to slide it
-  horizontally, revealing the card underneath while remaining clickable.
-  The 'rotate(90deg)' is included to preserve the original rotation for spreads like the Celtic Cross.
+This is the new hover effect.
+It targets the top card within the group and applies a transform to slide it
+horizontally, revealing the card underneath while remaining clickable.
+The 'rotate(90deg)' is included to preserve the original rotation for spreads like the Celtic Cross.
 */
 .layout-celtic-cross .overlap-group:hover .position-container.top-card {
     transform: rotate(90deg) translateX(80%);
@@ -623,6 +623,147 @@ input[type="range"] { flex-grow: 1; }
     gap: 1.5rem;
 }
 
+/* ----------------------------------------------------------------- */
+/* |                  7a. SHUFFLE ZONE MODAL                       | */
+/* ----------------------------------------------------------------- */
+
+.shuffle-zone-content {
+    display: grid;
+    grid-template-rows: 1fr auto; /* Stage on top, controls on bottom */
+    height: 100%;
+    max-height: 450px;
+    padding: 1rem 0;
+    box-sizing: border-box;
+    gap: 1rem;
+}
+
+#visual-deck-container {
+    width: 100%; /* Allow it to take full width of the modal content area */
+    display: flex; /* Use flex to center its own child (the deck) */
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    perspective: 1000px;
+    flex-grow: 1; /* ANNOTATION: This is the key fix. It makes this container take all available vertical space. */
+    min-height: 0; /* A flexbox fix to prevent overflow issues */
+}
+
+/* This is the base style for the deck in the shuffle zone. It has no image by default. */
+.visual-deck {
+    width: 100%;
+    max-width: 120px; /* Set a max-width to match animation cards */
+    aspect-ratio: 1 / 1.75; /* ANNOTATION: This is the key fix for the shape. */
+    background-color: var(--primary-purple); /* Fallback color */
+    background-size: cover;
+    background-position: center;
+    border-radius: 8px;
+    box-shadow: 
+        0 2px 2px rgba(0,0,0,0.5),
+        0 4px 4px rgba(0,0,0,0.4),
+        0 6px 6px rgba(0,0,0,0.3),
+        0 8px 8px rgba(0,0,0,0.2),
+        0 10px 10px rgba(0,0,0,0.1);
+    position: relative;
+    border: 2px solid var(--secondary-purple);
+}
+
+/* ANNOTATION: These new rules dynamically apply the selected theme to the visual deck */
+.card-back-theme-artdeco .visual-deck {
+    background-image: url('../img/backs/artdeco.jpg');
+    border: none;
+}
+.card-back-theme-botanical .visual-deck {
+    background-image: url('../img/backs/botanical.jpg');
+    border: none;
+}
+.card-back-theme-celestial .visual-deck {
+    background-image: url('../img/backs/celestial.jpg');
+    border: none;
+}
+
+/* ANNOTATION: Corrected path for the cloth pattern */
+.reading-canvas.cloth-theme-pattern1::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('../img/cloth/pattern.png'); /* Corrected path */
+    background-repeat: repeat;
+    opacity: 0.15;
+    z-index: 0;
+    pointer-events: none;
+}
+
+#shuffle-controls {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.shuffle-btn {
+    padding: 0.6em 1.2em;
+    border: 1px solid var(--secondary-purple);
+    background-color: transparent;
+    color: var(--text-light);
+    cursor: pointer;
+    transition: all 0.3s;
+    border-radius: 5px;
+}
+
+.shuffle-btn:hover {
+    background-color: var(--secondary-purple);
+    border-color: var(--glow-blue);
+}
+
+/* --- Cut Animation Styles --- */
+.deck-half {
+    width: 120px; /* Give it a fixed width */
+    height: auto; /* Height will be set by aspect-ratio */
+    aspect-ratio: 1 / 1.75; /* Enforce correct card shape */
+    position: absolute;
+    background-size: cover;
+    background-position: center;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+}
+
+.deck-half-bottom {
+    animation: cut-bottom-half-animation 0.8s ease-in-out forwards;
+}
+
+.deck-half-top {
+    animation: cut-top-half-animation 0.8s ease-in-out forwards;
+}
+
+@keyframes cut-bottom-half-animation {
+    0%   { transform: translate(0, 0); z-index: 1; }
+    50%  { transform: translate(-80px, 0); z-index: 1; }
+    100% { transform: translate(0, 0); z-index: 1; }
+}
+
+@keyframes cut-top-half-animation {
+    0%   { transform: translate(0, 0); z-index: 2; }
+    25%  { transform: translate(80px, 0); z-index: 2; }
+    50%  { transform: translate(80px, -60px); z-index: 3; } /* Lifts above */
+    75%  { transform: translate(-80px, -60px); z-index: 3; }
+    100% { transform: translate(0, 0); z-index: 2; }
+}
+
+/* --- Deal Animation Styles --- */
+.flying-card {
+    /* These cards exist outside the normal flow, on a layer above everything. */
+    position: fixed;
+    z-index: 2000; /* Ensure they are on top of all other UI */
+    width: 120px; /* Matches the size of the final cards */
+    height: 210px;
+    background-size: cover;
+    background-position: center;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    /* This transition is the magic that creates the "flying" effect. */
+    transition: all 0.6s cubic-bezier(0.5, 0, 0.2, 1);
+}
 
 /* ----------------------------------------------------------------- */
 /* |                       8. GRIMOIRE & MODAL                     | */
@@ -766,4 +907,18 @@ input[type="range"] { flex-grow: 1; }
         width: 200px; 
         flex-shrink: 0; 
     }
+}
+
+.shuffle-card {
+    width: 120px; /* Give it a fixed width */
+    height: auto;
+    aspect-ratio: 1 / 1.75; /* Enforce correct card shape */
+    position: absolute;
+    background-size: cover;
+    background-position: center;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease-in-out;
+    transform: translate(0, 0) rotate(0deg);
+    opacity: 0;
 }
