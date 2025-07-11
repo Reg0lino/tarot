@@ -16,10 +16,9 @@
     --glow-blue: #00BFFF;
     --text-light: #E0E0E0;
     --border-light: #330055;
-    /* ANNOTATION: Define header height as a variable for reuse. */
+    /*   Define header height as a variable for reuse. */
     --header-height: 65px; 
 }
-/* landmark: Add this new section at the top of style.css */
 /*
 ===================================================================
   THEME FOR COLORIS PICKER
@@ -74,7 +73,7 @@ h1, h2, h3 {
 
 h1 { font-size: 2.5rem; }
 h2 { font-size: 2rem; margin-top: 1em; margin-bottom: 0.5em; }
-/* landmark: Replace the old h3 rule with this new block */
+
 /* Styles for section headers, both static (h3) and collapsible (summary) */
 .control-section h3,
 .control-section summary {
@@ -170,7 +169,7 @@ a { color: var(--accent-gold); text-decoration: none; }
     width: 100%; 
     height: 100%; 
     z-index: 0; 
-    /* ANNOTATION: Makes the canvas invisible to mouse events, allowing clicks to pass through to the controls underneath. */
+    /*   Makes the canvas invisible to mouse events, allowing clicks to pass through to the controls underneath. */
     pointer-events: none;
 }
 
@@ -211,7 +210,7 @@ header .nav-link:hover, header .nav-link.active { color: var(--accent-gold); tex
 .learn-more-container { text-align: center; margin-top: 1.5rem; opacity: 0; transform: translateY(10px); pointer-events: none; transition: opacity 0.5s ease-out, transform 0.5s ease-out; }
 .learn-more-container.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
 
-/* ANNOTATION: This new rule specifically targets the card back for the "Card of the Day"
+/*   This new rule specifically targets the card back for the "Card of the Day"
    and applies the celestial theme, without affecting the card backs in the Reading Room. */
 #card-of-the-day-container .card-back {
     background-image: url('img/backs/celestial.jpg');
@@ -233,16 +232,19 @@ header .nav-link:hover, header .nav-link.active { color: var(--accent-gold); tex
 
 /* --- Control Panel (Sticky Sidebar) --- */
 .control-panel { 
-    background-color: rgba(13, 0, 31, 0.95); /* Darker for contrast */
-    padding: 1.5rem; 
+    background-color: rgba(13, 0, 31, 0.95);
+    padding: 0 1.5rem 1.5rem; 
     display: flex; 
     flex-direction: column; 
     box-sizing: border-box; 
     height: 100%;
-    overflow-y: auto; /* Allow panel to scroll if content is long */
+    overflow-y: auto;
     border-right: 1px solid var(--border-light);
 }
-.control-section { padding: 1rem 0; }
+.control-section { 
+
+    padding: 0.75rem 0; 
+}
 .control-section:first-child { padding-top: 0; }
 .control-section:not(:first-child) { border-top: 1px solid var(--border-light); }
 .control-group { display: flex; flex-direction: column; gap: 0.75rem; }
@@ -256,9 +258,9 @@ header .nav-link:hover, header .nav-link.active { color: var(--accent-gold); tex
     margin-top: 1rem; /* Adds space above the "Shuffle with..." options */
 }
 /* --- Styles for the Card Back Selector --- */
-/* landmark: Replace the old .card-back rule with this block */
+
 .card-back {
-    /* ANNOTATION: Using specific properties instead of the 'background' shorthand
+    /*   Using specific properties instead of the 'background' shorthand
        to prevent background-position and background-size from being reset. */
     background-color: var(--primary-purple);
     background-image: none;
@@ -373,7 +375,7 @@ input[type="range"] { flex-grow: 1; }
     cursor: grab;
     position: relative;
 }
-/* landmark: Add this new code block directly after the .reading-canvas rule */
+
 .reading-canvas.cloth-theme-pattern1::before {
     content: '';
     position: absolute;
@@ -382,7 +384,7 @@ input[type="range"] { flex-grow: 1; }
     height: 100%;
     background-image: url('img/cloth/pattern.png');
     background-repeat: repeat;
-    opacity: 0.15; /* ANNOTATION: Lowered opacity to make it a subtle background texture. */
+    opacity: 0.15; /*   Lowered opacity to make it a subtle background texture. */
     z-index: 0;
     pointer-events: none; /* Ensures it doesn't interfere with clicks */
 }
@@ -410,7 +412,7 @@ input[type="range"] { flex-grow: 1; }
 }
 .reveal-all-container.hidden { display: none; }
 
-/* ANNOTATION: These new rules create the "Blueprint Mode" effect before cards are dealt. */
+/*   These new rules create the "Blueprint Mode" effect before cards are dealt. */
 .reading-canvas::before {
     content: '';
     position: absolute;
@@ -430,7 +432,7 @@ input[type="range"] { flex-grow: 1; }
 #drawer-close-btn { display: none; }
 #mobile-controls-trigger { display: none; }
 
-/* landmark: Add these new rules at the end of the "Card Back Selector" styles */
+
 .custom-color-picker-input {
     width: 100%;
     height: 100%;
@@ -457,7 +459,7 @@ input[type="range"] { flex-grow: 1; }
     align-content: start; 
     align-items: center; 
     width: 100%; 
-    min-height: 100%; /* ANNOTATION: Allows the canvas to grow taller than the screen to fit long spreads. */
+    min-height: 100%; /*   Allows the canvas to grow taller than the screen to fit long spreads. */
     transition: transform 0.3s ease-out; 
     transform-origin: center center; 
     touch-action: none; 
@@ -467,7 +469,7 @@ input[type="range"] { flex-grow: 1; }
 .position-container { position: relative; width: 120px; height: 210px; }
 .position-label { position: absolute; bottom: -25px; left: 50%; transform: translateX(-50%); width: 150%; text-align: center; font-size: 0.8rem; color: var(--text-light); opacity: 0.7; transition: opacity 0.3s; pointer-events: none; }
 .position-container:hover .position-label { opacity: 1; font-weight: bold; }
-/* ANNOTATION: In blueprint mode, make labels fully opaque and add a shadow for readability. */
+/*   In blueprint mode, make labels fully opaque and add a shadow for readability. */
 .blueprint-mode .position-label {
     opacity: 1;
     text-shadow: 0 0 6px rgba(0,0,0,0.9);
@@ -480,7 +482,7 @@ input[type="range"] { flex-grow: 1; }
 .card-front { transform: rotateY(180deg); }
 .card-front img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; }
 .card-front img.reversed { transform: rotate(180deg); }
-/* ANNOTATION: Replaced the dashed outline with a solid, glowing placeholder for better visibility in blueprint mode. */
+/*   Replaced the dashed outline with a solid, glowing placeholder for better visibility in blueprint mode. */
 .card-placeholder {
     width: 100%;
     height: 100%;
@@ -501,7 +503,7 @@ input[type="range"] { flex-grow: 1; }
     gap: 1.5rem;
     justify-content: center; /* Horizontally centers the cards */
     align-items: center;    /* Vertically centers the cards */
-    height: 100%;           /* ANNOTATION: This is the key. It makes the container fill the vertical space, allowing align-items to work. */
+    height: 100%;           /*   This is the key. It makes the container fill the vertical space, allowing align-items to work. */
 }
 .layout-custom { display: grid; justify-content: center; gap: 1.5rem; }
 /* --- Horseshoe Spread Layout --- */
@@ -525,7 +527,7 @@ input[type="range"] { flex-grow: 1; }
     display: grid;
     grid-template-columns: repeat(3, auto);
     grid-template-rows: repeat(3, auto);
-    /* ANNOTATION: Sets row-gap to 1.5rem and column-gap to a wider 5rem to prevent overlap. */
+    /*   Sets row-gap to 1.5rem and column-gap to a wider 5rem to prevent overlap. */
     gap: 1.5rem 5rem; 
 }
 .layout-relationship .pos-1 { grid-area: 2 / 1; }
@@ -571,11 +573,11 @@ input[type="range"] { flex-grow: 1; }
     position: absolute; 
     top: 0; 
     left: 0; 
-    /* ANNOTATION: Add a transition to animate the card smoothly when it moves. */
+    /*   Add a transition to animate the card smoothly when it moves. */
     transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 /* 
-  ANNOTATION: This is the new hover effect.
+    This is the new hover effect.
   It targets the top card within the group and applies a transform to slide it
   horizontally, revealing the card underneath while remaining clickable.
   The 'rotate(90deg)' is included to preserve the original rotation for spreads like the Celtic Cross.
@@ -614,10 +616,10 @@ input[type="range"] { flex-grow: 1; }
 
 .layout-chakra-spread {
     display: flex;
-    /* ANNOTATION: Reverses the stacking order to build from bottom (1) to top (7). */
+    /*   Reverses the stacking order to build from bottom (1) to top (7). */
     flex-direction: column-reverse;
     align-items: center;
-    /* ANNOTATION: Reduced the gap to make the vertical layout more compact. */
+    /*   Reduced the gap to make the vertical layout more compact. */
     gap: 1.5rem;
 }
 
@@ -635,7 +637,7 @@ input[type="range"] { flex-grow: 1; }
 #grimoire-results-count { text-align: center; opacity: 0.8; font-style: italic; }
 
 .grimoire-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 3rem 1.5rem; margin-top: 2rem; justify-items: center; }
-/* ANNOTATION: Renamed from .grimoire-card to match the class being created in main.js. This is the primary fix. */
+/*   Renamed from .grimoire-card to match the class being created in main.js. This is the primary fix. */
 .grimoire-card-container { width: 150px; display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: transform 0.3s ease-out; }
 .grimoire-card-container:hover { transform: scale(1.05); }
 .grimoire-card-container img { width: 100%; height: auto; border-radius: 8px; box-shadow: 0 0 15px rgba(0,0,0,0.5); background-color: var(--primary-purple); }
@@ -741,7 +743,7 @@ input[type="range"] { flex-grow: 1; }
         flex-basis: 0;
     }
 
-    /* ANNOTATION: Polish for landscape mode on mobile devices. */
+    /*   Polish for landscape mode on mobile devices. */
     @media (orientation: landscape) {
         #hero {
             min-height: 0; /* Let content define height */

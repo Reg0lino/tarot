@@ -161,7 +161,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const reversedMeaning = `<div class="meaning-section ${card.isReversed ? 'highlight' : ''}"><h4>Meaning (Reversed)</h4><p>${createDictionaryLinks(card.meanings.reversed)}</p></div>`;
         const advice = `<div class="meaning-section"><h4>Advice</h4><p>${createDictionaryLinks(card.isReversed ? card.advice.reversed : card.advice.upright)}</p></div>`;
         const keywordsHTML = `<p><strong>Keywords:</strong> ${createDictionaryLinks((card.isReversed ? card.keywords.reversed : card.keywords.upright).join(', '))}</p>`;
-// landmark: Replace it with this corrected line
         const notesHTML = (card.notes && card.notes.critique) ? `<details><summary>Historical Notes & Analysis</summary><div class="details-content"><p>${createDictionaryLinks(card.notes.critique)}</p></div></details>` : '';
         content.innerHTML = `
             <img src="img/cards/${card.img}" alt="${card.name}" class="${card.isReversed ? 'reversed' : ''}">
@@ -232,7 +231,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const dayIndex = Math.floor(today.getTime() / (1000 * 60 * 60 * 24));
             const cardIndex = (dayIndex + 5) % deck.length;
 
-            // ANNOTATION: The reversal logic has been removed. The card will always be upright.
+            //   The reversal logic has been removed. The card will always be upright.
             const isReversed = false;
 
             const card = { ...deck[cardIndex], isReversed };
@@ -263,7 +262,7 @@ document.addEventListener('DOMContentLoaded', () => {
             cardElement.addEventListener('click', () => {
                 if (cardElement.classList.contains('flipped')) return;
                 cardElement.classList.add('flipped');
-                // ANNOTATION: Since card is always upright, we can simplify this.
+                //   Since card is always upright, we can simplify this.
                 const meaning = card.keywords.upright[0];
                 meaningText.textContent = `Today's theme: ${meaning}.`;
                 learnMoreContainer.classList.add('visible');
@@ -359,7 +358,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 spread.positions = Array.from({ length: spread.cardCount }, (_, i) => ({ label: `Card ${i + 1}` }));
             }
 
-            // ANNOTATION: Activate "Blueprint Mode" to show a clear layout preview.
+            //   Activate "Blueprint Mode" to show a clear layout preview.
             ui.readingCanvas.classList.add('blueprint-mode');
             
             ui.readingCloth.innerHTML = '';
@@ -446,10 +445,10 @@ document.addEventListener('DOMContentLoaded', () => {
         ui.readingCanvas.addEventListener("wheel", (e) => {
             e.preventDefault();
             const delta = e.deltaY > 0 ? -0.1 : 0.1;
-            // ANNOTATION: The max scale is correctly clamped to 4 (or 400%).
+            //   The max scale is correctly clamped to 4 (or 400%).
             scale = Math.max(0.25, Math.min(scale + delta, 4)); 
             ui.sliderValue.textContent = `${Math.round(scale * 100)}%`;
-            // ANNOTATION: This new line updates the slider's visual position to match the zoom.
+            //   This new line updates the slider's visual position to match the zoom.
             ui.sizeSlider.value = scale * 100; 
             applyTransform();
         });
@@ -518,7 +517,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         ui.dealBtn.addEventListener('click', async () => {
-            // ANNOTATION: Deactivate "Blueprint Mode" as the cards are dealt.
+            //   Deactivate "Blueprint Mode" as the cards are dealt.
             ui.readingCanvas.classList.remove('blueprint-mode');
 
             ui.controlPanel.classList.remove('is-open');
@@ -588,7 +587,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
-        // landmark: Add this new code block right after the 'change' event listener
             // --- Apply Initial Card Back Theme on Load ---
             const initialBack = document.querySelector('input[name="card-back"]:checked');
             if (initialBack && initialBack.value !== 'default') {
@@ -754,13 +752,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (canvas) {
         const ctx = canvas.getContext('2d');
         let stars = [];
-        // ANNOTATION: Added arrays to track the new animated elements.
+        //   Added arrays to track the new animated elements.
         let shootingStars = [];
         let constellations = [];
         
         function generateStars() {
             stars = []; // Clear existing stars
-            // ANNOTATION: Decreased divisor from 8000 to 4000 to double the star density.
+            //   Decreased divisor from 8000 to 4000 to double the star density.
             const starCount = Math.floor((canvas.width * canvas.height) / 4000);
             for (let i = 0; i < starCount; i++) {
                 stars.push({
@@ -773,7 +771,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
         
-        // ANNOTATION: Creates a shooting star from a random edge of the screen.
+        //   Creates a shooting star from a random edge of the screen.
         function createShootingStar() {
             const side = Math.floor(Math.random() * 4); // 0: top, 1: right, 2: bottom, 3: left
             let x, y, angle;
@@ -786,10 +784,10 @@ document.addEventListener('DOMContentLoaded', () => {
             shootingStars.push({ x, y, len: Math.random() * 80 + 20, angle, speed: Math.random() * 5 + 5, alpha: 1, life: 60 });
         }
 
-        // ANNOTATION: Finds a small group of nearby stars to form a temporary constellation.
+        //   Finds a small group of nearby stars to form a temporary constellation.
         function createConstellation() {
             if (stars.length < 5) return;
-            // ANNOTATION: Increased the number of stars per constellation for longer lines.
+            //   Increased the number of stars per constellation for longer lines.
             const numStars = Math.floor(Math.random() * 4) + 4; // 4 to 7 stars
             const startIdx = Math.floor(Math.random() * stars.length);
             let indices = [startIdx];
@@ -797,7 +795,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             for (let i = 0; i < numStars - 1; i++) {
                 let closest = -1;
-                // ANNOTATION: Increased search radius to allow for longer, more spread-out lines.
+                //   Increased search radius to allow for longer, more spread-out lines.
                 let minDist = 250; // Max distance for a neighbor
                 for (let j = 0; j < stars.length; j++) {
                     if (indices.includes(j)) continue;
@@ -807,13 +805,13 @@ document.addEventListener('DOMContentLoaded', () => {
                         closest = j;
                     }
                 }
-                // ANNOTATION: This is the key fix. It updates the 'lastIdx' to form a chain, ensuring lines connect star-to-star.
+                //   This is the key fix. It updates the 'lastIdx' to form a chain, ensuring lines connect star-to-star.
                 if (closest !== -1) { indices.push(closest); lastIdx = closest; }
                 else break;
             }
 
             if (indices.length > 2) {
-                // ANNOTATION: Increased the maxAlpha range again to make constellations even brighter.
+                //   Increased the maxAlpha range again to make constellations even brighter.
                 constellations.push({ indices, alpha: 0, maxAlpha: Math.random() * 0.2 + 0.3, life: 600, state: 'fading-in' });
             }
         }
@@ -856,7 +854,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             // --- Create and draw constellations ---            
-            // ANNOTATION: Increased probability and max count to make constellations more numerous.
+            //   Increased probability and max count to make constellations more numerous.
             if (Math.random() < 0.002 && constellations.length < 3) createConstellation();
             constellations = constellations.filter(c => c.life > 0);
             constellations.forEach(c => {
