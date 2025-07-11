@@ -19,7 +19,38 @@
     /* ANNOTATION: Define header height as a variable for reuse. */
     --header-height: 65px; 
 }
+/* landmark: Add this new section at the top of style.css */
+/*
+===================================================================
+  THEME FOR COLORIS PICKER
+===================================================================
+*/
+.clr-picker,
+.clr-field button,
+.clr-field input {
+    color: var(--text-light);
+}
 
+.clr-picker {
+    background: var(--primary-purple);
+    border: 1px solid var(--border-light);
+    box-shadow: 0 0 20px var(--secondary-purple);
+}
+
+.clr-field input,
+.clr-field button {
+    border-color: var(--border-light);
+}
+
+.clr-field input:focus,
+.clr-field button:focus {
+    border-color: var(--accent-gold);
+    box-shadow: 0 0 5px var(--accent-gold);
+}
+
+.clr-alpha, .clr-hue, .clr-sat {
+    background-image: none;
+}
 
 /* ----------------------------------------------------------------- */
 /* |                      2. GENERAL STYLES                        | */
@@ -167,7 +198,74 @@ header .nav-link:hover, header .nav-link.active { color: var(--accent-gold); tex
 #shuffle-methods {
     margin-top: 1rem; /* Adds space above the "Shuffle with..." options */
 }
-
+/* --- Styles for the Card Back Selector --- */
+/* landmark: Replace the old .card-back rule with this block */
+.card-back {
+    /* ANNOTATION: Using specific properties instead of the 'background' shorthand
+       to prevent background-position and background-size from being reset. */
+    background-color: var(--primary-purple);
+    background-image: none;
+    background-size: cover;
+    background-position: center;
+    border: 2px solid var(--secondary-purple);
+}
+.card-back-theme-artdeco .card-back {
+    background-image: url('../img/backs/artdeco.jpg');
+    background-size: cover;
+    background-position: center;
+    border: none;
+}
+.card-back-theme-botanical .card-back {
+    background-image: url('../img/backs/botanical.jpg');
+    background-size: cover;
+    background-position: center;
+    border: none;
+}
+.card-back-theme-celestial .card-back {
+    background-image: url('../img/backs/celestial.jpg');
+    background-size: cover;
+    background-position: center;
+    border: none;
+}
+.card-back-option input[type="radio"] {
+    display: none; /* Hide the actual radio button */
+}
+.card-back-thumbnail {
+    cursor: pointer;
+    display: block;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 3px solid transparent;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    aspect-ratio: 1 / 1.75; /* Enforce tarot card aspect ratio */
+}
+.card-back-thumbnail:hover {
+    border-color: var(--secondary-purple);
+}
+.card-back-option input[type="radio"]:checked + .card-back-thumbnail {
+    border-color: var(--accent-gold);
+    box-shadow: 0 0 15px var(--accent-gold);
+}
+.card-back-thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+/* Replace it with this rule */
+.card-back-selection-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); /* <-- Reduced size */
+    gap: 0.75rem;
+}
+.default-back {
+    background-color: var(--primary-purple);
+    border: 2px solid var(--secondary-purple);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    text-align: center;
+}
 /* --- Styles for the collapsible shuffle explanation --- */
 .shuffle-details-container {
     margin-top: 1.5rem; /* Add space above the summary */

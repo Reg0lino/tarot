@@ -269,7 +269,9 @@ document.addEventListener('DOMContentLoaded', () => {
             revealAllContainer: document.getElementById('reveal-all-container'),
             revealAllBtn: document.getElementById('reveal-all-btn'),
             canvasHint: document.querySelector('.canvas-hint'),
-            canvasPlaceholder: document.querySelector('.canvas-placeholder-text')
+            canvasPlaceholder: document.querySelector('.canvas-placeholder-text'),
+            cardBackSelection: document.getElementById('card-back-selection')
+            
         };
         const mobileActionBar = document.getElementById('mobile-action-bar');
 
@@ -531,7 +533,31 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             ui.revealAllContainer.classList.remove('hidden');
         });
+    // --- Card Back Selection Listener ---
+    ui.cardBackSelection.addEventListener('change', (e) => {
+        if (e.target.name === 'card-back') {
+            const selectedTheme = e.target.value;
+            const themePrefix = 'card-back-theme-';
 
+            // Remove any existing theme classes from the body
+            for (const className of document.body.classList) {
+                if (className.startsWith(themePrefix)) {
+                    document.body.classList.remove(className);
+                }
+            }
+
+            // Add the new theme class if it's not the default
+            if (selectedTheme !== 'default') {
+                document.body.classList.add(themePrefix + selectedTheme);
+            }
+        }
+    });
+    // landmark: Add this new code block right after the 'change' event listener
+    // --- Apply Initial Card Back Theme on Load ---
+    const initialBack = document.querySelector('input[name="card-back"]:checked');
+    if (initialBack && initialBack.value !== 'default') {
+        document.body.classList.add('card-back-theme-' + initialBack.value);
+    }
         // --- Initial View Setup ---
         document.querySelector('.spread-btn').click();
         document.querySelector('input[name="shuffle-method"]:checked').dispatchEvent(new Event('change'));
