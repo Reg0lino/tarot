@@ -14,11 +14,98 @@ document.addEventListener('DOMContentLoaded', () => {
     const appContainer = document.getElementById('app-container');
 
     const spreads = {
-        'one-card': { name: 'One Card', cardCount: 1, description: 'A single card for quick insight.', layoutClass: 'layout-one-card', positions: [ { label: '1. The Card' } ] },
-        'three-card': { name: 'Three Card', cardCount: 3, description: 'A simple spread for exploring a path.', layoutClass: 'layout-three-card', positions: [ { label: '1. The Past' }, { label: '2. The Present' }, { label: '3. The Future' } ] },
-        'safe-passage': { name: 'Safe Passage (Modern)', cardCount: 7, description: 'A modern, fictional spread. It has no historical basis and is provided for creative exploration based on the pentagram layout from "Agatha All Along".', layoutClass: 'layout-safe-passage', positions: [ { label: '1. The Traveler' }, { label: '2. What\'s Missing' }, { label: '3. The Path Behind' }, { label: '4. The Path Ahead' }, { label: '5. Obstacles' }, { label: '6. Potential Windfall' }, { label: '7. The Destination' } ], overlapGroups: [[1, 7]] },
-        'celtic-cross': { name: 'Celtic Cross', cardCount: 10, description: 'A comprehensive spread for a deep analysis of a situation.', layoutClass: 'layout-celtic-cross', positions: [ { label: '1. Current energy' }, { label: '2. The challenge' }, { label: '3. Conscious beliefs' }, { label: '4. Subconscious beliefs' }, { label: '5. The past' }, { label: '6. The future' }, { label: '7. Best approach' }, { label: '8. External influences' }, { label: '9. Hopes and fears' }, { label: '10. The outcome' } ], overlapGroups: [[1, 2]] },
-        'custom': { name: 'Custom Spread', cardCount: 0, description: 'A flexible layout you design yourself.', layoutClass: 'layout-custom' }
+        'one-card': { 
+            name: 'One Card', 
+            cardCount: 1, 
+            description: 'A single card for quick insight.', 
+            layoutClass: 'layout-one-card', 
+            positions: [ { label: '1. The Card' } ] },
+        'three-card': { 
+            name: 'Three Card', 
+            cardCount: 3, 
+            description: 'A simple spread for exploring a path.', 
+            layoutClass: 'layout-three-card', 
+            positions: [ { label: '1. The Past' }, 
+                { label: '2. The Present' }, 
+                { label: '3. The Future' } ] },
+        'safe-passage': { 
+            name: 'Safe Passage (Modern)', 
+            cardCount: 7, 
+            description: 'A modern, fictional spread. It has no historical basis and is provided for creative exploration based on the pentagram layout from "Agatha All Along".', 
+            layoutClass: 'layout-safe-passage', 
+            positions: [ { label: '1. The Traveler' }, 
+                { label: '2. What\'s Missing' }, 
+                { label: '3. The Path Behind' }, 
+                { label: '4. The Path Ahead' }, 
+                { label: '5. Obstacles' }, 
+                { label: '6. Potential Windfall' }, 
+                { label: '7. The Destination' } ], 
+                overlapGroups: [[1, 7]] },
+        'celtic-cross': { 
+            name: 'Celtic Cross', 
+            cardCount: 10, 
+            description: 'A comprehensive spread for a deep analysis of a situation.', 
+            layoutClass: 'layout-celtic-cross', 
+            positions: [ { label: '1. Current energy' }, 
+                { label: '2. The challenge' }, 
+                { label: '3. Conscious beliefs' }, 
+                { label: '4. Subconscious beliefs' }, 
+                { label: '5. The past' }, 
+                { label: '6. The future' }, 
+                { label: '7. Best approach' }, 
+                { label: '8. External influences' }, 
+                { label: '9. Hopes and fears' }, 
+                { label: '10. The outcome' } ], 
+                overlapGroups: [[1, 2]] },
+        'horseshoe': {
+            name: 'Horseshoe Spread',
+            cardCount: 7,
+            description: 'A classic spread for a detailed overview of a situation\'s progression.',
+            layoutClass: 'layout-horseshoe',
+            positions: [
+                { label: '1. Past Influences' }, { label: '2. Present Circumstances' },
+                { label: '3. Upcoming Influences' }, { label: '4. Best Course of Action' },
+                { label: '5. The Attitude of Others' }, { label: '6. Possible Obstacles' },
+                { label: '7. Final Outcome' }
+            ]
+        },
+        'relationship': {
+            name: 'Relationship Spread',
+            cardCount: 5,
+            description: 'Explores the dynamics between two people in a relationship.',
+            layoutClass: 'layout-relationship',
+            positions: [
+                { label: '1. You' }, { label: '2. The Other Person' },
+                { label: '3. The Relationship' }, { label: '4. The Past' },
+                { label: '5. The Future' }
+            ]
+        },
+        'success': {
+            name: 'Success Spread',
+            cardCount: 5,
+            description: 'Provides insight on achieving a specific goal or ambition.',
+            layoutClass: 'layout-success',
+            positions: [
+                { label: '1. Central Issue' }, { label: '2. Obstacles' },
+                { label: '3. Assistance' }, { label: '4. How to Improve' },
+                { label: '5. Underlying Factors' }
+            ]
+        },
+        'four-card-cross': {
+            name: 'Four Card Cross',
+            cardCount: 4,
+            description: 'A balanced spread for understanding a situation, its challenges, and its potential.',
+            layoutClass: 'layout-four-card-cross',
+            positions: [
+                { label: 'Position 1' }, { label: 'Position 2' },
+                { label: 'Position 3' }, { label: 'Position 4' }
+            ]
+        },
+        'custom': { 
+            name: 'Custom Spread', 
+            cardCount: 0, 
+            description: 'A flexible layout you design yourself.', 
+            layoutClass: 'layout-custom' }
     };
 
     // -----------------------------------------------------------------

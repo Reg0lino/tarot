@@ -27,16 +27,10 @@
         </nav>
     </header>
 
-    <!-- 
-      ANNOTATION: The 'container' class has been REMOVED from this main element.
-      This makes the app container full-width by default, allowing specific views 
-      like the Reading Room to control their own top-level layout and break out 
-      of the centered, max-width design.
-    -->
     <main id="app-container"></main>
 
+    <!-- ANNOTATION: Footer has been removed as per the plan. -->
     
-    <!-- ANNOTATION: This is the container for mobile-specific action buttons. It's populated by JS. -->
     <div id="mobile-action-bar"></div>
 
     <div id="card-modal" class="modal-container hidden">
@@ -49,7 +43,6 @@
     <!-- --------------------- VIEW TEMPLATES --------------------- -->
 
     <template id="view-home">
-        <!-- ANNOTATION: A 'container' div is now inside the template to keep this specific view centered. -->
         <div class="container">
             <section id="hero">
                 <h1>A Digital Tarot Toolkit</h1>
@@ -69,9 +62,6 @@
     </template>
 
 
-    <!-- =================================================================== -->
-    <!-- ANNOTATION: This Reading Room template has NO container, allowing it to be full-width. -->
-    <!-- =================================================================== -->
     <template id="view-reading-room">
         <div class="reading-room-layout">
             <aside class="control-panel">
@@ -87,6 +77,7 @@
                     <p id="spread-info-text" class="spread-info-text"></p>
                 </section>
                 
+                <!-- ANNOTATION: The Shuffle Mechanism is now inside this section. -->
                 <section class="control-section">
                     <h3>2. Choose Options</h3>
                     <div class="control-group checkbox-group">
@@ -101,18 +92,22 @@
                         <textarea id="shuffle-input" class="shuffle-input" placeholder="Type any text here..."></textarea>
                         <button id="generate-btn" class="generate-btn" title="Generate Random Number">🎲</button>
                     </div>
+                    
+                    <!-- ANNOTATION: The explanation is now wrapped in a collapsible <details> element. -->
+                    <details class="shuffle-details-container">
+                        <summary>How does the shuffle work?</summary>
+                        <div id="shuffle-explanation" class="shuffle-explanation">
+                            <p>A "seed" is like a unique instruction for a complex shuffle. Entering the same input will always produce the same shuffle order, which will be different from the order produced by any other input.</p>
+                            <p id="shuffle-math-text" class="shuffle-math-text"></p>
+                        </div>
+                    </details>
                 </section>
 
-                <section class="control-section">
-                    <h3>3. The Shuffle Mechanism</h3>
-                    <div id="shuffle-explanation" class="shuffle-explanation">
-                        <p>A "seed" is like a unique instruction for a complex shuffle. Entering the same input will always produce the same shuffle order, which will be different from the order produced by any other input.</p>
-                        <p id="shuffle-math-text" class="shuffle-math-text"></p>
-                    </div>
-                </section>
+                <!-- ANNOTATION: The "Shuffle Mechanism" section has been removed from here. -->
 
+                <!-- ANNOTATION: Header re-numbered from 4 to 3. -->
                 <section class="control-section slider-group">
-                    <h3>4. Adjust Layout</h3>
+                    <h3>3. Adjust Layout</h3>
                     <div class="control-group">
                         <label for="layout-size-slider">Layout Size: <span id="slider-value">100%</span></label>
                         <div class="slider-wrapper">
@@ -126,9 +121,7 @@
             </aside>
 
             <main id="reading-canvas" class="reading-canvas">
-                <div id="reading-cloth" class="reading-cloth">
-                    <!-- Placeholder text is now a sibling, not a child -->
-                </div>
+                <div id="reading-cloth" class="reading-cloth"></div>
                 <p class="canvas-placeholder-text">Select a spread from the Control Panel to begin.</p>
             </main>
         </div>
@@ -143,7 +136,6 @@
     </template>
     
     <template id="view-grimoire">
-        <!-- ANNOTATION: A 'container' div is now inside the template to keep this specific view centered. -->
         <div class="container">
             <h1>Grimoire</h1>
             <p class="subtitle">An interactive encyclopedia of the Rider-Waite-Smith tarot deck.</p>
