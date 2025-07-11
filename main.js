@@ -101,6 +101,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 { label: 'Position 3' }, { label: 'Position 4' }
             ]
         },
+        'chakra-spread': {
+            name: 'Chakra Spread',
+            cardCount: 7,
+            description: 'For the assessment of overall health and well-being.',
+            layoutClass: 'layout-chakra-spread',
+            positions: [
+                { label: '1. Root Chakra: Foundation' },
+                { label: '2. Sacral Chakra: Resources & Relationships' },
+                { label: '3. Solar Plexus Chakra: Identity' },
+                { label: '4. Heart Chakra: Love' },
+                { label: '5. Throat Chakra: Self Expression' },
+                { label: '6. Third Eye: Wisdom' },
+                { label: '7. Crown Chakra: Spiritual Awareness' }
+            ]
+        }, 
         'custom': { 
             name: 'Custom Spread', 
             cardCount: 0, 
@@ -146,8 +161,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const reversedMeaning = `<div class="meaning-section ${card.isReversed ? 'highlight' : ''}"><h4>Meaning (Reversed)</h4><p>${createDictionaryLinks(card.meanings.reversed)}</p></div>`;
         const advice = `<div class="meaning-section"><h4>Advice</h4><p>${createDictionaryLinks(card.isReversed ? card.advice.reversed : card.advice.upright)}</p></div>`;
         const keywordsHTML = `<p><strong>Keywords:</strong> ${createDictionaryLinks((card.isReversed ? card.keywords.reversed : card.keywords.upright).join(', '))}</p>`;
-        const notesHTML = card.notes.critique ? `<details><summary>Historical Notes & Analysis</summary><div class="details-content"><p>${createDictionaryLinks(card.notes.critique)}</p></div></details>` : '';
-
+// landmark: Replace it with this corrected line
+        const notesHTML = (card.notes && card.notes.critique) ? `<details><summary>Historical Notes & Analysis</summary><div class="details-content"><p>${createDictionaryLinks(card.notes.critique)}</p></div></details>` : '';
         content.innerHTML = `
             <img src="img/cards/${card.img}" alt="${card.name}" class="${card.isReversed ? 'reversed' : ''}">
             <div>
@@ -192,6 +207,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // |                3. VIEW INITIALIZATION LOGIC                   |
     // -----------------------------------------------------------------
     
+
+
     /**
      * Initializes the Home page view.
      */
@@ -210,15 +227,27 @@ document.addEventListener('DOMContentLoaded', () => {
             const deck = await loadDeck();
             if (deck.length === 0) return;
 
+            // --- Deterministic Card Selection Logic ---
             const today = new Date();
-            const dateString = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
-            const seed = dateString.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+            const dayIndex = Math.floor(today.getTime() / (1000 * 60 * 60 * 24));
+            const cardIndex = (dayIndex + 5) % deck.length;
 
-            const cardRandom = createPRNG(seed);
-            const reversalRandom = createPRNG(seed + 1);
-            const cardIndex = Math.floor(cardRandom() * deck.length);
-            const isReversed = reversalRandom() > 0.5;
+            // ANNOTATION: The reversal logic has been removed. The card will always be upright.
+            const isReversed = false;
+
             const card = { ...deck[cardIndex], isReversed };
+            // --- End of Logic ---
+
+            // --- DEBUGGING LOGS ---
+            console.clear();
+            console.log("--- CARD OF THE DAY CALCULATION ---");
+            console.log("Current Date:", today.toDateString());
+            console.log("Day Index (Days since Epoch):", dayIndex);
+            console.log("Card Index ( (Day Index + 5) % 78 ):", cardIndex);
+            console.log("Determined Card:", card.name);
+            console.log("Is Reversed:", isReversed, "(Always false)"); // Updated log
+            console.log("-------------------------------------");
+            // --- End of Logs ---
 
             cardContainer.innerHTML = `
                 <div class="card-container">
@@ -234,7 +263,8 @@ document.addEventListener('DOMContentLoaded', () => {
             cardElement.addEventListener('click', () => {
                 if (cardElement.classList.contains('flipped')) return;
                 cardElement.classList.add('flipped');
-                const meaning = card.isReversed ? card.keywords.reversed[0] : card.keywords.upright[0];
+                // ANNOTATION: Since card is always upright, we can simplify this.
+                const meaning = card.keywords.upright[0];
                 meaningText.textContent = `Today's theme: ${meaning}.`;
                 learnMoreContainer.classList.add('visible');
             });
@@ -244,7 +274,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         drawCardOfTheDay();
     }
-
     /**
      * Initializes the Reading Room view.
      */
