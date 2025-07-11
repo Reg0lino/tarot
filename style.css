@@ -1,4 +1,12 @@
-/* style.css (Version 9: The Stable Layout Fix) */
+/*
+===================================================================
+ style.css (Version 15: Full-Width Desktop & Landscape Polish)
+===================================================================
+*/
+
+/* ----------------------------------------------------------------- */
+/* |                      1. ROOT VARIABLES                        | */
+/* ----------------------------------------------------------------- */
 
 :root {
     --bg-dark: #0D001F;
@@ -8,7 +16,14 @@
     --glow-blue: #00BFFF;
     --text-light: #E0E0E0;
     --border-light: #330055;
+    /* ANNOTATION: Define header height as a variable for reuse. */
+    --header-height: 65px; 
 }
+
+
+/* ----------------------------------------------------------------- */
+/* |                      2. GENERAL STYLES                        | */
+/* ----------------------------------------------------------------- */
 
 body {
     background-color: var(--bg-dark);
@@ -19,55 +34,139 @@ body {
     user-select: none;
 }
 
-/* --- THEMED SCROLLBARS --- */
+h1, h2, h3 { 
+    font-family: 'Cormorant Garamond', serif; 
+    color: var(--text-light); 
+    text-shadow: 0 0 8px rgba(127, 0, 255, 0.5); 
+    text-align: center; 
+}
+
+h1 { font-size: 2.5rem; }
+h2 { font-size: 2rem; margin-top: 1em; margin-bottom: 0.5em; }
+h3 { font-size: 1.2rem; text-align: left; border-bottom: 1px solid var(--border-light); padding-bottom: 0.5rem; margin: 0 0 1rem 0; }
+p.subtitle { text-align: center; font-size: 1.1rem; color: var(--text-light); opacity: 0.8; max-width: 600px; margin: 0 auto 1.5em auto; }
+a { color: var(--accent-gold); text-decoration: none; }
+
+.glowing-btn { 
+    display: inline-block; 
+    padding: 0.8em 1.5em; 
+    border: 1px solid var(--accent-gold); 
+    border-radius: 5px; 
+    background-color: transparent; 
+    color: var(--accent-gold); 
+    font-family: 'Cormorant Garamond', serif; 
+    font-size: 1.1rem; 
+    font-weight: 700; 
+    cursor: pointer; 
+    transition: background-color 0.4s, box-shadow 0.4s; 
+    margin-top: 1rem; 
+}
+.glowing-btn:hover { background-color: var(--accent-gold); color: var(--primary-purple); box-shadow: 0 0 20px var(--accent-gold); }
+
+/* --- Themed Scrollbars --- */
 ::-webkit-scrollbar { width: 12px; }
 ::-webkit-scrollbar-track { background: var(--primary-purple); }
 ::-webkit-scrollbar-thumb { background-color: var(--secondary-purple); border-radius: 6px; border: 2px solid var(--primary-purple); }
 ::-webkit-scrollbar-thumb:hover { background-color: var(--glow-blue); }
 
-h1, h2, h3 { font-family: 'Cormorant Garamond', serif; color: var(--text-light); text-shadow: 0 0 8px rgba(127, 0, 255, 0.5); text-align: center; }
-h1 { font-size: 2.5rem; }
-h2 { font-size: 2rem; margin-top: 2em; margin-bottom: 1em; }
-h3 { font-size: 1.2rem; text-align: left; border-bottom: 1px solid var(--border-light); padding-bottom: 0.5rem; margin: 0 0 1rem 0; }
-p.subtitle { text-align: center; font-size: 1.1rem; color: var(--text-light); opacity: 0.8; max-width: 600px; margin: 0 auto 1.5em auto; }
-a { color: var(--accent-gold); text-decoration: none; }
 
-.container { width: 90%; max-width: 1400px; margin: 0 auto; padding: 1rem; position: relative; z-index: 2; }
-#starfield-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
+/* ----------------------------------------------------------------- */
+/* |                   3. LAYOUT & STRUCTURE                       | */
+/* ----------------------------------------------------------------- */
 
-header { background-color: rgba(13, 0, 31, 0.7); backdrop-filter: blur(8px); position: sticky; top: 0; z-index: 10; border-bottom: 1px solid var(--border-light); }
-header nav { display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; }
+.container { 
+    width: 90%; 
+    max-width: 1400px; 
+    margin: 0 auto; 
+    padding: 1rem; 
+    position: relative; 
+    z-index: 2; 
+}
+
+#starfield-canvas { 
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%; 
+    z-index: 0; 
+    /* ANNOTATION: Makes the canvas invisible to mouse events, allowing clicks to pass through to the controls underneath. */
+    pointer-events: none;
+}
+
+header { 
+    background-color: rgba(13, 0, 31, 0.7); 
+    backdrop-filter: blur(8px); 
+    position: sticky; 
+    top: 0; 
+    z-index: 10; 
+    border-bottom: 1px solid var(--border-light); 
+    height: var(--header-height);
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+}
+header nav { display: flex; justify-content: space-between; align-items: center; padding: 0; } /* Removed vertical padding */
 header .logo { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 700; }
 header ul { list-style: none; display: flex; gap: 1.5rem; margin: 0; padding: 0; }
-header .nav-link { transition: color 0.3s, text-shadow 0.3s; }
 header .nav-link:hover, header .nav-link.active { color: var(--accent-gold); text-shadow: 0 0 10px var(--accent-gold); }
 
-.glowing-btn { display: inline-block; padding: 0.8em 1.5em; border: 1px solid var(--accent-gold); border-radius: 5px; background-color: transparent; color: var(--accent-gold); font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: background-color 0.4s, box-shadow 0.4s; margin-top: 1rem; }
-.glowing-btn:hover { background-color: var(--accent-gold); color: var(--primary-purple); box-shadow: 0 0 20px var(--accent-gold); }
 
-/* --- Homepage Specifics --- */
-#hero { min-height: 40vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+
+/* ----------------------------------------------------------------- */
+/* |                       4. HOME PAGE                            | */
+/* ----------------------------------------------------------------- */
+
+#hero { 
+    min-height: 30vh; /* Adjusted for better vertical centering */
+    display: flex; 
+    flex-direction: column; 
+    justify-content: center; 
+    align-items: center; 
+    text-align: center; 
+}
 #card-of-the-day-container { display: flex; justify-content: center; align-items: center; min-height: 320px; }
+.card-container-single .card-container { width: 180px; height: 315px; font-size: 1rem; }
 .card-day-description { text-align: center; font-style: italic; max-width: 600px; margin: 1rem auto; opacity: 0.9; min-height: 2em; }
 .learn-more-container { text-align: center; margin-top: 1.5rem; opacity: 0; transform: translateY(10px); pointer-events: none; transition: opacity 0.5s ease-out, transform 0.5s ease-out; }
 .learn-more-container.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
 
-/* --- Reading Room Layout --- */
-.reading-room-layout { display: grid; grid-template-columns: 350px 1fr; gap: 2rem; align-items: flex-start; }
-.control-panel { background-color: rgba(26, 0, 51, 0.3); border: 1px solid var(--border-light); border-radius: 8px; padding: 1.5rem; display: flex; flex-direction: column; height: 100%; box-sizing: border-box; }
+
+/* ----------------------------------------------------------------- */
+/* |              5. READING ROOM (FULL-WIDTH DESKTOP)             | */
+/* ----------------------------------------------------------------- */
+
+/* --- Main Layout --- */
+.reading-room-layout { 
+    display: grid; 
+    grid-template-columns: 350px 1fr; /* Fixed sidebar, flexible canvas */
+    height: calc(100vh - var(--header-height)); /* Full viewport height minus header */
+}
+
+/* --- Control Panel (Sticky Sidebar) --- */
+.control-panel { 
+    background-color: rgba(13, 0, 31, 0.95); /* Darker for contrast */
+    padding: 1.5rem; 
+    display: flex; 
+    flex-direction: column; 
+    box-sizing: border-box; 
+    height: 100%;
+    overflow-y: auto; /* Allow panel to scroll if content is long */
+    border-right: 1px solid var(--border-light);
+}
 .control-section { padding: 1rem 0; }
 .control-section:first-child { padding-top: 0; }
 .control-section:not(:first-child) { border-top: 1px solid var(--border-light); }
 .control-group { display: flex; flex-direction: column; gap: 0.75rem; }
-.control-group.checkbox-group { padding-bottom: 1rem; }
 .control-panel #deal-cards-btn { width: 100%; margin-top: auto; font-size: 1.5rem; }
-#custom-spread-controls.hidden { display: none; }
-#custom-spread-controls input { width: 60px; background-color: var(--bg-dark); color: var(--text-light); border: 1px solid var(--border-light); padding: 5px; border-radius: 4px; }
-.reading-canvas { min-height: 80vh; background-color: transparent; overflow: auto; display: flex; flex-direction: column; }
-.canvas-placeholder-text { text-align: center; font-size: 1.2rem; opacity: 0.5; margin-top: 4rem; }
+
+/* --- Specific Controls --- */
 #spread-selection { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
 .spread-btn { padding: 0.7em; border: 1px solid var(--secondary-purple); background-color: transparent; color: var(--text-light); cursor: pointer; transition: all 0.3s; text-align: center; }
 .spread-btn.selected, .spread-btn:hover { background-color: var(--secondary-purple); border-color: var(--glow-blue); color: white; }
+#custom-spread-controls { margin-top: 1.5rem; }
+#custom-spread-controls.hidden { display: none; }
+#custom-spread-controls input { width: 60px; background-color: var(--bg-dark); color: var(--text-light); border: 1px solid var(--border-light); padding: 5px; border-radius: 4px; }
 .spread-info-text { font-size: 0.85rem; font-style: italic; opacity: 0.8; min-height: 2.5em; margin-top: 1rem; }
 #shuffle-methods { display: flex; flex-direction: column; gap: 0.75rem; }
 .shuffle-input-group { display: flex; gap: 0.5rem; margin-top: 0.5rem; }
@@ -78,10 +177,66 @@ header .nav-link:hover, header .nav-link.active { color: var(--accent-gold); tex
 .slider-group .slider-wrapper { display: flex; align-items: center; gap: 0.5rem; }
 input[type="range"] { flex-grow: 1; }
 .reset-btn { font-size: 1.2rem; background: none; border: 1px solid var(--border-light); color: var(--text-light); cursor: pointer; border-radius: 4px; padding: 0.2rem 0.5rem; }
-.reveal-all-container { text-align: center; margin-top: 2rem; flex-shrink: 0; }
+
+/* --- Canvas and Action Buttons (Desktop) --- */
+.reading-canvas { 
+    height: 100%; 
+    background-color: transparent; 
+    overflow: hidden; 
+    display: flex; /* Use flex to position children */
+    flex-direction: column;
+    justify-content: center; /* Center content vertically */
+    cursor: grab;
+    position: relative;
+}
+.reading-canvas:active { cursor: grabbing; }
+
+.canvas-placeholder-text { 
+    position: absolute; /* Position relative to canvas */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center; 
+    font-size: 1.2rem; 
+    opacity: 0.5;
+    z-index: 1;
+}
+
+.canvas-hint { display: none; } /* Hidden on desktop */
+
+.reveal-all-container { 
+    position: absolute; /* Position within the canvas */
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+}
 .reveal-all-container.hidden { display: none; }
 
-/* --- Card Styling --- */
+/* --- Mobile-Only Elements (Hidden on Desktop) --- */
+#drawer-close-btn { display: none; }
+#mobile-controls-trigger { display: none; }
+
+
+/* ----------------------------------------------------------------- */
+/* |                       6. CARD STYLING                         | */
+/* ----------------------------------------------------------------- */
+.reading-cloth { 
+    display: grid; 
+    justify-content: center; 
+    align-content: start; 
+    align-items: center; 
+    width: 100%; 
+    height: 100%; 
+    transition: transform 0.3s ease-out; 
+    transform-origin: center center; 
+    touch-action: none; 
+    padding: 2rem; /* Add padding to prevent layouts from touching edges */
+    box-sizing: border-box;
+}
+.position-container { position: relative; width: 120px; height: 210px; }
+.position-label { position: absolute; bottom: -25px; left: 50%; transform: translateX(-50%); width: 150%; text-align: center; font-size: 0.8rem; color: var(--text-light); opacity: 0.7; transition: opacity 0.3s; pointer-events: none; }
+.position-container:hover .position-label { opacity: 1; font-weight: bold; }
 .card-container { position: relative; width: 100%; height: 100%; perspective: 1000px; cursor: pointer; }
 .tarot-card { position: absolute; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform 0.8s; }
 .card-container.flipped .tarot-card { transform: rotateY(180deg); }
@@ -91,98 +246,80 @@ input[type="range"] { flex-grow: 1; }
 .card-front img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; }
 .card-front img.reversed { transform: rotate(180deg); }
 .card-placeholder { width: 100%; height: 100%; border: 2px dashed var(--border-light); border-radius: 10px; background: rgba(255,255,255,0.05); }
-.position-container { position: relative; width: 120px; height: 210px; }
-.position-label { position: absolute; bottom: -25px; left: 50%; transform: translateX(-50%); width: 150%; text-align: center; font-size: 0.8rem; color: var(--text-light); opacity: 0.7; transition: opacity 0.3s; pointer-events: none; }
-.position-container:hover .position-label { opacity: 1; font-weight: bold; }
 
-/* --- Grimoire FIX & POLISH --- */
-#search-section { 
-    max-width: 600px; 
-    margin: 2rem auto; /* Center the search section */
-}
-#search-bar { 
-    font-size: 1.2rem; 
-    padding: 12px; 
-    width: 100%;
-    box-sizing: border-box;
-    background-color: var(--bg-dark);
-    border: 1px solid var(--border-light);
-    color: var(--text-light);
-    border-radius: 4px;
-    text-align: center;
-}
-#search-bar:focus {
-    outline: none;
-    border-color: var(--accent-gold);
-    box-shadow: 0 0 10px var(--accent-gold);
-}
-.grimoire-grid { 
-    display: grid; 
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); 
-    gap: 3rem 1.5rem; 
-    margin-top: 2rem; 
-    justify-items: center; 
-}
-.grimoire-card {
-    width: 150px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    cursor: pointer;
-    transition: transform 0.3s ease-out;
-}
-.grimoire-card:hover {
-    transform: scale(1.05); /* Add hover effect */
-}
-.grimoire-card img {
-    width: 100%;
-    height: auto;
-    border-radius: 8px;
-    box-shadow: 0 0 15px rgba(0,0,0,0.5);
-    background-color: var(--primary-purple);
-}
-.grimoire-card .grimoire-card-name {
-    margin-top: 0.75rem;
-    font-family: 'Cormorant Garamond', serif;
-    font-weight: bold;
-    font-size: 0.9rem;
-    color: var(--text-light);
-    text-align: center;
-}
+/* ----------------------------------------------------------------- */
+/* |                       7. SPREAD LAYOUTS                       | */
+/* ----------------------------------------------------------------- */
 
-/* --- SPREAD LAYOUTS (REWRITTEN & STABLE) --- */
-.reading-cloth { display: grid; justify-content: center; align-content: start; align-items: center; max-width: 100%; padding: 1rem; min-height: 100%; transition: transform 0.3s ease-out; transform-origin: top center; }
-.position-container { position: relative; width: 120px; height: 210px; }
-.position-label { position: absolute; bottom: -25px; left: 50%; transform: translateX(-50%); width: 150%; text-align: center; font-size: 0.8rem; color: var(--text-light); opacity: 0.7; transition: opacity 0.3s; pointer-events: none; }
-.position-container:hover .position-label { opacity: 1; font-weight: bold; }
 .layout-one-card { display: flex; }
 .layout-three-card { display: flex; flex-wrap: wrap; gap: 1.5rem; }
 .layout-custom { display: grid; justify-content: center; gap: 1.5rem; }
 
-.overlap-group { position: relative; width: 120px; height: 210px; grid-area: inherit; /* Inherit position from grid */ }
-.overlap-group .position-container { position: absolute; top: 0; left: 0; }
-.overlap-group .top-card .tarot-card { transition: opacity 0.3s ease-out; }
-.overlap-group:hover .top-card .tarot-card { opacity: 0.2; }
-
-.layout-safe-passage { grid-template-columns: repeat(5, auto); grid-template-rows: repeat(3, auto); gap: 2.5rem 1.5rem; }
-.layout-safe-passage .pos-1 { z-index: 2; } /* Top card */
-.layout-safe-passage .pos-7 { transform: rotate(90deg); z-index: 1; } /* Bottom card, rotated */
-.layout-safe-passage [class*="pos-"] { justify-self: center; align-self: center; } /* Center all items */
-.layout-safe-passage .overlap-group { grid-area: 2 / 3; }
-.layout-safe-passage .pos-2 { grid-area: 3 / 3; } .layout-safe-passage .pos-3 { grid-area: 1 / 2; } .layout-safe-passage .pos-4 { grid-area: 1 / 4; } .layout-safe-passage .pos-5 { grid-area: 2 / 1; } .layout-safe-passage .pos-6 { grid-area: 2 / 5; }
-
-.layout-celtic-cross { 
-    grid-template-columns: repeat(4, auto); 
-    grid-template-rows: repeat(4, auto); 
-    gap: 3rem 2.5rem; /* WIDENED SPREAD: Increased column gap */
+/* Complex Spreads */
+.overlap-group { 
+    position: relative; 
+    width: 120px; 
+    height: 210px; 
+    grid-area: inherit; 
 }
-.layout-celtic-cross [class*="pos-"] { justify-self: center; align-self: center; } /* Center all items */
+.overlap-group .position-container { 
+    position: absolute; 
+    top: 0; 
+    left: 0; 
+    /* ANNOTATION: Add a transition to animate the card smoothly when it moves. */
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+/* 
+  ANNOTATION: This is the new hover effect.
+  It targets the top card within the group and applies a transform to slide it
+  horizontally, revealing the card underneath while remaining clickable.
+  The 'rotate(90deg)' is included to preserve the original rotation for spreads like the Celtic Cross.
+*/
+.layout-celtic-cross .overlap-group:hover .position-container.top-card {
+    transform: rotate(90deg) translateX(80%);
+}
+.layout-safe-passage .overlap-group:hover .position-container.top-card {
+    transform: rotate(90deg) translateX(80%);
+}
+.layout-safe-passage { grid-template-columns: repeat(5, auto); grid-template-rows: repeat(3, auto); gap: 2.5rem 1.5rem; }
+.layout-safe-passage .pos-1 { z-index: 2; }
+.layout-safe-passage .pos-7 { transform: rotate(90deg); z-index: 1; }
+.layout-safe-passage [class*="pos-"] { justify-self: center; align-self: center; }
+.layout-safe-passage .overlap-group { grid-area: 2 / 3; }
+.layout-safe-passage .pos-2 { grid-area: 3 / 3; } 
+.layout-safe-passage .pos-3 { grid-area: 1 / 2; } 
+.layout-safe-passage .pos-4 { grid-area: 1 / 4; } 
+.layout-safe-passage .pos-5 { grid-area: 2 / 1; } 
+.layout-safe-passage .pos-6 { grid-area: 2 / 5; }
+.layout-celtic-cross { grid-template-columns: repeat(4, auto); grid-template-rows: repeat(4, auto); gap: 3rem 3.5rem; }
+.layout-celtic-cross [class*="pos-"] { justify-self: center; align-self: center; }
 .layout-celtic-cross .overlap-group { grid-area: 2 / 2 / 4 / 3; }
-.layout-celtic-cross .pos-1 { z-index: 1; } /* Bottom card */
-.layout-celtic-cross .pos-2 { transform: rotate(90deg); z-index: 2; } /* Top card, rotated */
-.layout-celtic-cross .pos-3 { grid-area: 1 / 2; } .layout-celtic-cross .pos-4 { grid-area: 4 / 2; } .layout-celtic-cross .pos-5 { grid-area: 2 / 1 / 4 / 1; } .layout-celtic-cross .pos-6 { grid-area: 2 / 3 / 4 / 4; } .layout-celtic-cross .pos-7 { grid-area: 4 / 4; } .layout-celtic-cross .pos-8 { grid-area: 3 / 4; } .layout-celtic-cross .pos-9 { grid-area: 2 / 4; } .layout-celtic-cross .pos-10 { grid-area: 1 / 4; }
+.layout-celtic-cross .pos-1 { z-index: 1; }
+.layout-celtic-cross .pos-2 { transform: rotate(90deg); z-index: 2; }
+.layout-celtic-cross .pos-3 { grid-area: 1 / 2; } 
+.layout-celtic-cross .pos-4 { grid-area: 4 / 2; } 
+.layout-celtic-cross .pos-5 { grid-area: 2 / 1 / 4 / 1; } 
+.layout-celtic-cross .pos-6 { grid-area: 2 / 3 / 4 / 4; } 
+.layout-celtic-cross .pos-7 { grid-area: 4 / 4; } 
+.layout-celtic-cross .pos-8 { grid-area: 3 / 4; } 
+.layout-celtic-cross .pos-9 { grid-area: 2 / 4; } 
+.layout-celtic-cross .pos-10 { grid-area: 1 / 4; }
 
-/* --- Modal & Footer Styling --- */
+
+/* ----------------------------------------------------------------- */
+/* |                       8. GRIMOIRE & MODAL                     | */
+/* ----------------------------------------------------------------- */
+
+#search-section { max-width: 600px; margin: 2rem auto; }
+#search-bar { font-size: 1.2rem; padding: 12px; width: 100%; box-sizing: border-box; background-color: var(--bg-dark); border: 1px solid var(--border-light); color: var(--text-light); border-radius: 4px; text-align: center; }
+#search-bar:focus { outline: none; border-color: var(--accent-gold); box-shadow: 0 0 10px var(--accent-gold); }
+.grimoire-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 3rem 1.5rem; margin-top: 2rem; justify-items: center; }
+.grimoire-card { width: 150px; display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: transform 0.3s ease-out; }
+.grimoire-card:hover { transform: scale(1.05); }
+.grimoire-card img { width: 100%; height: auto; border-radius: 8px; box-shadow: 0 0 15px rgba(0,0,0,0.5); background-color: var(--primary-purple); }
+.grimoire-card .grimoire-card-name { margin-top: 0.75rem; font-family: 'Cormorant Garamond', serif; font-weight: bold; font-size: 0.9rem; color: var(--text-light); text-align: center; }
+
+/* Modal Styles */
 .modal-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 100; display: flex; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.3s ease-in-out; pointer-events: none; }
 .modal-container:not(.hidden) { opacity: 1; pointer-events: all; }
 .modal-content { background-color: var(--primary-purple); border: 1px solid var(--secondary-purple); box-shadow: 0 0 30px var(--secondary-purple); border-radius: 10px; padding: 2rem; width: 90%; max-width: 800px; max-height: 90vh; overflow-y: auto; position: relative; transform: scale(0.95); transition: transform 0.3s ease-in-out; }
@@ -199,13 +336,109 @@ input[type="range"] { flex-grow: 1; }
 #modal-card-content .details-content { padding: 0 0.5rem 0.5rem 0.5rem; }
 .dict-link { font-style: italic; color: var(--accent-gold); border-bottom: 1px dotted var(--accent-gold); cursor: help; text-decoration: none; }
 
-footer { text-align: center; padding: 2rem; margin-top: 4rem; border-top: 1px solid var(--border-light); background-color: rgba(13, 0, 31, 0.7); position: relative; z-index: 2; }
+
+/* ----------------------------------------------------------------- */
+/* |               9. MOBILE RESPONSIVE STYLES                     | */
+/* ----------------------------------------------------------------- */
 
 @media (max-width: 900px) {
-    .reading-room-layout { grid-template-columns: 1fr; }
-    .control-panel { margin-bottom: 2rem; }
+    /* Revert Reading Room to a simple block layout for stacking on mobile */
+    .reading-room-layout { 
+        display: block;
+        height: auto; /* Let content determine height */
+    }
+
+    /* Ensure canvas has a minimum height on mobile */
+    .reading-canvas {
+        min-height: 80vh;
+        z-index: 1;
+    }
+
+    /* Control Panel Drawer Styling */
+    .control-panel { 
+        position: fixed; 
+        bottom: 0; 
+        left: 0; 
+        right: 0; 
+        width: 100%; 
+        height: auto; 
+        max-height: 85vh; 
+        overflow-y: auto; 
+        z-index: 1000;
+        border-right: none;
+        border-top-left-radius: 20px; 
+        border-top-right-radius: 20px; 
+        transform: translateY(100%); 
+        transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+        padding-top: 2.5rem;
+        padding-bottom: 5rem; /* Space for the fixed action bar */
+    }
+    .control-panel.is-open { transform: translateY(0); box-shadow: 0 -10px 40px rgba(0,0,0,0.5); }
+    #drawer-close-btn { display: block; top: 5px; right: 5px; z-index: 1001; }
+    #mobile-controls-trigger { display: inline-block; }
+
+    /* Hide desktop-only elements and show mobile ones */
+    .slider-group { display: none; }
+    .reveal-all-container { position: static; transform: none; text-align: center; } /* Reset desktop positioning */
+    
+    .canvas-placeholder-text {
+        width: 80%;
+        z-index: 5;
+    }
+    
+    .canvas-hint { 
+        display: block; 
+        position: fixed; 
+        bottom: 5rem;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 10;
+        width: 100%;
+        transition: opacity 0.5s;
+    }
+
+    /* Mobile Action Bar Layout */
+    #mobile-action-bar {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 0 1rem 1rem 1rem;
+        gap: 1rem;
+        z-index: 100;
+        pointer-events: none;
+    }
+    #mobile-action-bar > * {
+        pointer-events: all;
+        margin: 0;
+        flex-grow: 1;
+        flex-basis: 0;
+    }
+
+    /* ANNOTATION: Polish for landscape mode on mobile devices. */
+    @media (orientation: landscape) {
+        #hero {
+            min-height: 0; /* Let content define height */
+            padding: 1rem 0;
+        }
+        header {
+            height: 50px; /* Make header shorter */
+        }
+        
+    }
 }
+
+/* --- Larger screen modal adjustments --- */
 @media (min-width: 768px) {
-    #modal-card-content { flex-direction: row; align-items: flex-start; }
-    #modal-card-content img { width: 200px; flex-shrink: 0; }
+    #modal-card-content { 
+        flex-direction: row; 
+        align-items: flex-start; 
+    }
+    #modal-card-content img { 
+        width: 200px; 
+        flex-shrink: 0; 
+    }
 }

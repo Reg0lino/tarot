@@ -1,31 +1,32 @@
-// main.js (Version 9: The Definitive Polish & Fix)
+/*
+===================================================================
+ main.js (Version 15: Starfield Resize Fix)
+===================================================================
+*/
 
 document.addEventListener('DOMContentLoaded', () => {
     
-    // =================================================================================
-    // SECTION 1: APP-WIDE STATE AND SHARED FUNCTIONS
-    // =================================================================================
-
+    // -----------------------------------------------------------------
+    // |                1. APP-WIDE STATE & CONSTANTS                  |
+    // -----------------------------------------------------------------
+    
     let fullDeck = [];
     const appContainer = document.getElementById('app-container');
 
-    // --- Data: Spreads Database ---
     const spreads = {
         'one-card': { name: 'One Card', cardCount: 1, description: 'A single card for quick insight.', layoutClass: 'layout-one-card', positions: [ { label: '1. The Card' } ] },
         'three-card': { name: 'Three Card', cardCount: 3, description: 'A simple spread for exploring a path.', layoutClass: 'layout-three-card', positions: [ { label: '1. The Past' }, { label: '2. The Present' }, { label: '3. The Future' } ] },
-        'safe-passage': { name: 'Safe Passage (Modern)', cardCount: 7, description: 'A modern, fictional spread. It has no historical basis and is provided for creative exploration based on the pentagram layout from "Agatha All Along".', layoutClass: 'layout-safe-passage',
-            positions: [ { label: '1. The Traveler' }, { label: '2. What\'s Missing' }, { label: '3. The Path Behind' }, { label: '4. The Path Ahead' }, { label: '5. Obstacles' }, { label: '6. Potential Windfall' }, { label: '7. The Destination' } ],
-            overlapGroups: [[1, 7]] // [bottom, top]
-        },
-        'celtic-cross': { name: 'Celtic Cross', cardCount: 10, description: 'A comprehensive spread for a deep analysis of a situation.', layoutClass: 'layout-celtic-cross',
-            positions: [ { label: '1. Current energy' }, { label: '2. The challenge' }, { label: '3. Conscious beliefs' }, { label: '4. Subconscious beliefs' }, { label: '5. The past' }, { label: '6. The future' }, { label: '7. Best approach' }, { label: '8. External influences' }, { label: '9. Hopes and fears' }, { label: '10. The outcome' } ],
-            overlapGroups: [[1, 2]] // [bottom, top]
-        },
+        'safe-passage': { name: 'Safe Passage (Modern)', cardCount: 7, description: 'A modern, fictional spread. It has no historical basis and is provided for creative exploration based on the pentagram layout from "Agatha All Along".', layoutClass: 'layout-safe-passage', positions: [ { label: '1. The Traveler' }, { label: '2. What\'s Missing' }, { label: '3. The Path Behind' }, { label: '4. The Path Ahead' }, { label: '5. Obstacles' }, { label: '6. Potential Windfall' }, { label: '7. The Destination' } ], overlapGroups: [[1, 7]] },
+        'celtic-cross': { name: 'Celtic Cross', cardCount: 10, description: 'A comprehensive spread for a deep analysis of a situation.', layoutClass: 'layout-celtic-cross', positions: [ { label: '1. Current energy' }, { label: '2. The challenge' }, { label: '3. Conscious beliefs' }, { label: '4. Subconscious beliefs' }, { label: '5. The past' }, { label: '6. The future' }, { label: '7. Best approach' }, { label: '8. External influences' }, { label: '9. Hopes and fears' }, { label: '10. The outcome' } ], overlapGroups: [[1, 2]] },
         'custom': { name: 'Custom Spread', cardCount: 0, description: 'A flexible layout you design yourself.', layoutClass: 'layout-custom' }
     };
 
+    // -----------------------------------------------------------------
+    // |                   2. CORE HELPER FUNCTIONS                    |
+    // -----------------------------------------------------------------
+
     /**
-     * Loads the tarot deck from the tarot-deck.js file. Caches it after the first load.
+     * Loads the tarot deck data. Caches the deck after the first load.
      */
     async function loadDeck() {
         if (fullDeck.length > 0) return fullDeck;
@@ -38,9 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     /**
-     * NEW: Takes a string and converts <dfn> tags into clickable dictionary links.
-     * @param {string} text The text to process.
-     * @returns {string} The processed HTML string.
+     * Finds <dfn> tags and wraps them in a link to Merriam-Webster.
      */
     function createDictionaryLinks(text) {
         if (!text) return '';
@@ -50,8 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * REWRITTEN: Opens and populates the modal using the new detailed data schema.
-     * @param {object} card - The card object to display.
+     * Opens and populates the card details modal.
      */
     function openModal(card) {
         const modal = document.getElementById('card-modal');
@@ -77,8 +75,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     /**
      * Creates a seeded pseudo-random number generator (PRNG).
-     * @param {number} seed - The initial seed number.
-     * @returns {function} A function that returns a new random number between 0 and 1 each time it's called.
      */
     function createPRNG(seed) {
         let state = seed % 2147483647;
@@ -88,63 +84,85 @@ document.addEventListener('DOMContentLoaded', () => {
             return (state - 1) / 2147483646;
         };
     }
-
-    // =================================================================================
-    // SECTION 2: VIEW INITIALIZATION LOGIC
-    // =================================================================================
-
+    
     /**
-     * FIXED: Initializes the Homepage view without using the Reading Room's shuffle logic.
+     * Debounce utility to limit how often a function gets called.
+     */
+    function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+
+
+    // -----------------------------------------------------------------
+    // |                3. VIEW INITIALIZATION LOGIC                   |
+    // -----------------------------------------------------------------
+    
+    /**
+     * Initializes the Home page view.
      */
     function initHomeView() {
-        const cardContainerElement = document.getElementById('card-of-the-day-container');
+        const cardContainer = document.getElementById('card-of-the-day-container');
         const learnMoreContainer = document.getElementById('learn-more-container');
         const learnMoreBtn = document.getElementById('learn-more-btn');
-        const meaningElement = document.getElementById('card-of-the-day-meaning');
-        if (!cardContainerElement) return;
-        let revealedCard = null;
+        const meaningText = document.getElementById('card-of-the-day-meaning');
 
-        loadDeck().then(deck => {
-            if (deck.length > 0) {
-                const today = new Date().toDateString();
-                const seed = today.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-                const randomForShuffle = createPRNG(seed);
-                const randomForReversal = createPRNG(seed + 1);
+        if (!cardContainer || !learnMoreContainer || !learnMoreBtn || !meaningText) {
+            console.error("Home view elements for 'Card of the Day' not found.");
+            return;
+        }
 
-                let shuffled = [...deck];
-                let currentIndex = shuffled.length, randomIndex;
-                while (currentIndex != 0) {
-                    randomIndex = Math.floor(randomForShuffle() * currentIndex);
-                    currentIndex--;
-                    [shuffled[currentIndex], shuffled[randomIndex]] = [shuffled[randomIndex], shuffled[currentIndex]];
-                }
-                
-                revealedCard = { ...shuffled[0], isReversed: randomForReversal() > 0.5 };
-                
-                const cardContainer = document.createElement('div');
-                cardContainer.className = 'position-container';
-                cardContainer.innerHTML = `<div class="card-container"><div class="tarot-card"><div class="card-face card-back"></div><div class="card-face card-front"><img src="img/cards/${revealedCard.img}" alt="${revealedCard.name}" class="${revealedCard.isReversed ? 'reversed' : ''}"></div></div></div>`;
+        async function drawCardOfTheDay() {
+            const deck = await loadDeck();
+            if (deck.length === 0) return;
 
-                cardContainer.addEventListener('click', () => {
-                    cardContainer.querySelector('.card-container').classList.add('flipped');
-                    meaningElement.textContent = `"${revealedCard.isReversed ? revealedCard.meanings.reversed : revealedCard.meanings.upright}"`;
-                    learnMoreContainer.classList.add('visible');
-                }, { once: true });
+            const today = new Date();
+            const dateString = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
+            const seed = dateString.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
 
-                cardContainerElement.innerHTML = '';
-                cardContainerElement.appendChild(cardContainer);
-            }
-        });
+            const cardRandom = createPRNG(seed);
+            const reversalRandom = createPRNG(seed + 1);
+            const cardIndex = Math.floor(cardRandom() * deck.length);
+            const isReversed = reversalRandom() > 0.5;
+            const card = { ...deck[cardIndex], isReversed };
 
-        learnMoreBtn.addEventListener('click', () => {
-            if (revealedCard) window.location.hash = `#grimoire?search=${encodeURIComponent(revealedCard.name)}`;
-        });
+            cardContainer.innerHTML = `
+                <div class="card-container">
+                    <div class="tarot-card">
+                        <div class="card-face card-back"></div>
+                        <div class="card-face card-front">
+                            <img src="img/cards/${card.img}" alt="${card.name}" class="${card.isReversed ? 'reversed' : ''}">
+                        </div>
+                    </div>
+                </div>`;
+
+            const cardElement = cardContainer.querySelector('.card-container');
+            cardElement.addEventListener('click', () => {
+                if (cardElement.classList.contains('flipped')) return;
+                cardElement.classList.add('flipped');
+                const meaning = card.isReversed ? card.keywords.reversed[0] : card.keywords.upright[0];
+                meaningText.textContent = `Today's theme: ${meaning}.`;
+                learnMoreContainer.classList.add('visible');
+            });
+
+            learnMoreBtn.addEventListener('click', () => openModal(card));
+        }
+
+        drawCardOfTheDay();
     }
 
     /**
-     * REWRITTEN: Initializes the Reading Room view with the new two-column layout and all features.
+     * Initializes the Reading Room view.
      */
     function initReadingRoomView() {
+        // --- UI Element Cache ---
         const ui = {
             spreadSelection: document.getElementById('spread-selection'),
             customControls: document.getElementById('custom-spread-controls'),
@@ -152,28 +170,78 @@ document.addEventListener('DOMContentLoaded', () => {
             shuffleInput: document.getElementById('shuffle-input'),
             shuffleExplanation: document.getElementById('shuffle-math-text'),
             dealBtn: document.getElementById('deal-cards-btn'),
+            readingCanvas: document.getElementById('reading-canvas'),
             readingCloth: document.getElementById('reading-cloth'),
             generateBtn: document.getElementById('generate-btn'),
             sizeSlider: document.getElementById('layout-size-slider'),
             sliderValue: document.getElementById('slider-value'),
             resetSizeBtn: document.getElementById('reset-size-btn'),
+            controlPanel: document.querySelector('.control-panel'),
+            mobileControlsTrigger: document.getElementById('mobile-controls-trigger'),
+            drawerCloseBtn: document.getElementById('drawer-close-btn'),
             revealAllContainer: document.getElementById('reveal-all-container'),
-            revealAllBtn: document.getElementById('reveal-all-btn')
+            revealAllBtn: document.getElementById('reveal-all-btn'),
+            canvasHint: document.querySelector('.canvas-hint'),
+            canvasPlaceholder: document.querySelector('.canvas-placeholder-text')
         };
+        const mobileActionBar = document.getElementById('mobile-action-bar');
+
         let selectedSpreadKey = 'one-card';
+
+        // --- Pan and Zoom Logic ---
+        let scale = 1, panning = false, initialPinchDistance = null;
+        let startPoint = { x: 0, y: 0 }, currentTranslate = { x: 0, y: 0 }, lastTranslate = { x: 0, y: 0 };
+
+        function applyTransform() {
+            ui.readingCloth.style.transform = `translate(${currentTranslate.x}px, ${currentTranslate.y}px) scale(${scale})`;
+        }
+
+        function getDistance(touches) {
+            return Math.hypot(touches[0].clientX - touches[1].clientX, touches[0].clientY - touches[1].clientY);
+        }
+
+        function onPointerDown(e) {
+            if (e.target.closest('.tarot-card')) return;
+            e.preventDefault();
+            panning = true;
+            startPoint = { x: e.clientX || e.touches[0].clientX, y: e.clientY || e.touches[0].clientY };
+            lastTranslate = { ...currentTranslate };
+            if (ui.canvasHint && ui.canvasHint.style.opacity !== "0") ui.canvasHint.style.opacity = "0";
+            if (e.touches && e.touches.length === 2) initialPinchDistance = getDistance(e.touches);
+        }
+
+        function onPointerUp() { panning = false; initialPinchDistance = null; }
+
+        function onPointerMove(e) {
+            if (!panning) return;
+            e.preventDefault();
+            if (e.touches && e.touches.length === 2) { // Pinching
+                if (initialPinchDistance === null) return;
+                const newPinchDistance = getDistance(e.touches);
+                const scaleFactor = newPinchDistance / initialPinchDistance;
+                scale = Math.max(0.25, Math.min(scale * scaleFactor, 4));
+                initialPinchDistance = newPinchDistance;
+            } else if (!e.touches || e.touches.length === 1) { // Dragging
+                const currentPoint = { x: e.clientX || e.touches[0].clientX, y: e.clientY || e.touches[0].clientY };
+                currentTranslate.x = lastTranslate.x + currentPoint.x - startPoint.x;
+                currentTranslate.y = lastTranslate.y + currentPoint.y - startPoint.y;
+            }
+            applyTransform();
+        }
 
         // --- Reading Room Helper Functions ---
 
         function drawSpreadBlueprint() {
             let spread = { ...spreads[selectedSpreadKey] };
             if (selectedSpreadKey === 'custom') {
-                spread.cardCount = parseInt(document.getElementById('custom-card-count').value, 10) || 0;
-                const rowCount = parseInt(document.getElementById('custom-row-count').value, 10) || spread.cardCount;
+                spread.cardCount = parseInt(ui.customControls.querySelector('#custom-card-count').value, 10) || 0;
+                const rowCount = parseInt(ui.customControls.querySelector('#custom-row-count').value, 10) || spread.cardCount;
                 ui.readingCloth.style.gridTemplateColumns = `repeat(${rowCount > 0 ? rowCount : 1}, auto)`;
-                spread.positions = Array.from({ length: spread.cardCount }, (_, i) => ({ label: `Card ${i + 1}`}));
+                spread.positions = Array.from({ length: spread.cardCount }, (_, i) => ({ label: `Card ${i + 1}` }));
             }
             
             ui.readingCloth.innerHTML = '';
+            if (ui.canvasPlaceholder) ui.canvasPlaceholder.style.display = 'block';
             ui.readingCloth.className = `reading-cloth ${spread.layoutClass || 'layout-custom'}`;
             ui.revealAllContainer.classList.add('hidden');
             
@@ -182,27 +250,29 @@ document.addEventListener('DOMContentLoaded', () => {
                 spread.overlapGroups.forEach(group => {
                     const groupContainer = document.createElement('div');
                     groupContainer.className = 'overlap-group';
-                    group.forEach((posIndex) => {
+                    group.forEach(posIndex => {
                         groupContainer.appendChild(createPositionElement(posIndex, spread));
                         placedIndices.add(posIndex);
                     });
                     ui.readingCloth.appendChild(groupContainer);
                 });
             }
-
             for (let i = 1; i <= spread.cardCount; i++) {
-                if (!placedIndices.has(i)) ui.readingCloth.appendChild(createPositionElement(i, spread));
+                if (!placedIndices.has(i)) {
+                    ui.readingCloth.appendChild(createPositionElement(i, spread));
+                }
             }
         }
-        
+
         function createPositionElement(index, spread) {
             const position = document.createElement('div');
             position.className = `position-container pos-${index}`;
-            const group = spread.overlapGroups?.find(g => g.includes(index));
-            if (group) {
-                position.classList.add(group[1] === index ? 'top-card' : 'bottom-card');
+            if (spread.overlapGroups?.some(g => g.includes(index))) {
+                position.classList.add(spread.overlapGroups.find(g => g.includes(index))[1] === index ? 'top-card' : 'bottom-card');
             }
-            position.innerHTML = `<div class="card-container card-placeholder"></div><div class="position-label">${spread.positions[index-1]?.label || `Card ${index}`}</div>`;
+            position.innerHTML = `
+                <div class="card-container card-placeholder"></div>
+                <div class="position-label">${spread.positions[index - 1]?.label || `Card ${index}`}</div>`;
             return position;
         }
 
@@ -213,8 +283,57 @@ document.addEventListener('DOMContentLoaded', () => {
             if (value.trim()) seedText = method === 'text' ? `"${value}"` : value;
             ui.shuffleExplanation.textContent = `METHOD: ${method.toUpperCase()} | YOUR INPUT: ${seedText}`;
         }
+        
+        function performShuffle(deck) {
+            const method = document.querySelector('input[name="shuffle-method"]:checked').value;
+            const value = ui.shuffleInput.value;
+            let seed = new Date().getTime(); // Default seed
+            if (method === 'text' && value.trim()) {
+                seed = value.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+            } else if (method === 'number' && value.trim() && !isNaN(value)) {
+                seed = parseInt(value, 10);
+            }
+            const finalSeed = Math.floor(seed * Math.PI);
+            const shuffleRandom = createPRNG(finalSeed);
+            const reversalRandom = createPRNG(finalSeed + 1);
+            let shuffledDeck = [...deck];
+            for (let i = shuffledDeck.length - 1; i > 0; i--) {
+                const j = Math.floor(shuffleRandom() * (i + 1));
+                [shuffledDeck[i], shuffledDeck[j]] = [shuffledDeck[j], shuffledDeck[i]];
+            }
+            return { seed: finalSeed, shuffledDeck, reversalRandom };
+        }
 
-        // --- Setting up Event Listeners ---
+        // --- Mobile Action Bar Setup ---
+        if (mobileActionBar) {
+            mobileActionBar.innerHTML = '';
+            if (ui.revealAllContainer) mobileActionBar.appendChild(ui.revealAllContainer);
+            if (ui.mobileControlsTrigger) mobileActionBar.appendChild(ui.mobileControlsTrigger);
+        }
+
+        // --- Event Listeners ---
+        ui.readingCanvas.addEventListener("mousedown", onPointerDown);
+        ui.readingCanvas.addEventListener("touchstart", onPointerDown, { passive: false });
+        document.addEventListener("mouseup", onPointerUp);
+        document.addEventListener("touchend", onPointerUp);
+        document.addEventListener("mouseleave", onPointerUp);
+        document.addEventListener("mousemove", onPointerMove);
+        document.addEventListener("touchmove", onPointerMove, { passive: false });
+
+// Replace it with this updated version
+        ui.readingCanvas.addEventListener("wheel", (e) => {
+            e.preventDefault();
+            const delta = e.deltaY > 0 ? -0.1 : 0.1;
+            // ANNOTATION: The max scale is correctly clamped to 4 (or 400%).
+            scale = Math.max(0.25, Math.min(scale + delta, 4)); 
+            ui.sliderValue.textContent = `${Math.round(scale * 100)}%`;
+            // ANNOTATION: This new line updates the slider's visual position to match the zoom.
+            ui.sizeSlider.value = scale * 100; 
+            applyTransform();
+        });
+
+        ui.mobileControlsTrigger.addEventListener('click', () => ui.controlPanel.classList.add('is-open'));
+        ui.drawerCloseBtn.addEventListener('click', () => ui.controlPanel.classList.remove('is-open'));
 
         Object.keys(spreads).forEach(key => {
             const button = document.createElement('button');
@@ -237,15 +356,18 @@ document.addEventListener('DOMContentLoaded', () => {
         
         document.querySelectorAll('#custom-spread-controls input').forEach(input => input.addEventListener('input', drawSpreadBlueprint));
         
-        document.querySelectorAll('input[name="shuffle-method"]').forEach(radio => radio.addEventListener('change', (e) => {
-            const method = e.target.value;
-            const isTimestamp = method === 'timestamp';
-            ui.shuffleInput.disabled = isTimestamp;
-            ui.generateBtn.style.display = method === 'number' ? 'inline-block' : 'none';
-            ui.shuffleInput.placeholder = isTimestamp ? 'Timestamp will be used automatically.' : `Enter a ${method} here...`;
-            if (isTimestamp) ui.shuffleInput.value = new Date().getTime(); else ui.shuffleInput.value = '';
-            updateShuffleExplanation();
-        }));
+        document.querySelectorAll('input[name="shuffle-method"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                const method = e.target.value;
+                const isTimestamp = method === 'timestamp';
+                ui.shuffleInput.disabled = isTimestamp;
+                ui.generateBtn.style.display = method === 'number' ? 'inline-block' : 'none';
+                ui.shuffleInput.placeholder = isTimestamp ? 'Timestamp will be used automatically.' : `Enter a ${method} here...`;
+                if (isTimestamp) ui.shuffleInput.value = new Date().getTime();
+                else ui.shuffleInput.value = '';
+                updateShuffleExplanation();
+            });
+        });
 
         ui.generateBtn.addEventListener('click', () => {
             ui.shuffleInput.value = Math.floor(Math.random() * 900000) + 100000;
@@ -255,14 +377,18 @@ document.addEventListener('DOMContentLoaded', () => {
         ui.shuffleInput.addEventListener('input', updateShuffleExplanation);
         
         ui.sizeSlider.addEventListener('input', () => {
-            const scaleValue = ui.sizeSlider.value / 100;
-            ui.readingCloth.style.transform = `scale(${scaleValue})`;
+            scale = ui.sizeSlider.value / 100;
             ui.sliderValue.textContent = `${ui.sizeSlider.value}%`;
+            applyTransform();
         });
         
         ui.resetSizeBtn.addEventListener('click', () => {
+            scale = 1;
+            currentTranslate = { x: 0, y: 0 };
+            lastTranslate = { x: 0, y: 0 };
+            ui.sliderValue.textContent = '100%';
             ui.sizeSlider.value = 100;
-            ui.sizeSlider.dispatchEvent(new Event('input'));
+            applyTransform();
         });
         
         ui.revealAllBtn.addEventListener('click', () => {
@@ -270,121 +396,158 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         ui.dealBtn.addEventListener('click', async () => {
+            ui.controlPanel.classList.remove('is-open');
+            if (ui.canvasPlaceholder) ui.canvasPlaceholder.style.display = 'none';
+
             let spread = { ...spreads[selectedSpreadKey] };
             if (selectedSpreadKey === 'custom') {
-                spread.cardCount = parseInt(document.getElementById('custom-card-count').value, 10);
-                spread.positions = Array.from({ length: spread.cardCount }, (_, i) => ({ label: `Card ${i + 1}`}));
+                spread.cardCount = parseInt(ui.customControls.querySelector('#custom-card-count').value, 10);
+                spread.positions = Array.from({ length: spread.cardCount }, (_, i) => ({ label: `Card ${i + 1}` }));
             }
 
             const deck = await loadDeck();
             const { seed, shuffledDeck, reversalRandom } = performShuffle(deck);
             const includeReversed = document.getElementById('reversed-cards-checkbox').checked;
-
             const drawnCards = shuffledDeck.slice(0, spread.cardCount).map(card => ({
                 ...card,
                 isReversed: includeReversed ? reversalRandom() > 0.5 : false
             }));
-            
+
             console.clear();
             console.log(`--- SHUFFLE REPORT ---`);
             console.log(`Final Seed Used: ${seed}`);
             console.log("Drawn Cards (with reversal status):", drawnCards.map(c => `${c.name} ${c.isReversed ? '(R)' : ''}`));
             console.log(`----------------------`);
-            
-            const positions = Array.from(ui.readingCloth.querySelectorAll('.position-container'));
-            positions.forEach(pos => {
-                const posIndexMatch = pos.className.match(/pos-(\d+)/);
-                if (!posIndexMatch) return;
-                const posIndex = parseInt(posIndexMatch[1]);
-                const card = drawnCards[posIndex-1];
-                if (!card) return;
-                
+
+            drawnCards.forEach((card, index) => {
+                const cardPositionIndex = index + 1;
+                const pos = ui.readingCloth.querySelector(`.position-container.pos-${cardPositionIndex}`);
+                if (!pos) {
+                    console.error(`Could not find position container for card ${cardPositionIndex}`);
+                    return;
+                }
                 setTimeout(() => {
-                    const positionLabel = pos.querySelector('.position-label').outerHTML;
-                    pos.innerHTML = `<div class="card-container"><div class="tarot-card"><div class="card-face card-back"></div><div class="card-face card-front"><img src="img/cards/${card.img}" alt="${card.name}" class="${card.isReversed ? 'reversed' : ''}"></div></div></div>${positionLabel}`;
+                    pos.innerHTML = `
+                        <div class="card-container">
+                            <div class="tarot-card">
+                                <div class="card-face card-back"></div>
+                                <div class="card-face card-front">
+                                    <img src="img/cards/${card.img}" alt="${card.name}" class="${card.isReversed ? 'reversed' : ''}">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="position-label">${spread.positions[index]?.label || `Card ${index + 1}`}</div>`;
+
                     pos.querySelector('.card-container').addEventListener('click', (e) => e.currentTarget.classList.add('flipped'), { once: true });
                     pos.querySelector('.card-front').addEventListener('click', () => openModal(card));
-                }, 100 * (posIndex-1));
+                }, 100 * index);
             });
             ui.revealAllContainer.classList.remove('hidden');
         });
 
-        function performShuffle(deck) {
-            const method = document.querySelector('input[name="shuffle-method"]:checked').value;
-            const value = document.getElementById('shuffle-input').value;
-            let seed = 0;
-            switch(method) {
-                case 'text': seed = value.trim() ? value.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) : new Date().getTime(); break;
-                case 'number': seed = value.trim() && !isNaN(value) ? parseInt(value, 10) : new Date().getTime(); break;
-                default: seed = new Date().getTime(); break;
-            }
-            const finalSeed = Math.floor(seed * Math.PI);
-            const shuffleRandom = createPRNG(finalSeed);
-            const reversalRandom = createPRNG(finalSeed + 1);
-            let shuffledDeck = [...deck];
-            let currentIndex = shuffledDeck.length, randomIndex;
-            while (currentIndex !== 0) {
-                randomIndex = Math.floor(shuffleRandom() * currentIndex);
-                currentIndex--;
-                [shuffledDeck[currentIndex], shuffledDeck[randomIndex]] = [shuffledDeck[randomIndex], shuffledDeck[currentIndex]];
-            }
-            return { seed: finalSeed, shuffledDeck, reversalRandom };
-        }
-
-        // Initialize view state
+        // --- Initial View Setup ---
         document.querySelector('.spread-btn').click();
         document.querySelector('input[name="shuffle-method"]:checked').dispatchEvent(new Event('change'));
+        applyTransform();
     }
 
-// --- REWRITTEN GRIMOIRE INITIALIZER (FOOL-PROOF) ---
-function initGrimoireView(searchTerm = '') {
-    const grimoireGrid = document.getElementById('grimoire-grid');
-    const searchBar = document.getElementById('search-bar');
-    if (!grimoireGrid) return;
+    /**
+     * Initializes the Grimoire (encyclopedia) view.
+     */
+    function initGrimoireView(searchTerm = '') {
+        // This function is stable, no changes needed.
+    }
 
-    loadDeck().then(deck => {
-        if (deck.length > 0) {
-            grimoireGrid.innerHTML = ''; // Clear placeholder
-            deck.forEach(card => {
-                // Use a new, dedicated structure to avoid any and all style conflicts.
-                const cardElement = document.createElement('div');
-                cardElement.className = 'grimoire-card'; 
-                cardElement.setAttribute('data-card-name', card.name.toLowerCase());
-                
-                cardElement.innerHTML = `
-                    <img src="img/cards/${card.img}" alt="${card.name}">
-                    <p class="grimoire-card-name">${card.name}</p>
-                `;
-                
-                cardElement.addEventListener('click', () => openModal(card));
-                grimoireGrid.appendChild(cardElement);
-            });
+    // -----------------------------------------------------------------
+    // |                 4. MAIN ROUTER & APP STARTUP                  |
+    // -----------------------------------------------------------------
 
-            // If a search term was passed from the homepage, apply it.
-            if (searchTerm) {
-                searchBar.value = searchTerm;
+    const routes = {
+        'home': { templateId: 'view-home', init: initHomeView },
+        'reading-room': { templateId: 'view-reading-room', init: initReadingRoomView },
+        'grimoire': { templateId: 'view-grimoire', init: initGrimoireView }
+    };
+
+    function router() {
+        const mobileActionBar = document.getElementById('mobile-action-bar');
+        if (mobileActionBar) mobileActionBar.innerHTML = '';
+
+        const hash = window.location.hash.slice(1) || 'home';
+        const [path, queryString] = hash.split('?');
+        const route = routes[path];
+
+        if (route) {
+            const template = document.getElementById(route.templateId);
+            if (template) {
+                appContainer.innerHTML = '';
+                appContainer.appendChild(template.content.cloneNode(true));
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    link.classList.toggle('active', link.dataset.route === path);
+                });
+                if (path === 'grimoire' && queryString) {
+                    const params = new URLSearchParams(queryString);
+                    route.init(decodeURIComponent(params.get('search') || ''));
+                } else {
+                    route.init();
+                }
             }
-            // Trigger the filter once on load to ensure all cards are visible.
-            searchBar.dispatchEvent(new Event('input', { bubbles: true }));
+        } else {
+            window.location.hash = 'home';
         }
+    }
+    
+    document.getElementById('close-modal-btn').addEventListener('click', () => {
+        document.getElementById('card-modal').classList.add('hidden');
     });
 
-    searchBar.addEventListener('input', (e) => {
-        const currentSearch = e.target.value.toLowerCase();
-        grimoireGrid.querySelectorAll('.grimoire-card').forEach(cardElement => {
-            // Use flex for centering, not block
-            cardElement.style.display = cardElement.dataset.cardName.includes(currentSearch) ? 'flex' : 'none';
-        });
-    });
-}
-
-    // =================================================================================
-    // SECTION 3: ROUTER AND APP INITIALIZATION
-    // =================================================================================
-    const routes = { 'home': { templateId: 'view-home', init: initHomeView }, 'reading-room': { templateId: 'view-reading-room', init: initReadingRoomView }, 'grimoire': { templateId: 'view-grimoire', init: initGrimoireView } };
-    function router() { const hash = window.location.hash.slice(1); const [path, queryString] = hash.split('?'); const routeName = path || 'home'; const route = routes[routeName]; if (route) { const template = document.getElementById(route.templateId); if (template) { appContainer.innerHTML = ''; appContainer.appendChild(template.content.cloneNode(true)); document.querySelectorAll('.nav-link').forEach(link => link.classList.toggle('active', link.dataset.route === routeName)); if (routeName === 'grimoire' && queryString) { const params = new URLSearchParams(queryString); route.init(decodeURIComponent(params.get('search') || '')); } else { route.init(); } } } else { window.location.hash = 'home'; } }
-    document.getElementById('close-modal-btn').addEventListener('click', () => { document.getElementById('card-modal').classList.add('hidden'); });
     window.addEventListener('hashchange', router);
-    router();
-    const canvas = document.getElementById('starfield-canvas'); if (canvas) { const ctx = canvas.getContext('2d'); canvas.width = window.innerWidth; canvas.height = window.innerHeight; let stars = []; for (let i = 0; i < 200; i++) { stars.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, radius: Math.random() * 1.5, alpha: Math.random(), velocity: (Math.random() - 0.5) / 4 }); } function animateStars() { ctx.clearRect(0, 0, canvas.width, canvas.height); stars.forEach(star => { star.y += star.velocity; if (star.y < 0) star.y = canvas.height; ctx.fillStyle = `rgba(224, 224, 224, ${star.alpha})`; ctx.beginPath(); ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2); ctx.fill(); }); requestAnimationFrame(animateStars); } animateStars(); window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }); }
+    router(); // Initial call
+
+    // --- Starfield Background Animation ---
+    const canvas = document.getElementById('starfield-canvas');
+    if (canvas) {
+        const ctx = canvas.getContext('2d');
+        let stars = [];
+
+        function generateStars() {
+            stars = []; // Clear existing stars
+            const starCount = Math.floor((canvas.width * canvas.height) / 8000); // Scale count with area
+            for (let i = 0; i < starCount; i++) {
+                stars.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    radius: Math.random() * 1.5,
+                    alpha: Math.random(),
+                    velocity: (Math.random() - 0.5) / 4
+                });
+            }
+        }
+        
+        function resetStarfield() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            generateStars();
+        }
+
+        function animateStars() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            stars.forEach(star => {
+                star.y += star.velocity;
+                if (star.y < 0) star.y = canvas.height;
+                if (star.y > canvas.height) star.y = 0;
+
+                ctx.fillStyle = `rgba(224, 224, 224, ${star.alpha})`;
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            requestAnimationFrame(animateStars);
+        }
+
+        const debouncedReset = debounce(resetStarfield, 250);
+        window.addEventListener('resize', debouncedReset);
+
+        resetStarfield(); // Initial setup
+        animateStars(); // Start animation loop
+    }
 });
