@@ -694,45 +694,135 @@ document.addEventListener('DOMContentLoaded', () => {
     if (canvas) {
         const ctx = canvas.getContext('2d');
         let stars = [];
-
+        // ANNOTATION: Added arrays to track the new animated elements.
+        let shootingStars = [];
+        let constellations = [];
+        
         function generateStars() {
             stars = []; // Clear existing stars
-            const starCount = Math.floor((canvas.width * canvas.height) / 8000); // Scale count with area
+            // ANNOTATION: Decreased divisor from 8000 to 4000 to double the star density.
+            const starCount = Math.floor((canvas.width * canvas.height) / 4000);
             for (let i = 0; i < starCount; i++) {
                 stars.push({
                     x: Math.random() * canvas.width,
                     y: Math.random() * canvas.height,
                     radius: Math.random() * 1.5,
                     alpha: Math.random(),
-                    velocity: (Math.random() - 0.5) / 4
+                    velocity: (Math.random() - 0.5) / 4 // Slow vertical drift
                 });
             }
         }
         
+        // ANNOTATION: Creates a shooting star from a random edge of the screen.
+        function createShootingStar() {
+            const side = Math.floor(Math.random() * 4); // 0: top, 1: right, 2: bottom, 3: left
+            let x, y, angle;
+            switch (side) {
+                case 0: x = Math.random() * canvas.width; y = 0; angle = Math.random() * Math.PI * 0.4 + Math.PI * 0.3; break; // Down
+                case 1: x = canvas.width; y = Math.random() * canvas.height; angle = Math.random() * Math.PI * 0.4 + Math.PI * 0.8; break; // Left
+                case 2: x = Math.random() * canvas.width; y = canvas.height; angle = Math.random() * Math.PI * 0.4 + Math.PI * 1.3; break; // Up
+                case 3: x = 0; y = Math.random() * canvas.height; angle = Math.random() * Math.PI * 0.4 - Math.PI * 0.2; break; // Right
+            }
+            shootingStars.push({ x, y, len: Math.random() * 80 + 20, angle, speed: Math.random() * 5 + 5, alpha: 1, life: 60 });
+        }
+
+        // ANNOTATION: Finds a small group of nearby stars to form a temporary constellation.
+        function createConstellation() {
+            if (stars.length < 5) return;
+            const numStars = Math.floor(Math.random() * 3) + 3; // 3 to 5 stars
+            const startIdx = Math.floor(Math.random() * stars.length);
+            let indices = [startIdx];
+            let lastIdx = startIdx;
+
+            for (let i = 0; i < numStars - 1; i++) {
+                let closest = -1;
+                let minDist = 150; // Max distance for a neighbor
+                for (let j = 0; j < stars.length; j++) {
+                    if (indices.includes(j)) continue;
+                    const dist = Math.hypot(stars[lastIdx].x - stars[j].x, stars[lastIdx].y - stars[j].y);
+                    if (dist < minDist) {
+                        minDist = dist;
+                        closest = j;
+                    }
+                }
+                if (closest !== -1) indices.push(closest);
+                else break;
+            }
+
+            if (indices.length > 2) {
+                constellations.push({ indices, alpha: 0, maxAlpha: Math.random() * 0.1 + 0.05, life: 600, state: 'fading-in' });
+            }
+        }
+
         function resetStarfield() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
             generateStars();
+            shootingStars = [];
+            constellations = [];
         }
 
         function animateStars() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // --- Draw normal stars ---
             stars.forEach(star => {
                 star.y += star.velocity;
                 if (star.y < 0) star.y = canvas.height;
                 if (star.y > canvas.height) star.y = 0;
-
                 ctx.fillStyle = `rgba(224, 224, 224, ${star.alpha})`;
                 ctx.beginPath();
                 ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
                 ctx.fill();
             });
+
+            // --- Create and draw shooting stars ---
+            if (Math.random() < 0.0025 && shootingStars.length < 3) createShootingStar();
+            shootingStars = shootingStars.filter(ss => ss.alpha > 0);
+            shootingStars.forEach(ss => {
+                ss.x += ss.speed * Math.cos(ss.angle);
+                ss.y += ss.speed * Math.sin(ss.angle);
+                ss.alpha -= 1 / ss.life;
+                ctx.strokeStyle = `rgba(255, 221, 153, ${ss.alpha})`;
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.moveTo(ss.x, ss.y);
+                ctx.lineTo(ss.x - ss.len * Math.cos(ss.angle), ss.y - ss.len * Math.sin(ss.angle));
+                ctx.stroke();
+            });
+
+            // --- Create and draw constellations ---
+            if (Math.random() < 0.0005 && constellations.length === 0) createConstellation();
+            constellations = constellations.filter(c => c.life > 0);
+            constellations.forEach(c => {
+                c.life--;
+                if (c.state === 'fading-in') {
+                    c.alpha += c.maxAlpha / 180; // Fade in over 3s
+                    if (c.alpha >= c.maxAlpha) { c.alpha = c.maxAlpha; c.state = 'visible'; }
+                } else if (c.life < 180) { // Fade out over last 3s
+                    c.state = 'fading-out';
+                    c.alpha -= c.maxAlpha / 180;
+                }
+
+                if (c.alpha > 0) {
+                    ctx.strokeStyle = `rgba(100, 150, 255, ${c.alpha})`;
+                    ctx.lineWidth = 0.5;
+                    ctx.beginPath();
+                    const startPoint = stars[c.indices[0]];
+                    ctx.moveTo(startPoint.x, startPoint.y);
+                    for (let i = 1; i < c.indices.length; i++) {
+                        const point = stars[c.indices[i]];
+                        ctx.lineTo(point.x, point.y);
+                    }
+                    ctx.stroke();
+                }
+            });
+
             requestAnimationFrame(animateStars);
         }
 
         const debouncedReset = debounce(resetStarfield, 250);
         window.addEventListener('resize', debouncedReset);
-
         resetStarfield(); // Initial setup
         animateStars(); // Start animation loop
     }
