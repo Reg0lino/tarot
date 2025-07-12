@@ -31,7 +31,6 @@
     </header>
 
     <main id="app-container"></main>
-    <div id="mobile-action-bar"></div>
     <div id="card-modal" class="modal-container hidden">
         <div class="modal-content">
             <button id="close-modal-btn" class="close-modal">×</button>
@@ -167,16 +166,17 @@
     <button id="deal-cards-btn" class="glowing-btn">Shuffle & Deal Cards</button>
 </aside>
 
-            <main id="reading-canvas" class="reading-canvas">
-                <div id="reading-cloth" class="reading-cloth"></div>
-                <p class="canvas-placeholder-text">Select a spread from the Control Panel to begin.</p>
-            </main>
-        </div>
-        <p class="canvas-hint">Pinch to zoom, drag to pan</p>
+        <main id="reading-canvas" class="reading-canvas">
+            <div id="reading-cloth" class="reading-cloth"></div>
+            <!-- ANNOTATION: The hint is now a direct child of the canvas for better positioning. -->
+            <p class="canvas-hint">Pinch to zoom, drag to pan</p>
+        </main>
+        <div id="mobile-action-bar">
             <div id="reveal-all-container" class="reveal-all-container hidden">
                 <button id="reading-action-btn" class="glowing-btn">Reveal All Cards</button>
             </div>
-        <button id="mobile-controls-trigger" class="glowing-btn">Reading Controls</button>
+            <button id="mobile-controls-trigger" class="glowing-btn">Reading Controls</button>
+        </div>
     </template>
 
     <template id="view-grimoire">

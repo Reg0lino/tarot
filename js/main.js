@@ -467,36 +467,62 @@ document.addEventListener('DOMContentLoaded', () => {
         function autoFitSpread() {
             const content = ui.readingCloth;
             const container = ui.readingCanvas;
-            const contentRect = content.getBoundingClientRect();
-            const containerRect = container.getBoundingClientRect();
-            // Ensure we don't divide by zero if content hasn't rendered
-            if (contentRect.width === 0 || contentRect.height === 0) {
-                return;
-            }
-            // Calculate the scale needed to fit the content's width and height
-            const scaleX = containerRect.width / contentRect.width;
-            const scaleY = containerRect.height / contentRect.height;
-            // Use the smaller of the two scales to ensure the whole spread fits
-            // Apply a little padding so it's not flush against the edges
-            const newScale = Math.min(scaleX, scaleY) * 0.75;
-            // We only apply auto-fit if it would result in zooming out.
-            // This prevents small spreads from being unnecessarily enlarged.
-            if (newScale < 1) {
+            // We must wait a "tick" for the browser to paint the final card positions
+            // before we can accurately measure them.
+            setTimeout(() => {
+                const cardElements = content.querySelectorAll('.position-container');
+                if (cardElements.length === 0) return;
+                // Find the bounding box of all cards combined
+                let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+                cardElements.forEach(card => {
+                    const rect = card.getBoundingClientRect();
+                    if (rect.left < minX) minX = rect.left;
+                    if (rect.top < minY) minY = rect.top;
+                    if (rect.right > maxX) maxX = rect.right;
+                    if (rect.bottom > maxY) maxY = rect.bottom;
+                });
+                const contentWidth = maxX - minX;
+                const contentHeight = maxY - minY;
+                
+                // Use clientWidth/Height for an accurate viewport size that ignores scrollbars
+                const containerWidth = container.clientWidth;
+                const containerHeight = container.clientHeight;
+                if (contentWidth === 0 || contentHeight === 0) return;
+                const PADDING = 60; // A more generous padding
+                const scaleX = (containerWidth - PADDING) / contentWidth;
+                const scaleY = (containerHeight - PADDING) / contentHeight;
+                const newScale = Math.min(scaleX, scaleY);
+                // Calculate the center of the content relative to the viewport
+                const contentCenterX = minX + contentWidth / 2;
+                const contentCenterY = minY + contentHeight / 2;
+                // Calculate the center of the container/viewport
+                const containerCenterX = container.getBoundingClientRect().left + containerWidth / 2;
+                const containerCenterY = container.getBoundingClientRect().top + containerHeight / 2;
+                // Calculate the translation needed to center the content
+                // We must account for the new scale when calculating the translation
+                const panX = containerCenterX - contentCenterX;
+                const panY = containerCenterY - contentCenterY;
+                // Apply the new pan and scale
                 scale = newScale;
-                // Reset pan to center the newly scaled content
-                currentTranslate = { x: 0, y: 0 };
-                lastTranslate = { x: 0, y: 0 };
+                currentTranslate = { x: panX, y: panY };
+                lastTranslate = { ...currentTranslate };
                 // Update the UI slider to reflect the new state
                 ui.sliderValue.textContent = `${Math.round(scale * 100)}%`;
                 ui.sizeSlider.value = scale * 100;
                 applyTransform();
+            }, 100); // A 100ms delay gives the browser ample time to render the layout
         }
-    }
 
         // --- 3. Event Listeners ---
         function onPointerDown(e) {
             if (e.target.closest('.tarot-card')) return;
             e.preventDefault();
+
+            // ANNOTATION: This new block finds the hint and hides it on first interaction.
+            if (ui.canvasHint && !ui.canvasHint.classList.contains('hidden')) {
+                ui.canvasHint.classList.add('hidden');
+            }
+
             panning = true;
             startPoint = { x: e.clientX || e.touches[0].clientX, y: e.clientY || e.touches[0].clientY };
             lastTranslate = { ...currentTranslate };
@@ -543,12 +569,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         if (ui.mobileControlsTrigger) {
-            const mobileActionBar = document.getElementById('mobile-action-bar');
-            if (mobileActionBar) {
-                mobileActionBar.innerHTML = '';
-                if (ui.revealAllContainer) mobileActionBar.appendChild(ui.revealAllContainer);
-                mobileActionBar.appendChild(ui.mobileControlsTrigger);
-            }
             ui.mobileControlsTrigger.addEventListener('click', () => ui.controlPanel.classList.add('is-open'));
         }
         if (ui.drawerCloseBtn) {

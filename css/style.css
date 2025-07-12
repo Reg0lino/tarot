@@ -404,7 +404,7 @@ input[type="range"] { flex-grow: 1; }
     z-index: 1;
 }
 
-.canvas-hint { display: none; } /* Hidden on desktop */
+
 
 .reveal-all-container { 
     position: absolute; /* Position within the canvas */
@@ -822,7 +822,9 @@ The 'rotate(90deg)' is included to preserve the original rotation for spreads li
 #modal-card-content .details-content { padding: 0 0.5rem 0.5rem 0.5rem; }
 .dict-link { font-style: italic; color: var(--accent-gold); border-bottom: 1px dotted var(--accent-gold); cursor: help; text-decoration: none; }
 
-
+.layout-chakra-spread .position-container {
+    flex-shrink: 0;
+}
 /* ----------------------------------------------------------------- */
 /* |               9. MOBILE RESPONSIVE STYLES                     | */
 /* ----------------------------------------------------------------- */
@@ -872,37 +874,46 @@ The 'rotate(90deg)' is included to preserve the original rotation for spreads li
         z-index: 5;
     }
     
-    .canvas-hint { 
-        display: block; 
-        position: fixed; 
-        bottom: 5rem;
+    .canvas-hint {
+        display: block;
+        position: absolute;
+        /* ANNOTATION: Positions the hint near the top, not the center. */
+        top: 20px; 
         left: 50%;
-        transform: translateX(-50%);
+        /* We only need to translate on the X-axis now */
+        transform: translateX(-50%); 
         z-index: 10;
-        width: 100%;
-        transition: opacity 0.5s;
+        width: auto;
+        padding: 0.8em 1.2em; /* Slightly smaller padding */
+        background-color: rgba(13, 0, 31, 0.8);
+        border: 1px solid var(--border-light);
+        border-radius: 8px;
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 1.1rem;
+        color: var(--text-light);
+        opacity: 1; /* Start fully visible */
+        transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+        pointer-events: none;
+    }
+
+    .canvas-hint.hidden {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.9); /* Add a subtle shrink effect */
     }
 
     /* Mobile Action Bar Layout */
-    #mobile-action-bar {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        padding: 0 1rem 1rem 1rem;
-        gap: 1rem;
-        z-index: 100;
-        pointer-events: none;
-    }
-    #mobile-action-bar > * {
-        pointer-events: all;
-        margin: 0;
-        flex-grow: 1;
-        flex-basis: 0;
-    }
+#mobile-action-bar {
+    /* ANNOTATION: Switched to CSS Grid for a robust two-column layout. */
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 0 1rem 1rem 1rem;
+    gap: 1rem;
+    z-index: 100;
+}
 
     /*   Polish for landscape mode on mobile devices. */
     @media (orientation: landscape) {
