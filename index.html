@@ -38,19 +38,6 @@
             <div id="modal-card-content"></div>
         </div>
     </div>
-        <!-- ANNOTATION: This is the modal for the interactive shuffling sequence. -->
-    <div id="shuffle-zone-modal" class="modal-container hidden">
-        <div class="shuffle-zone-content">
-            <div id="visual-deck-container">
-                <!-- The visual deck will be created by JS, but this is its home -->
-            </div>
-            <div id="shuffle-controls">
-                <button id="cut-deck-btn" class="shuffle-btn">Cut</button>
-                <button id="wash-deck-btn" class="shuffle-btn">Shuffle</button>
-                <button id="begin-reading-btn" class="glowing-btn">Begin Reading</button>
-            </div>
-        </div>
-    </div>
 
     <!-- --------------------- VIEW TEMPLATES --------------------- -->
     <template id="view-home">
@@ -186,9 +173,9 @@
             </main>
         </div>
         <p class="canvas-hint">Pinch to zoom, drag to pan</p>
-        <div id="reveal-all-container" class="reveal-all-container hidden">
-            <button id="reveal-all-btn" class="glowing-btn">Reveal All Cards</button>
-        </div>
+            <div id="reveal-all-container" class="reveal-all-container hidden">
+                <button id="reading-action-btn" class="glowing-btn">Reveal All Cards</button>
+            </div>
         <button id="mobile-controls-trigger" class="glowing-btn">Reading Controls</button>
     </template>
 

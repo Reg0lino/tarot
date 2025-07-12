@@ -1,63 +1,113 @@
 // js/shuffle-animation.js
+
 class ShuffleController {
-    constructor(deck, spread) {
+    constructor(deck, spread, onComplete) {
         this.deck = [...deck];
         this.spread = spread;
+        this.onComplete = onComplete;
         this.isAnimating = false;
         this.washAnimationType = 0;
 
-        // --- DOM Element Cache ---
-        this.modal = document.getElementById('shuffle-zone-modal');
-        this.visualDeckContainer = document.getElementById('visual-deck-container');
-        this.cutBtn = document.getElementById('cut-deck-btn');
-        this.washBtn = document.getElementById('wash-deck-btn');
-        this.dealBtn = document.getElementById('begin-reading-btn');
-        this.readingCanvas = document.getElementById('reading-canvas'); // Cache the canvas
+        // --- Component's UI elements, will be created dynamically ---
+        this.modal = null;
+        this.visualDeckContainer = null;
+        this.cutBtn = null;
+        this.washBtn = null;
+        this.dealBtn = null;
 
         // --- Pre-bind event handlers for proper removal ---
-        // This is crucial for preventing event listener leaks.
         this.boundCutHandler = this.handleCutClick.bind(this);
         this.boundWashHandler = this.handleWashClick.bind(this);
         this.boundDealHandler = this.handleDealClick.bind(this);
-    }
-    
-    start() {
-        this.addEventListeners();
-        this.createVisualDeck();
-        this.showModal();
+        this.boundCancelHandler = this.handleCancelClick.bind(this);
     }
 
-    // ANNOTATION: This new method is the core of the cleanup protocol.
+    // --- Core Lifecycle Methods ---
+
+    start() {
+        this._createModal();
+        this.addEventListeners();
+        this.showModal();
+        this.createVisualDeck();
+    }
+
     cleanup() {
         this.removeEventListeners();
         this.hideModal();
-        // The controller's final act is to remove the blueprint visuals,
-        // revealing the fully dealt, interactive cards.
-        this.readingCanvas.classList.remove('blueprint-mode');
+
+        // ANNOTATION: This is the new callback invocation.
+        // It triggers the auto-fit logic in main.js after the deal is complete.
+        if (typeof this.onComplete === 'function') {
+            this.onComplete();
+        }
     }
-    
+
+    // --- UI Creation and Management ---
+    _createModal() {
+        const modalContainer = document.createElement('div');
+        modalContainer.id = 'shuffle-zone-modal';
+        modalContainer.className = 'modal-container';
+
+        modalContainer.innerHTML = `
+            <div class="shuffle-zone-content">
+                <button class="close-modal" id="cancel-shuffle-btn" title="Cancel and return to setup">×</button>
+                <div id="visual-deck-container"></div>
+                <div id="shuffle-controls">
+                    <button id="cut-deck-btn" class="shuffle-btn" title="Performs a single, precise cut on the deck.">Cut</button>
+                    <button id="wash-deck-btn" class="shuffle-btn" title="Significantly randomizes the entire deck order.">Shuffle Again</button>
+                    <button id="begin-reading-btn" class="glowing-btn" title="Deals the cards into the selected spread.">Begin Reading</button>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(modalContainer);
+
+        this.modal = modalContainer;
+        this.visualDeckContainer = this.modal.querySelector('#visual-deck-container');
+        this.cutBtn = this.modal.querySelector('#cut-deck-btn');
+        this.washBtn = this.modal.querySelector('#wash-deck-btn');
+        this.dealBtn = this.modal.querySelector('#begin-reading-btn');
+        this.cancelBtn = this.modal.querySelector('#cancel-shuffle-btn'); // Cache the new button
+    }
+
     addEventListeners() {
         this.cutBtn.addEventListener('click', this.boundCutHandler);
         this.washBtn.addEventListener('click', this.boundWashHandler);
         this.dealBtn.addEventListener('click', this.boundDealHandler);
+        this.cancelBtn.addEventListener('click', this.boundCancelHandler); // Add listener
     }
 
     removeEventListeners() {
         this.cutBtn.removeEventListener('click', this.boundCutHandler);
         this.washBtn.removeEventListener('click', this.boundWashHandler);
         this.dealBtn.removeEventListener('click', this.boundDealHandler);
+        this.cancelBtn.removeEventListener('click', this.boundCancelHandler); // Remove listener
     }
 
-    createVisualDeck() { this.visualDeckContainer.innerHTML = '<div class="visual-deck"></div>'; }
-    showModal() { this.modal.classList.remove('hidden'); }
-    hideModal() { this.modal.classList.add('hidden'); }
-    
+    createVisualDeck() {
+        this.visualDeckContainer.innerHTML = '<div class="visual-deck"></div>';
+    }
+
+    showModal() {
+        // This is intentionally left blank for now as the modal starts visible.
+        // We could add fade-in logic here later if needed.
+    }
+
+    hideModal() {
+        if (this.modal) {
+            this.modal.classList.add('hidden');
+        }
+    }
+
+
+    // --- User Action Handlers & Logic ---
+
     handleCutClick() {
         if (this.isAnimating) return;
         this.deck = this.cutDeck(this.deck);
         this.animateCut();
     }
-    
+
     handleWashClick() {
         if (this.isAnimating) return;
         this.deck = this.washDeck(this.deck);
@@ -65,19 +115,26 @@ class ShuffleController {
         else this.animateFan();
         this.washAnimationType = (this.washAnimationType + 1) % 2;
     }
-    
+
     handleDealClick() {
         if (this.isAnimating) return;
         this.animateDeal();
     }
-    
+
+    handleCancelClick() {
+    // Re-routing to the base hash triggers our reliable
+    // "disposable view" reset, returning the user to the blueprint.
+        window.location.hash = '#reading-room';
+        this.cleanup();
+    }
+
     cutDeck(deck) {
         const cutPoint = Math.floor(deck.length / 2) + Math.floor(Math.random() * 10) - 5;
         const topHalf = deck.slice(0, cutPoint);
         const bottomHalf = deck.slice(cutPoint);
         return [...bottomHalf, ...topHalf];
     }
-    
+
     washDeck(deck) {
         let washedDeck = [...deck];
         for (let i = 0; i < washedDeck.length; i++) {
@@ -86,7 +143,10 @@ class ShuffleController {
         }
         return washedDeck;
     }
-    
+
+
+    // --- Animations ---
+
     animateCut() {
         this.isAnimating = true;
         const mainDeck = this.visualDeckContainer.querySelector('.visual-deck');
@@ -111,9 +171,11 @@ class ShuffleController {
             bottomHalf.remove();
             mainDeck.style.opacity = '1';
             this.isAnimating = false;
-        }, { once: true });
+        }, {
+            once: true
+        });
     }
-    
+
     animateCascade() {
         this.isAnimating = true;
         const mainDeck = this.visualDeckContainer.querySelector('.visual-deck');
@@ -121,10 +183,16 @@ class ShuffleController {
         const cardCount = 7;
         const cards = [];
         const currentThemeClass = document.body.className.match(/card-back-theme-\w+/);
-        let cardBackStyle = { backgroundColor: 'var(--primary-purple)', border: '2px solid var(--secondary-purple)' };
+        let cardBackStyle = {
+            backgroundColor: 'var(--primary-purple)',
+            border: '2px solid var(--secondary-purple)'
+        };
         if (currentThemeClass) {
             const themeStyle = getComputedStyle(document.querySelector(`.${currentThemeClass[0]} .visual-deck`));
-            cardBackStyle = { backgroundImage: themeStyle.backgroundImage, border: 'none' };
+            cardBackStyle = {
+                backgroundImage: themeStyle.backgroundImage,
+                border: 'none'
+            };
         }
         for (let i = 0; i < cardCount; i++) {
             const cardEl = document.createElement('div');
@@ -157,17 +225,22 @@ class ShuffleController {
 
     animateFan() {
         this.isAnimating = true;
-        this.visualDeckContainer.classList.add('is-shuffling');
         const mainDeck = this.visualDeckContainer.querySelector('.visual-deck');
         mainDeck.style.opacity = '0';
         const cardCount = 7;
         const fanAngle = 90;
         const cards = [];
         const currentThemeClass = document.body.className.match(/card-back-theme-\w+/);
-        let cardBackStyle = { backgroundColor: 'var(--primary-purple)', border: '2px solid var(--secondary-purple)' };
+        let cardBackStyle = {
+            backgroundColor: 'var(--primary-purple)',
+            border: '2px solid var(--secondary-purple)'
+        };
         if (currentThemeClass) {
             const themeStyle = getComputedStyle(document.querySelector(`.${currentThemeClass[0]} .visual-deck`));
-            cardBackStyle = { backgroundImage: themeStyle.backgroundImage, border: 'none' };
+            cardBackStyle = {
+                backgroundImage: themeStyle.backgroundImage,
+                border: 'none'
+            };
         }
         for (let i = 0; i < cardCount; i++) {
             const cardEl = document.createElement('div');
@@ -190,7 +263,6 @@ class ShuffleController {
             });
             setTimeout(() => {
                 cards.forEach(card => card.remove());
-                this.visualDeckContainer.classList.remove('is-shuffling');
                 mainDeck.style.opacity = '1';
                 this.isAnimating = false;
             }, 500);
@@ -204,7 +276,8 @@ class ShuffleController {
         this.dealBtn.style.display = 'none';
         this.visualDeckContainer.style.opacity = '0';
 
-        const includeReversed = document.getElementById('reversed-cards-checkbox').checked;
+        const reversedCheckbox = document.getElementById('reversed-cards-checkbox');
+        const includeReversed = reversedCheckbox ? reversedCheckbox.checked : false;
         const reversalRandom = window.createPRNG(new Date().getTime());
 
         const cardsToDraw = this.deck.slice(0, this.spread.cardCount).map(card => ({
@@ -218,8 +291,7 @@ class ShuffleController {
 
         let completedAnimations = 0;
         const totalAnimations = cardsToDraw.length;
-        
-        // If there are no cards to draw, clean up immediately.
+
         if (totalAnimations === 0) {
             this.cleanup();
             return;
@@ -232,7 +304,6 @@ class ShuffleController {
             const placeholder = document.querySelector(`.reading-cloth .pos-${cardPositionIndex}`);
             if (!placeholder) {
                 console.error(`Could not find placeholder for position ${cardPositionIndex}`);
-                // Ensure cleanup happens even if a placeholder is missing.
                 completedAnimations++;
                 if (completedAnimations === totalAnimations) {
                     this.cleanup();
@@ -241,7 +312,7 @@ class ShuffleController {
             };
 
             const endRect = placeholder.getBoundingClientRect();
-            
+
             const finalCardWrapper = document.createElement('div');
             finalCardWrapper.innerHTML = `
                 <div class="card-container">
@@ -252,8 +323,8 @@ class ShuffleController {
                         </div>
                     </div>
                 </div>`;
-            finalCardWrapper.className = 'flying-card'; 
-            
+            finalCardWrapper.className = 'flying-card';
+
             Object.assign(finalCardWrapper.style, {
                 top: `${startY - (endRect.height / 2)}px`,
                 left: `${startX - (endRect.width / 2)}px`,
@@ -271,22 +342,41 @@ class ShuffleController {
                 });
             }, 100 * index);
 
-            finalCardWrapper.addEventListener('transitionend', () => {
+        finalCardWrapper.addEventListener('transitionend', () => {
+            // ANNOTATION: This is the surgical fix.
+            // 1. Find the specific placeholder *card* inside the position container.
+            const placeholderCard = placeholder.querySelector('.card-placeholder');
+            
+            // 2. Extract the new, fully-formed interactive card from its temporary wrapper.
+            const newCardContainer = finalCardWrapper.querySelector('.card-container');
+            
+            // 3. If both exist, replace the placeholder card with the new interactive card,
+            //    leaving the sibling .position-label element untouched.
+            if (placeholderCard && newCardContainer) {
+                placeholderCard.replaceWith(newCardContainer);
+            } else {
+                // Fallback for safety, though it shouldn't be needed.
                 placeholder.innerHTML = finalCardWrapper.innerHTML;
-                
-                placeholder.querySelector('.card-container').addEventListener('click', (e) => e.currentTarget.classList.add('flipped'), { once: true });
-                placeholder.querySelector('.card-front').addEventListener('click', () => showCardModal(cardData));
-                
-                finalCardWrapper.remove(); 
+            }
+            
+            // 4. Attach final listeners to the card now that it's in the DOM.
+            // Note: We query from 'placeholder' which is the permanent element on the page.
+            placeholder.querySelector('.card-container').addEventListener('click', (e) => e.currentTarget.classList.add('flipped'), {
+                once: true
+            });
+            placeholder.querySelector('.card-front').addEventListener('click', () => showCardModal(cardData));
+            
+            // 5. Clean up the temporary flying card from the body.
+            finalCardWrapper.remove();
 
-                completedAnimations++;
-                // ANNOTATION: The cleanup protocol is only called after the VERY LAST card
-                // has finished its animation, ensuring a seamless transition.
-                if (completedAnimations === totalAnimations) {
-                    document.querySelector('#reveal-all-container').classList.remove('hidden');
-                    this.cleanup(); // Self-destruct and hide the modal.
-                }
-            }, { once: true });
+            completedAnimations++;
+            if (completedAnimations === totalAnimations) {
+                document.getElementById('reveal-all-container').classList.remove('hidden');
+                this.cleanup();
+            }
+        }, {
+            once: true
+        });
         });
     }
 }

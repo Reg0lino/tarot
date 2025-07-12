@@ -255,10 +255,10 @@ header .nav-link:hover, header .nav-link.active { color: var(--accent-gold); tex
 .spread-btn { padding: 0.7em; border: 1px solid var(--secondary-purple); background-color: transparent; color: var(--text-light); cursor: pointer; transition: all 0.3s; text-align: center; }
 .spread-btn.selected, .spread-btn:hover { background-color: var(--secondary-purple); border-color: var(--glow-blue); color: white; }
 #shuffle-methods {
-    margin-top: 1rem; /* Adds space above the "Shuffle with..." options */
+    margin-top: 1rem; 
 }
-/* --- Styles for the Card Back Selector --- */
 
+/* --- Styles for the Card Back Selector --- */
 .card-back {
     /*   Using specific properties instead of the 'background' shorthand
        to prevent background-position and background-size from being reset. */
@@ -374,6 +374,9 @@ input[type="range"] { flex-grow: 1; }
     justify-content: flex-start;
     cursor: grab;
     position: relative;
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none;     /* IE 10+ */
+    user-select: none;         /* Standard syntax */
 }
 
 .reading-canvas.cloth-theme-pattern1::before {
@@ -474,8 +477,25 @@ input[type="range"] { flex-grow: 1; }
     opacity: 1;
     text-shadow: 0 0 6px rgba(0,0,0,0.9);
 }
-.card-container { position: relative; width: 100%; height: 100%; perspective: 1000px; cursor: pointer; }
-.tarot-card { position: absolute; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform 0.8s; }
+.card-container { 
+    position: relative; 
+    width: 100%; 
+    height: 100%; 
+    perspective: 1000px; 
+    cursor: pointer; 
+    /* ANNOTATION: This is the missing piece. It disables the tap highlight
+       on the container that the user actually clicks to initiate the flip. */
+    -webkit-tap-highlight-color: transparent;
+}
+.tarot-card { 
+    position: absolute; 
+    width: 100%; 
+    height: 100%; 
+    transform-style: preserve-3d; 
+    transition: transform 0.8s; 
+    /* ANNOTATION: This removes the default blue/gray tap highlight on mobile browsers. */
+    -webkit-tap-highlight-color: transparent;
+}
 .card-container.flipped .tarot-card { transform: rotateY(180deg); }
 .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 8px; box-shadow: 0 0 15px rgba(0,0,0,0.5); overflow: hidden; }
 .card-back { background: var(--primary-purple); border: 2px solid var(--secondary-purple); }
