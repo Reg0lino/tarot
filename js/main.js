@@ -510,8 +510,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 ui.sliderValue.textContent = `${Math.round(scale * 100)}%`;
                 ui.sizeSlider.value = scale * 100;
                 applyTransform();
-            }, 100); // A 100ms delay gives the browser ample time to render the layout
-        }
+                if (isTouchDevice) {
+                const hint = document.querySelector('.canvas-hint');
+                if (hint) {
+                    // Step 1: Make the hint visible.
+                    hint.style.display = 'block';
+
+                    // Step 2: Set the fallback timer to hide it.
+                    hintDismissTimer = setTimeout(() => {
+                        if (!hint.classList.contains('hidden')) {
+                            console.log('[HINT] Dismissing via 5-second timer fallback.');
+                            hint.classList.add('hidden');
+                            // Clean up the tap listener if the timer fires first.
+                            ui.readingCanvas.removeEventListener('pointerdown', dismissHintOnTap, true);
+                        }
+                    }, 5000);
+                }
+            }
+
+    }, 100);
+}
 
         // --- 3. Event Listeners ---
         function onPointerDown(e) {
@@ -527,6 +545,34 @@ document.addEventListener('DOMContentLoaded', () => {
             startPoint = { x: e.clientX || e.touches[0].clientX, y: e.clientY || e.touches[0].clientY };
             lastTranslate = { ...currentTranslate };
             if (e.touches && e.touches.length === 2) initialPinchDistance = getDistance(e.touches);
+        }
+
+        // --- Hint Logic ---
+        const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+        let hintDismissTimer = null;
+
+        function dismissHintOnTap() {
+            const hint = document.querySelector('.canvas-hint');
+            if (hint && !hint.classList.contains('hidden')) {
+                hint.classList.add('hidden');
+                if (hintDismissTimer) {
+                    clearTimeout(hintDismissTimer);
+                }
+                ui.readingCanvas.removeEventListener('pointerdown', dismissHintOnTap, true);
+            }
+        }
+
+        // Set up the listener, but do NOT show the hint here.
+        if (isTouchDevice) {
+            ui.readingCanvas.addEventListener('pointerdown', dismissHintOnTap, true);
+        }
+
+        if (isTouchDevice && ui.canvasHint) {
+            // If it's a touch device, show the hint...
+            ui.canvasHint.style.display = 'block';
+            // ...and attach the "one-shot" tap listener.
+            // We use "capture: true" to make sure it fires before any other pointer events.
+            ui.readingCanvas.addEventListener('pointerdown', dismissHintOnTap, true);
         }
 
         function onPointerUp() {

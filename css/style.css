@@ -875,7 +875,7 @@ The 'rotate(90deg)' is included to preserve the original rotation for spreads li
     }
     
     .canvas-hint {
-        display: block;
+        display: none;
         position: absolute;
         /* ANNOTATION: Positions the hint near the top, not the center. */
         top: 20px; 
