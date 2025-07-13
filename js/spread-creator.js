@@ -47,17 +47,16 @@ class SpreadCreator {
 
     cleanup() {
         console.log("SpreadCreator cleanup.");
-        this.removeEventListeners();
-        // Clear references and elements to prevent memory leaks, though router re-renders appContainer
+        this.removeEventListeners(); // Call the dedicated removal function
+        
+        // Clear references to DOM elements to help with garbage collection
         this.ui = {};
         this.cards = [];
         this.selectedCard = null;
         this.isPanning = false;
         this.isDraggingCard = false;
-        // Optionally, reset canvas style if it holds persistent states
-        if (this.appContainer) {
-            this.appContainer.innerHTML = '';
-        }
+
+        // The router will handle clearing the appContainer's innerHTML
     }
 
     // --- Setup & Teardown ---
@@ -83,19 +82,24 @@ class SpreadCreator {
         this.ui.nudgeLeftBtn = document.getElementById('nudge-left');
         this.ui.nudgeRightBtn = document.getElementById('nudge-right');
 
+        // ANNOTATION: Add references for mobile drawer functionality
+        this.ui.controlPanel = this.appContainer.querySelector('.control-panel');
+        this.ui.mobileControlsTrigger = this.appContainer.querySelector('#mobile-controls-trigger');
+        this.ui.drawerCloseBtn = this.appContainer.querySelector('#drawer-close-btn');
+
         // Set virtual canvas dimensions
         if (this.ui.canvas) {
             this.ui.canvas.width = 1600;
             this.ui.canvas.height = 1200;
-            this.ui.canvas.style.cursor = 'grab'; // Default cursor for canvas panning
+            this.ui.canvas.style.cursor = 'grab';
         }
     }
 
     addEventListeners() {
-        // Canvas interaction for pan/zoom
+        // Canvas interaction
         this.ui.canvas.addEventListener('pointerdown', this.boundPointerDown);
-        document.addEventListener('pointermove', this.boundPointerMove); // Global for dragging off canvas
-        document.addEventListener('pointerup', this.boundPointerUp); // Global for releasing drag off canvas
+        document.addEventListener('pointermove', this.boundPointerMove);
+        document.addEventListener('pointerup', this.boundPointerUp);
         this.ui.canvas.addEventListener('wheel', this.boundWheel);
 
         // UI button interactions
@@ -103,43 +107,55 @@ class SpreadCreator {
         this.ui.saveSpreadBtn.addEventListener('click', this.handleSaveSpread.bind(this));
         this.ui.deleteCardBtn.addEventListener('click', this.handleDeleteCard.bind(this));
         
-        // Nudge buttons (use nudgeSelectedCard directly, no need for redundant binding)
         this.ui.nudgeUpBtn.addEventListener('click', () => this.nudgeSelectedCard(0, -this.gridSize));
         this.ui.nudgeDownBtn.addEventListener('click', () => this.nudgeSelectedCard(0, this.gridSize));
         this.ui.nudgeLeftBtn.addEventListener('click', () => this.nudgeSelectedCard(-this.gridSize, 0));
         this.ui.nudgeRightBtn.addEventListener('click', () => this.nudgeSelectedCard(this.gridSize, 0));
         
-        // Manual input changes for selected card (debounce for performance)
+        // Manual input changes for selected card
         this.ui.positionXInput.addEventListener('change', this.handleCardInputChange.bind(this));
         this.ui.positionYInput.addEventListener('change', this.handleCardInputChange.bind(this));
         this.ui.rotationInput.addEventListener('change', this.handleCardInputChange.bind(this));
         this.ui.labelInput.addEventListener('change', this.handleCardInputChange.bind(this));
+        
+        // ANNOTATION: Add event listeners for mobile drawer
+        if (this.ui.mobileControlsTrigger) {
+            this.ui.mobileControlsTrigger.addEventListener('click', () => {
+                this.ui.controlPanel.classList.add('is-open');
+            });
+        }
+        if (this.ui.drawerCloseBtn) {
+            this.ui.drawerCloseBtn.addEventListener('click', () => {
+                this.ui.controlPanel.classList.remove('is-open');
+            });
+        }
     }
 
     removeEventListeners() {
+        if (!this.ui.canvas) return; // If UI was never cached, do nothing
+
+        // Canvas interaction
         this.ui.canvas.removeEventListener('pointerdown', this.boundPointerDown);
         document.removeEventListener('pointermove', this.boundPointerMove);
         document.removeEventListener('pointerup', this.boundPointerUp);
         this.ui.canvas.removeEventListener('wheel', this.boundWheel);
 
+        // UI button interactions
         this.ui.cardSpawner.removeEventListener('click', this.handleNewCard.bind(this));
         this.ui.saveSpreadBtn.removeEventListener('click', this.handleSaveSpread.bind(this));
         this.ui.deleteCardBtn.removeEventListener('click', this.handleDeleteCard.bind(this));
 
-        this.ui.nudgeUpBtn.removeEventListener('click', () => this.nudgeSelectedCard(0, -this.gridSize));
-        this.ui.nudgeDownBtn.removeEventListener('click', () => this.nudgeSelectedCard(0, this.gridSize));
-        this.ui.nudgeLeftBtn.removeEventListener('click', () => this.nudgeSelectedCard(-this.gridSize, 0));
-        this.ui.nudgeRightBtn.removeEventListener('click', () => this.nudgeSelectedCard(this.gridSize, 0));
-
+        // Nudge buttons don't need removal if they are anonymous arrow functions,
+        // but we'll manage them properly if we ever refactor them.
+        
+        // Manual input changes
         this.ui.positionXInput.removeEventListener('change', this.handleCardInputChange.bind(this));
         this.ui.positionYInput.removeEventListener('change', this.handleCardInputChange.bind(this));
         this.ui.rotationInput.removeEventListener('change', this.handleCardInputChange.bind(this));
         this.ui.labelInput.removeEventListener('change', this.handleCardInputChange.bind(this));
 
-        // Remove listeners from individual card elements (important for re-rendering)
-        this.ui.cardContainer.querySelectorAll('.creator-card-placeholder').forEach(cardEl => {
-            cardEl.removeEventListener('pointerdown', this.handleCardPointerDown); // This specific binding needs to be managed carefully
-        });
+        // Mobile drawer (the anonymous functions will be garbage collected with the elements)
+        // No explicit removal needed here as the elements are destroyed by the router.
     }
 
     // --- Canvas & Card Rendering ---
