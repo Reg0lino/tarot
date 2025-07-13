@@ -103,7 +103,7 @@ class SpreadCreator {
         this.ui.canvas.addEventListener('wheel', this.boundWheel);
 
         // UI button interactions
-        this.ui.cardSpawner.addEventListener('click', this.handleNewCard.bind(this));
+        this.ui.cardSpawner.addEventListener('click', (event) => this.handleNewCard(event));
         this.ui.saveSpreadBtn.addEventListener('click', this.handleSaveSpread.bind(this));
         this.ui.deleteCardBtn.addEventListener('click', this.handleDeleteCard.bind(this));
         
@@ -118,7 +118,7 @@ class SpreadCreator {
         this.ui.rotationInput.addEventListener('change', this.handleCardInputChange.bind(this));
         this.ui.labelInput.addEventListener('change', this.handleCardInputChange.bind(this));
         
-        // ANNOTATION: Add event listeners for mobile drawer
+        // Mobile drawer event listeners
         if (this.ui.mobileControlsTrigger) {
             this.ui.mobileControlsTrigger.addEventListener('click', () => {
                 this.ui.controlPanel.classList.add('is-open');
@@ -127,8 +127,49 @@ class SpreadCreator {
         if (this.ui.drawerCloseBtn) {
             this.ui.drawerCloseBtn.addEventListener('click', () => {
                 this.ui.controlPanel.classList.remove('is-open');
+                // ANNOTATION: Re-center the view on the selected card when the drawer is manually closed.
+                this.centerViewOn(this.selectedCard);
             });
         }
+    }
+
+    /**
+     * Intelligently centers the canvas view.
+     * If a card is provided, it pans to that card.
+     * If no target is provided, it fits all cards in the view.
+     * @param {Object|null} target - The card object to center on, or null to fit all.
+     */
+    centerViewOn(target = null) {
+        if (target && target.x !== undefined && target.y !== undefined) {
+            // Pan to a specific card without changing zoom
+            this.panToVirtualPoint(target.x, target.y);
+        } else {
+            // Fit all current cards into the view
+            this.autoFitToContent();
+        }
+    }
+
+        /**
+     * Pans the canvas to bring a specific virtual coordinate to the center of the viewport.
+     * @param {number} virtualX - The x-coordinate on the virtual canvas.
+     * @param {number} virtualY - The y-coordinate on the virtual canvas.
+     */
+    panToVirtualPoint(virtualX, virtualY) {
+        const viewportWidth = this.ui.canvas.clientWidth;
+        const viewportHeight = this.ui.canvas.clientHeight;
+
+        const targetScreenX = viewportWidth / 2;
+        const targetScreenY = viewportHeight / 2;
+
+        const currentScreenX = (virtualX * this.canvasState.scale) + this.canvasState.x;
+        const currentScreenY = (virtualY * this.canvasState.scale) + this.canvasState.y;
+
+        const dx = targetScreenX - currentScreenX;
+        const dy = targetScreenY - currentScreenY;
+
+        this.canvasState.x += dx;
+        this.canvasState.y += dy;
+        this.applyTransform();
     }
 
     removeEventListeners() {
@@ -383,70 +424,84 @@ class SpreadCreator {
 
     // --- Card Creation & Manipulation ---
 
-    handleNewCard() {
+    handleNewCard(mouseEvent) {
         const newId = this.cards.length > 0 ? Math.max(...this.cards.map(c => c.id)) + 1 : 1;
         
+        // Calculate spawn position: center of the current viewport
+        const canvasRect = this.ui.canvas.getBoundingClientRect();
+        const viewportCenterX = canvasRect.width / 2;
+        const viewportCenterY = canvasRect.height / 2;
+
+        // Convert screen center to virtual canvas coordinates
+        const virtualX = (viewportCenterX - this.canvasState.x) / this.canvasState.scale;
+        const virtualY = (viewportCenterY - this.canvasState.y) / this.canvasState.scale;
+        
+        const snappedX = Math.round(virtualX / this.gridSize) * this.gridSize;
+        const snappedY = Math.round(virtualY / this.gridSize) * this.gridSize;
+
         const newCard = {
             id: newId,
-            x: 800, // Center of 1600px canvas
-            y: 600, // Center of 1200px canvas
+            x: snappedX,
+            y: snappedY,
             rotation: 0,
             label: `Card ${newId}`
         };
 
         this.cards.push(newCard);
         this.renderCards();
-        this.selectCard(newCard.id);
+        this.selectCard(newCard); // Pass the full card object
 
-        console.log(`[SpreadCreator] Added new card: ID=${newCard.id}, X=${newCard.x}, Y=${newCard.y}, Label="${newCard.label}"`);
-        
-        // ANNOTATION: Pan to the newly added card (without zooming)
-        this.panToVirtualPoint(newCard.x, newCard.y);
+        console.log(`[SpreadCreator] Added new card: ID=${newCard.id}, X=${newCard.x}, Y=${newCard.y}`);
+
+        // Auto-close the mobile drawer if it's open
+        if (this.ui.controlPanel && this.ui.controlPanel.classList.contains('is-open')) {
+            this.ui.controlPanel.classList.remove('is-open');
+        }
     }
 
     handleCardPointerDown(e, cardId) {
-        e.stopPropagation(); // Prevent canvas panning from starting when clicking a card
-        this.selectCard(cardId); // Select the clicked card
+        e.stopPropagation(); // Prevent canvas panning
+        
+        // ANNOTATION: Find the full card object from the ID
+        const cardToSelect = this.cards.find(c => c.id === cardId);
+        if (!cardToSelect) return;
 
-        this.isDraggingCard = true; // Set card dragging state
-        const point = e.touches ? e.touches[0] : e; // Get consistent pointer coordinates
+        this.selectCard(cardToSelect); // Pass the full object, not just the ID
+
+        this.isDraggingCard = true;
+        const point = e.touches ? e.touches[0] : e;
 
         const canvasRect = this.ui.canvas.getBoundingClientRect();
-        // Convert current screen mouse position to virtual canvas coordinates
         const virtualMouseX = (point.clientX - canvasRect.left - this.canvasState.x) / this.canvasState.scale;
         const virtualMouseY = (point.clientY - canvasRect.top - this.canvasState.y) / this.canvasState.scale;
 
-        // Calculate offset from current mouse position to the card's center
-        // This offset is used to maintain relative position during drag
         this.dragOffset.x = this.selectedCard.x - virtualMouseX;
         this.dragOffset.y = this.selectedCard.y - virtualMouseY;
         
-        // Change cursor while dragging a card (optional, but good UX)
         const selectedEl = this.ui.cardContainer.querySelector(`[data-card-id="${cardId}"]`);
         if (selectedEl) {
             selectedEl.style.cursor = 'grabbing';
         }
     }
 
-    selectCard(cardId) {
+    selectCard(cardObject) {
         // Deselect any currently selected card visually
-        this.ui.cardContainer.querySelectorAll('.creator-card-placeholder').forEach(el => {
+        this.ui.cardContainer.querySelectorAll('.creator-card-placeholder.selected').forEach(el => {
             el.classList.remove('selected');
-            el.style.cursor = 'grab'; // Ensure all non-selected cards have grab cursor
         });
 
-        // Select the new card if cardId is provided, otherwise deselect all
-        if (cardId !== null) {
-            this.selectedCard = this.cards.find(c => c.id === cardId);
-            const selectedEl = this.ui.cardContainer.querySelector(`[data-card-id="${cardId}"]`);
+        this.selectedCard = cardObject; // Directly assign the object or null
+
+        if (this.selectedCard) {
+            const selectedEl = this.ui.cardContainer.querySelector(`[data-card-id="${this.selectedCard.id}"]`);
             if (selectedEl) {
                 selectedEl.classList.add('selected');
-                selectedEl.style.cursor = 'grab'; // Selected card also starts with grab cursor
             }
-        } else {
-            this.selectedCard = null;
+            // Center the view on the newly selected card.
+            this.centerViewOn(this.selectedCard);
         }
-        this.updateSelectedCardUI(); // Update UI to reflect selection/deselection
+        
+        this.updateSelectedCardUI();
     }
 
     updateSelectedCardUI() {
@@ -578,12 +633,14 @@ class SpreadCreator {
             }));
             this.ui.spreadNameInput.value = spreadToLoad.name;
             this.ui.spreadDescriptionInput.value = spreadToLoad.description;
-            this.selectedCard = null;
+            
             this.renderCards();
+            this.selectCard(null); // Deselect any card after loading
             this.updateSelectedCardUI();
+            
             alert(`Spread "${spreadToLoad.name}" loaded.`);
-            // ANNOTATION: Re-enabled autoFitToContent() for loading entire spreads, as it's useful here.
-            this.autoFitToContent(); 
+            // ANNOTATION: Fit all cards from the loaded spread into the view.
+            this.centerViewOn(null); 
         } else {
             alert("Spread not found.");
         }

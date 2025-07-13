@@ -320,6 +320,11 @@ document.addEventListener('DOMContentLoaded', () => {
         let isPanning = false;
         let startPoint = { x: 0, y: 0 };
         let lastPanPosition = { x: 0, y: 0 };
+
+        // ANNOTATION: New state variables for pinch-to-zoom
+        let isPinching = false;
+        let initialPinchDistance = 0;
+
         let hintDismissTimer = null;
         const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
@@ -587,25 +592,91 @@ document.addEventListener('DOMContentLoaded', () => {
         function onPointerDown(e) {
             if (e.target.closest('.tarot-card')) return;
             e.preventDefault();
-            isPanning = true;
-            const point = e.touches ? e.touches[0] : e;
-            startPoint = { x: point.clientX, y: point.clientY };
-            lastPanPosition = { x: canvasState.x, y: canvasState.y };
+
+            if (e.touches) {
+                if (e.touches.length === 1) {
+                    // --- Start Panning ---
+                    isPanning = true;
+                    isPinching = false;
+                    const point = e.touches[0];
+                    startPoint = { x: point.clientX, y: point.clientY };
+                    lastPanPosition = { x: canvasState.x, y: canvasState.y };
+                } else if (e.touches.length === 2) {
+                    // --- Start Pinching ---
+                    isPinching = true;
+                    isPanning = false;
+                    initialPinchDistance = Math.hypot(
+                        e.touches[0].clientX - e.touches[1].clientX,
+                        e.touches[0].clientY - e.touches[1].clientY
+                    );
+                }
+            } else {
+                // --- Mouse Panning ---
+                isPanning = true;
+                const point = e;
+                startPoint = { x: point.clientX, y: point.clientY };
+                lastPanPosition = { x: canvasState.x, y: canvasState.y };
+            }
         }
 
         function onPointerMove(e) {
-            if (!isPanning) return;
+            if (!isPanning && !isPinching) return;
             e.preventDefault();
-            const point = e.touches ? e.touches[0] : e;
-            const dx = point.clientX - startPoint.x;
-            const dy = point.clientY - startPoint.y;
-            canvasState.x = lastPanPosition.x + dx;
-            canvasState.y = lastPanPosition.y + dy;
-            applyTransform();
+
+            if (e.touches) {
+                if (e.touches.length === 1 && isPanning) {
+                    // --- Panning Logic ---
+                    const point = e.touches[0];
+                    const dx = point.clientX - startPoint.x;
+                    const dy = point.clientY - startPoint.y;
+                    canvasState.x = lastPanPosition.x + dx;
+                    canvasState.y = lastPanPosition.y + dy;
+                    applyTransform();
+                } else if (e.touches.length === 2 && isPinching) {
+                    // --- Pinching Logic ---
+                    const newPinchDistance = Math.hypot(
+                        e.touches[0].clientX - e.touches[1].clientX,
+                        e.touches[0].clientY - e.touches[1].clientY
+                    );
+                    const zoomFactor = newPinchDistance / initialPinchDistance;
+                    
+                    const oldScale = canvasState.scale;
+                    let newScale = oldScale * zoomFactor;
+                    newScale = Math.max(0.1, Math.min(newScale, 10)); // Clamp scale
+
+                    // Zoom from the center of the pinch
+                    const midpointX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+                    const midpointY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+                    const canvasRect = ui.readingCanvas.getBoundingClientRect();
+                    
+                    const mouseX = midpointX - canvasRect.left;
+                    const mouseY = midpointY - canvasRect.top;
+
+                    const worldX = (mouseX - canvasState.x) / oldScale;
+                    const worldY = (mouseY - canvasState.y) / oldScale;
+
+                    canvasState.x = mouseX - (worldX * newScale);
+                    canvasState.y = mouseY - (worldY * newScale);
+                    canvasState.scale = newScale;
+
+                    applyTransform();
+                    // Update for next move event
+                    initialPinchDistance = newPinchDistance;
+                }
+            } else if (isPanning) {
+                // --- Mouse Panning Logic ---
+                const point = e;
+                const dx = point.clientX - startPoint.x;
+                const dy = point.clientY - startPoint.y;
+                canvasState.x = lastPanPosition.x + dx;
+                canvasState.y = lastPanPosition.y + dy;
+                applyTransform();
+            }
         }
 
         function onPointerUp() {
             isPanning = false;
+            isPinching = false;
         }
 
         function onWheel(e) {
