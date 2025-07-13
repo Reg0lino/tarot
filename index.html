@@ -58,7 +58,7 @@
         </div>
     </template>
 
-    <template id="view-reading-room">
+        <template id="view-reading-room">
         <div class="reading-room-layout">
             <aside class="control-panel">
     <button id="drawer-close-btn" class="close-modal">×</button>
@@ -66,10 +66,14 @@
     <section class="control-section">
         <h3>1. Select a Spread</h3>
         <div id="spread-selection" class="control-group"></div>
+        <!-- 
+            ANNOTATION: The custom spread controls are now commented out.
+            This effectively disables the feature from the UI until it is ready.
         <div id="custom-spread-controls" class="control-group hidden">
             <label>Number of Cards: <input type="number" id="custom-card-count" min="1" max="78" value="5"></label>
             <label>Arrange in rows of: <input type="number" id="custom-row-count" min="1" max="20" value="5"></label>
         </div>
+        -->
         <p id="spread-info-text" class="spread-info-text"></p>
     </section>
 

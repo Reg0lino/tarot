@@ -338,7 +338,7 @@ class ShuffleController {
                 requestAnimationFrame(() => {
                     finalCardWrapper.style.top = `${endRect.top}px`;
                     finalCardWrapper.style.left = `${endRect.left}px`;
-                    finalCardWrapper.style.transform = getComputedStyle(placeholder).transform;
+                    finalCardWrapper.style.transform = '';
                 });
             }, 100 * index);
 

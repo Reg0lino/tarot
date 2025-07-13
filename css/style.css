@@ -456,22 +456,74 @@ input[type="range"] { flex-grow: 1; }
 /* |                       6. CARD STYLING                         | */
 /* ----------------------------------------------------------------- */
 
-.reading-cloth { 
-    display: grid; 
-    justify-content: center; 
-    align-content: start; 
-    align-items: center; 
-    width: 100%; 
-    min-height: 100%; /*   Allows the canvas to grow taller than the screen to fit long spreads. */
-    transition: transform 0.3s ease-out; 
-    transform-origin: center center; 
-    touch-action: none; 
-    padding: 2rem;
-    box-sizing: border-box;
+.reading-cloth {
+    position: relative; /* ANNOTATION: Establishes the canvas for absolute positioning. */
+    width: 100%;
+    min-height: 100%;
+    transition: transform 0.3s ease-out;
+    transform-origin: center center;
+    touch-action: none;
 }
-.position-container { position: relative; width: 120px; height: 210px; }
+.position-container {
+    position: absolute; /* ANNOTATION: Allows each card to be placed by top/left coordinates. */
+    width: 120px;
+    height: 210px;
+}
 .position-label { position: absolute; bottom: -25px; left: 50%; transform: translateX(-50%); width: 150%; text-align: center; font-size: 0.8rem; color: var(--text-light); opacity: 0.7; transition: opacity 0.3s; pointer-events: none; }
 .position-container:hover .position-label { opacity: 1; font-weight: bold; }
+
+/* The container for the overlapping cards */
+.overlap-group {
+    cursor: pointer; /* Indicate it's interactive */
+}
+
+/* Base transition for ALL position-containers within an overlap-group */
+.overlap-group .position-container {
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.4s ease-out; /* Smooth transition */
+}
+
+/* NEW/UPDATED: Base state for the top overlapping card (for animation) */
+.overlap-top-card {
+    /* ANNOTATION: This defines the starting point for animation for translateY and rotateZ. */
+    /* The base rotation (e.g., rotate(90deg)) will come from its .rotate-XXX class and combine. */
+    transform: translateY(0) rotateZ(0);
+    z-index: 2;
+}
+
+/* When hovering over the group, the top card slides away and fades out */
+.overlap-group:hover .overlap-top-card {
+    /* ANNOTATION: Apply additional transforms. These will combine with the base rotation class. */
+    transform: translateY(-120px) rotateZ(15deg); /* Adjust slide/turn amounts as needed */
+    opacity: 0.65; /* Desired transparency */
+    z-index: 10; /* Ensure it's above during animation */
+}
+
+/* When hovering over the group, the bottom card becomes fully visible and stays put */
+.overlap-group:hover .overlap-bottom-card {
+    opacity: 1; /* Ensure full visibility */
+    transform: translateY(0); /* Ensure it doesn't move */
+    z-index: 9; /* Keep it below the top card's animation */
+}
+
+/* Ensure the initial z-index for the bottom card */
+.overlap-bottom-card {
+    z-index: 1;
+}
+
+/* ANNOTATION: New base rotation classes (used by JS instead of inline styles) */
+.rotate-0 {
+    transform: rotate(0deg);
+}
+.rotate-90 {
+    transform: rotate(90deg);
+}
+.rotate-180 {
+    transform: rotate(180deg);
+}
+.rotate-270 {
+    transform: rotate(270deg);
+}
+
 /*   In blueprint mode, make labels fully opaque and add a shadow for readability. */
 .blueprint-mode .position-label {
     opacity: 1;
@@ -513,138 +565,7 @@ input[type="range"] { flex-grow: 1; }
 }
 
 /* ----------------------------------------------------------------- */
-/* |                       7. SPREAD LAYOUTS                       | */
-/* ----------------------------------------------------------------- */
-
-.layout-one-card { display: flex; }
-
-.layout-three-card {
-    display: flex;
-    gap: 1.5rem;
-    justify-content: center; /* Horizontally centers the cards */
-    align-items: center;    /* Vertically centers the cards */
-    height: 100%;           /*   This is the key. It makes the container fill the vertical space, allowing align-items to work. */
-}
-.layout-custom { display: grid; justify-content: center; gap: 1.5rem; }
-/* --- Horseshoe Spread Layout --- */
-.layout-horseshoe {
-    display: grid;
-    grid-template-columns: repeat(7, auto);
-    grid-template-rows: repeat(4, auto);
-    gap: 1.5rem 1rem;
-    align-items: center;
-}
-.layout-horseshoe .pos-1 { grid-area: 1 / 1; }
-.layout-horseshoe .pos-2 { grid-area: 2 / 2; }
-.layout-horseshoe .pos-3 { grid-area: 3 / 3; }
-.layout-horseshoe .pos-4 { grid-area: 4 / 4; }
-.layout-horseshoe .pos-5 { grid-area: 3 / 5; }
-.layout-horseshoe .pos-6 { grid-area: 2 / 6; }
-.layout-horseshoe .pos-7 { grid-area: 1 / 7; }
-
-/* --- Relationship Spread Layout --- */
-.layout-relationship {
-    display: grid;
-    grid-template-columns: repeat(3, auto);
-    grid-template-rows: repeat(3, auto);
-    /*   Sets row-gap to 1.5rem and column-gap to a wider 5rem to prevent overlap. */
-    gap: 1.5rem 5rem; 
-}
-.layout-relationship .pos-1 { grid-area: 2 / 1; }
-.layout-relationship .pos-2 { grid-area: 2 / 3; }
-.layout-relationship .pos-3 { grid-area: 2 / 2; transform: rotate(90deg); }
-.layout-relationship .pos-4 { grid-area: 3 / 2; }
-.layout-relationship .pos-5 { grid-area: 1 / 2; }
-
-/* --- Success Spread Layout --- */
-.layout-success {
-    display: grid;
-    grid-template-columns: repeat(3, auto);
-    grid-template-rows: repeat(3, auto);
-    gap: 1.5rem;
-}
-.layout-success .pos-1 { grid-area: 2 / 2; }
-.layout-success .pos-2 { grid-area: 2 / 1; }
-.layout-success .pos-3 { grid-area: 1 / 2; }
-.layout-success .pos-4 { grid-area: 2 / 3; }
-.layout-success .pos-5 { grid-area: 3 / 2; }
-
-/* --- Four Card Cross Layout --- */
-.layout-four-card-cross {
-    display: grid;
-    grid-template-columns: repeat(3, auto);
-    grid-template-rows: repeat(2, auto);
-    gap: 1.5rem;
-    align-items: center; /* Vertically align items in the grid cells */
-}
-.layout-four-card-cross .pos-1 { grid-area: 1 / 1 / span 2 / span 1; }
-.layout-four-card-cross .pos-2 { grid-area: 1 / 3 / span 2 / span 1; }
-.layout-four-card-cross .pos-3 { grid-area: 1 / 2; }
-.layout-four-card-cross .pos-4 { grid-area: 2 / 2; }
-
-/* Complex Spreads */
-.overlap-group { 
-    position: relative; 
-    width: 120px; 
-    height: 210px; 
-    grid-area: inherit; 
-}
-.overlap-group .position-container { 
-    position: absolute; 
-    top: 0; 
-    left: 0; 
-    /*   Add a transition to animate the card smoothly when it moves. */
-    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-/* 
-This is the new hover effect.
-It targets the top card within the group and applies a transform to slide it
-horizontally, revealing the card underneath while remaining clickable.
-The 'rotate(90deg)' is included to preserve the original rotation for spreads like the Celtic Cross.
-*/
-.layout-celtic-cross .overlap-group:hover .position-container.top-card {
-    transform: rotate(90deg) translateX(80%);
-}
-.layout-safe-passage .overlap-group:hover .position-container.top-card {
-    transform: rotate(90deg) translateX(80%);
-}
-.layout-safe-passage { grid-template-columns: repeat(5, auto); grid-template-rows: repeat(3, auto); gap: 2.5rem 1.5rem; }
-.layout-safe-passage .pos-1 { z-index: 2; }
-.layout-safe-passage .pos-7 { transform: rotate(90deg); z-index: 1; }
-.layout-safe-passage [class*="pos-"] { justify-self: center; align-self: center; }
-.layout-safe-passage .overlap-group { grid-area: 2 / 3; }
-.layout-safe-passage .pos-2 { grid-area: 3 / 3; } 
-.layout-safe-passage .pos-3 { grid-area: 1 / 2; } 
-.layout-safe-passage .pos-4 { grid-area: 1 / 4; } 
-.layout-safe-passage .pos-5 { grid-area: 2 / 1; } 
-.layout-safe-passage .pos-6 { grid-area: 2 / 5; }
-.layout-celtic-cross { grid-template-columns: repeat(4, auto); grid-template-rows: repeat(4, auto); gap: 3rem 3.5rem; }
-.layout-celtic-cross [class*="pos-"] { justify-self: center; align-self: center; }
-.layout-celtic-cross .overlap-group { grid-area: 2 / 2 / 4 / 3; }
-.layout-celtic-cross .pos-1 { z-index: 1; }
-.layout-celtic-cross .pos-2 { transform: rotate(90deg); z-index: 2; }
-.layout-celtic-cross .pos-3 { grid-area: 1 / 2; } 
-.layout-celtic-cross .pos-4 { grid-area: 4 / 2; } 
-.layout-celtic-cross .pos-5 { grid-area: 2 / 1 / 4 / 1; } 
-.layout-celtic-cross .pos-6 { grid-area: 2 / 3 / 4 / 4; } 
-.layout-celtic-cross .pos-7 { grid-area: 4 / 4; } 
-.layout-celtic-cross .pos-8 { grid-area: 3 / 4; } 
-.layout-celtic-cross .pos-9 { grid-area: 2 / 4; } 
-.layout-celtic-cross .pos-10 { grid-area: 1 / 4; }
-
-/* --- Chakra Spread Layout --- */
-
-.layout-chakra-spread {
-    display: flex;
-    /*   Reverses the stacking order to build from bottom (1) to top (7). */
-    flex-direction: column-reverse;
-    align-items: center;
-    /*   Reduced the gap to make the vertical layout more compact. */
-    gap: 1.5rem;
-}
-
-/* ----------------------------------------------------------------- */
-/* |                  7a. SHUFFLE ZONE MODAL                       | */
+/* |                  7. SHUFFLE ZONE MODAL                       | */
 /* ----------------------------------------------------------------- */
 
 .shuffle-zone-content {

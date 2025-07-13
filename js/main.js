@@ -18,120 +18,117 @@ document.addEventListener('DOMContentLoaded', () => {
             name: 'One Card',
             cardCount: 1,
             description: 'A single card for quick insight.',
-            layoutClass: 'layout-one-card',
-            positions: [{ label: '1. The Card' }]
+            positions: [
+                { label: '1. The Card', y: 600, x: 800 }
+            ]
         },
         'three-card': {
             name: 'Three Card',
             cardCount: 3,
             description: 'A simple spread for exploring a path.',
-            layoutClass: 'layout-three-card',
-            positions: [{ label: '1. The Past' },
-                { label: '2. The Present' },
-                { label: '3. The Future' }
-            ]
-        },
-        'safe-passage': {
-            name: 'Safe Passage (Modern)',
-            cardCount: 7,
-            description: 'A modern, fictional spread. It has no historical basis and is provided for creative exploration based on the pentagram layout from "Agatha All Along".',
-            layoutClass: 'layout-safe-passage',
-            positions: [{ label: '1. The Traveler' },
-                { label: '2. What\'s Missing' },
-                { label: '3. The Path Behind' },
-                { label: '4. The Path Ahead' },
-                { label: '5. Obstacles' },
-                { label: '6. Potential Windfall' },
-                { label: '7. The Destination' }
-            ],
-            overlapGroups: [
-                [1, 7]
+            positions: [
+                { label: '1. The Past', y: 600, x: 600 },
+                { label: '2. The Present', y: 600, x: 800 },
+                { label: '3. The Future', y: 600, x: 1000 }
             ]
         },
         'celtic-cross': {
             name: 'Celtic Cross',
             cardCount: 10,
             description: 'A comprehensive spread for a deep analysis of a situation.',
-            layoutClass: 'layout-celtic-cross',
-            positions: [{ label: '1. Current energy' },
-                { label: '2. The challenge' },
-                { label: '3. Conscious beliefs' },
-                { label: '4. Subconscious beliefs' },
-                { label: '5. The past' },
-                { label: '6. The future' },
-                { label: '7. Best approach' },
-                { label: '8. External influences' },
-                { label: '9. Hopes and fears' },
-                { label: '10. The outcome' }
-            ],
-            overlapGroups: [
-                [1, 2]
+            overlapGroups: [[1, 2]],
+            positions: [
+                // Core Cross
+                { label: '1. Current energy', y: 600, x: 700 }, // Anchor for overlap group (bottom card)
+                { label: '2. The challenge', y: 600, x: 700, rotation: 90 }, // Overlaps 1 (top card)
+                { label: '3. Conscious beliefs', y: 350, x: 700 },
+                { label: '4. Subconscious beliefs', y: 850, x: 700 },
+                { label: '5. The past', y: 600, x: 500 },
+                { label: '6. The future', y: 600, x: 900 },
+                // Staff
+                { label: '7. Best approach', y: 950, x: 1100 },
+                { label: '8. External influences', y: 700, x: 1100 },
+                { label: '9. Hopes and fears', y: 450, x: 1100 },
+                { label: '10. The outcome', y: 200, x: 1100 }
             ]
         },
         'horseshoe': {
             name: 'Horseshoe Spread',
             cardCount: 7,
             description: 'A classic spread for a detailed overview of a situation\'s progression.',
-            layoutClass: 'layout-horseshoe',
             positions: [
-                { label: '1. Past Influences' }, { label: '2. Present Circumstances' },
-                { label: '3. Upcoming Influences' }, { label: '4. Best Course of Action' },
-                { label: '5. The Attitude of Others' }, { label: '6. Possible Obstacles' },
-                { label: '7. Final Outcome' }
+                { label: '1. Past Influences', y: 300, x: 500 },
+                { label: '2. Present Circumstances', y: 550, x: 500 },
+                { label: '3. Upcoming Influences', y: 800, x: 600 },
+                { label: '4. Best Course of Action', y: 900, x: 800 },
+                { label: '5. The Attitude of Others', y: 800, x: 1000 },
+                { label: '6. Possible Obstacles', y: 550, x: 1100 },
+                { label: '7. Final Outcome', y: 300, x: 1100 }
             ]
         },
         'relationship': {
             name: 'Relationship Spread',
             cardCount: 5,
             description: 'Explores the dynamics between two people in a relationship.',
-            layoutClass: 'layout-relationship',
             positions: [
-                { label: '1. You' }, { label: '2. The Other Person' },
-                { label: '3. The Relationship' }, { label: '4. The Past' },
-                { label: '5. The Future' }
+                { label: '1. You', y: 600, x: 600 },
+                { label: '2. The Other Person', y: 600, x: 1010 },
+                { label: '3. The Relationship', y: 550, x: 860, rotation: 90 }, // ANNOTATION: Slightly adjusted X for visual centering
+                { label: '4. The Past', y: 800, x: 800 },
+                { label: '5. The Future', y: 380, x: 800 }
             ]
         },
         'success': {
             name: 'Success Spread',
             cardCount: 5,
             description: 'Provides insight on achieving a specific goal or ambition.',
-            layoutClass: 'layout-success',
             positions: [
-                { label: '1. Central Issue' }, { label: '2. Obstacles' },
-                { label: '3. Assistance' }, { label: '4. How to Improve' },
-                { label: '5. Underlying Factors' }
+                { label: '1. Central Issue', y: 600, x: 800 },
+                { label: '2. Obstacles', y: 600, x: 600 },
+                { label: '3. Assistance', y: 300, x: 800 },
+                { label: '4. How to Improve', y: 600, x: 1000 },
+                { label: '5. Underlying Factors', y: 900, x: 800 }
             ]
         },
         'four-card-cross': {
             name: 'Four Card Cross',
             cardCount: 4,
             description: 'A balanced spread for understanding a situation, its challenges, and its potential.',
-            layoutClass: 'layout-four-card-cross',
             positions: [
-                { label: 'Position 1' }, { label: 'Position 2' },
-                { label: 'Position 3' }, { label: 'Position 4' }
+                { label: 'Position 1', y: 600, x: 600 },
+                { label: 'Position 2', y: 450, x: 800 },
+                { label: 'Position 3', y: 600, x: 1000 },
+                { label: 'Position 4', y: 750, x: 800 }
             ]
         },
         'chakra-spread': {
             name: 'Chakra Spread',
             cardCount: 7,
             description: 'For the assessment of overall health and well-being.',
-            layoutClass: 'layout-chakra-spread',
             positions: [
-                { label: '1. Root Chakra: Foundation' },
-                { label: '2. Sacral Chakra: Resources & Relationships' },
-                { label: '3. Solar Plexus Chakra: Identity' },
-                { label: '4. Heart Chakra: Love' },
-                { label: '5. Throat Chakra: Self Expression' },
-                { label: '6. Third Eye: Wisdom' },
-                { label: '7. Crown Chakra: Spiritual Awareness' }
+                { label: '1. Root Chakra: Foundation', y: 1050, x: 800 },
+                { label: '2. Sacral Chakra: Resources & Relationships', y: 800, x: 800 },
+                { label: '3. Solar Plexus Chakra: Identity', y: 550, x: 800 },
+                { label: '4. Heart Chakra: Love', y: 300, x: 800 },
+                { label: '5. Throat Chakra: Self Expression', y: 50, x: 800 },
+                { label: '6. Third Eye: Wisdom', y: -200, x: 800 },
+                { label: '7. Crown Chakra: Spiritual Awareness', y: -450, x: 800 }
             ]
         },
-        'custom': {
-            name: 'Custom Spread',
-            cardCount: 0,
-            description: 'A flexible layout you design yourself.',
-            layoutClass: 'layout-custom'
+        'safe-passage': {
+            name: 'Safe Passage (Modern)',
+            cardCount: 7,
+            description: 'A modern, fictional spread based on the pentagram spread in the show "Agatha All Along".',
+            overlapGroups: [[1, 7]],
+            positions: [
+                { label: '1. The Traveler', y: 600, x: 800 }, // Anchor for overlap group (bottom card)
+                { label: '2. What\'s Missing', y: 900, x: 800 },
+                { label: '3. The Path Behind', y: 300, x: 550 },
+                { label: '4. The Path Ahead', y: 300, x: 1050 },
+                { label: '5. Obstacles', y: 600, x: 450 },
+                { label: '6. Potential Windfall', y: 600, x: 1150 },
+                { label: '7. The Destination', y: 600, x: 800, rotation: 90 } // Overlaps 1 (top card)
+            ]
         }
     };
 
@@ -237,7 +234,6 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
-
     // -----------------------------------------------------------------
     // |                3. VIEW INITIALIZATION LOGIC                   |
     // -----------------------------------------------------------------
@@ -291,15 +287,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function initReadingRoomView() {
 
-        // --- 1. Scoped State & Variables ---
+        // --- 1. View-Specific State & Elements ---
         const settingsKey = 'openTarotSettings';
         let selectedSpreadKey = 'one-card';
-        let scale = 1,
-            panning = false,
-            initialPinchDistance = null;
-        let startPoint = { x: 0, y: 0 },
-            currentTranslate = { x: 0, y: 0 },
-            lastTranslate = { x: 0, y: 0 };
 
         const ui = {
             spreadSelection: document.getElementById('spread-selection'),
@@ -325,20 +315,201 @@ document.addEventListener('DOMContentLoaded', () => {
             clothSelection: document.getElementById('cloth-selection'),
             sizeSlider: document.getElementById('layout-size-slider'),
             sliderValue: document.getElementById('slider-value'),
-            resetSizeBtn: document.getElementById('reset-size-btn')
+            resetSizeBtn: document.getElementById('reset-size-btn'),
+            canvasHint: document.querySelector('.canvas-hint')
         };
 
         window.openModal = openModal;
 
-        // --- 2. Helper Functions ---
+        // --- 2. State Management & Core Logic ---
+
+        const canvasState = { x: 0, y: 0, scale: 1 };
+        let isPanning = false;
+        let startPoint = { x: 0, y: 0 };
+        let lastPanPosition = { x: 0, y: 0 };
+        let hintDismissTimer = null;
+        const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
         function applyTransform() {
             if (ui.readingCloth) {
-                ui.readingCloth.style.transform = `translate(${currentTranslate.x}px, ${currentTranslate.y}px) scale(${scale})`;
+                ui.readingCloth.style.transformOrigin = 'top left';
+                ui.readingCloth.style.transform = `translate(${canvasState.x}px, ${canvasState.y}px) scale(${canvasState.scale})`;
             }
         }
 
-        function getDistance(touches) {
-            return Math.hypot(touches[0].clientX - touches[1].clientX, touches[0].clientY - touches[1].clientY);
+        function autoFitSpread() {
+            setTimeout(() => {
+                const spread = spreads[selectedSpreadKey];
+                const container = ui.readingCanvas;
+
+                if (!spread || !spread.positions || spread.positions.length === 0 || !container) {
+                    // If no positions (e.g., custom with 0 cards) or container missing, reset transform
+                    canvasState.x = 0;
+                    canvasState.y = 0;
+                    canvasState.scale = 1;
+                    applyTransform();
+                    ui.sliderValue.textContent = '100%';
+                    ui.sizeSlider.value = 100;
+                    return;
+                }
+
+                let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+                const cardBaseWidth = 120;
+                const cardBaseHeight = 210;
+
+                spread.positions.forEach(posData => {
+                    let currentCardWidth = cardBaseWidth;
+                    let currentCardHeight = cardBaseHeight;
+
+                    // Account for rotation when calculating bounding box
+                    if (posData.rotation === 90 || posData.rotation === 270) {
+                        [currentCardWidth, currentCardHeight] = [cardBaseHeight, cardBaseWidth];
+                    }
+
+                    // Calculate the top-left corner of the card's visual space based on its center 'x, y' from the spreads data
+                    const cardLeft = posData.x - (currentCardWidth / 2);
+                    const cardTop = posData.y - (currentCardHeight / 2);
+
+                    minX = Math.min(minX, cardLeft);
+                    minY = Math.min(minY, cardTop);
+                    maxX = Math.max(maxX, cardLeft + currentCardWidth);
+                    maxY = Math.max(maxY, cardTop + currentCardHeight);
+                });
+
+                const contentWidth = maxX - minX;
+                const contentHeight = maxY - minY;
+                const viewportWidth = container.clientWidth;
+                const viewportHeight = container.clientHeight;
+
+                if (contentWidth === 0 || contentHeight === 0) return; // Should not happen with valid spreads
+
+                const PADDING = 80; // Padding around the spread
+                const scaleX = (viewportWidth - PADDING) / contentWidth;
+                const scaleY = (viewportHeight - PADDING) / contentHeight;
+                const newScale = Math.min(scaleX, scaleY);
+
+                // Calculate the center of the spread content
+                const contentCenterX = minX + contentWidth / 2;
+                const contentCenterY = minY + contentHeight / 2;
+
+                // Calculate new pan positions to center the spread within the viewport
+                canvasState.x = (viewportWidth / 2) - (contentCenterX * newScale);
+                canvasState.y = (viewportHeight / 2) - (contentCenterY * newScale);
+                canvasState.scale = newScale;
+
+                applyTransform();
+
+                ui.sliderValue.textContent = `${Math.round(canvasState.scale * 100)}%`;
+                ui.sizeSlider.value = canvasState.scale * 100;
+
+                if (isTouchDevice) {
+                    const hint = ui.canvasHint;
+                    if (hint) {
+                        hint.style.display = 'block';
+                        hintDismissTimer = setTimeout(() => {
+                            if (!hint.classList.contains('hidden')) {
+                                hint.classList.add('hidden');
+                                ui.readingCanvas.removeEventListener('pointerdown', dismissHintOnTap, true);
+                            }
+                        }, 5000);
+                    }
+                }
+            }, 100); // Small delay to ensure DOM is ready and clientWidth/Height are accurate
+        }
+
+        function drawSpreadBlueprint() {
+            const spread = { ...spreads[selectedSpreadKey] };
+            const cloth = ui.readingCloth;
+
+            cloth.innerHTML = '';
+            ui.readingCanvas.classList.add('blueprint-mode');
+            if (ui.canvasPlaceholder) ui.canvasPlaceholder.style.display = 'block';
+
+            if (spread.positions) {
+                cloth.style.position = 'relative'; // Cloth must be relative for absolute children
+                cloth.style.width = '1600px';
+                cloth.style.height = '1200px';
+                cloth.style.display = 'block';
+                cloth.style.padding = '0';
+                cloth.style.gap = '0';
+                cloth.style.gridTemplateColumns = 'none';
+
+                const placedIndices = new Set();
+                if (spread.overlapGroups) {
+                    spread.overlapGroups.forEach(group => {
+                        const groupAnchorCardData = spread.positions[group[0] - 1]; // The first card in the group defines the group's position
+                        const groupContainer = document.createElement('div');
+                        groupContainer.className = 'overlap-group';
+                        groupContainer.style.position = 'absolute'; // Position the group container absolutely
+
+                        // Calculate group container's top-left based on the anchor card's center
+                        let anchorCardWidth = 120;
+                        let anchorCardHeight = 210;
+                        if (groupAnchorCardData.rotation === 90 || groupAnchorCardData.rotation === 270) {
+                            [anchorCardWidth, anchorCardHeight] = [anchorCardHeight, anchorCardWidth];
+                        }
+                        groupContainer.style.top = `${groupAnchorCardData.y - (anchorCardHeight / 2)}px`;
+                        groupContainer.style.left = `${groupAnchorCardData.x - (anchorCardWidth / 2)}px`;
+                        
+                        group.forEach((posIndex, idx) => {
+                            const actualCardData = spread.positions[posIndex - 1];
+                            const positionEl = createPositionElement(posIndex, {
+                                label: actualCardData.label,
+                                rotation: actualCardData.rotation
+                            });
+                            
+                            // ANNOTATION: Apply specific classes for overlap interaction
+                            if (idx === 0) { // First card in the group is the "bottom" card
+                                positionEl.classList.add('overlap-bottom-card');
+                            } else if (idx === 1) { // Second card in the group is the "top" card
+                                positionEl.classList.add('overlap-top-card');
+                            }
+                            groupContainer.appendChild(positionEl);
+                            placedIndices.add(posIndex);
+                        });
+                        cloth.appendChild(groupContainer);
+                    });
+                }
+                
+                spread.positions.forEach((posData, index) => {
+                    const cardPositionIndex = index + 1;
+                    if (!placedIndices.has(cardPositionIndex)) {
+                        const positionEl = createPositionElement(cardPositionIndex, posData);
+                        cloth.appendChild(positionEl);
+                    }
+                });
+            }
+        }
+
+        function createPositionElement(index, posData) {
+            const position = document.createElement('div');
+            position.className = `position-container pos-${index}`;
+
+            if (posData.x !== undefined && posData.y !== undefined) {
+                position.style.position = 'absolute';
+                
+                let cardWidth = 120;
+                let cardHeight = 210;
+                // ANNOTATION: Only calculate width/height for positioning, not for the transform itself.
+                if (posData.rotation === 90 || posData.rotation === 270) {
+                    [cardWidth, cardHeight] = [cardHeight, cardWidth];
+                }
+
+                position.style.top = `${posData.y - (cardHeight / 2)}px`;
+                position.style.left = `${posData.x - (cardWidth / 2)}px`;
+            }
+
+            // ANNOTATION: NEW/UPDATED - Add a rotation class instead of setting inline style.
+            if (posData.rotation !== undefined) { // Check if rotation is defined
+                position.classList.add(`rotate-${posData.rotation}`);
+            } else {
+                position.classList.add('rotate-0'); // Default to 0 rotation if not specified
+            }
+
+            position.innerHTML = `
+                <div class="card-container card-placeholder"></div>
+                <div class="position-label">${posData.label || `Card ${index}`}</div>`;
+            return position;
         }
 
         function saveSettings() {
@@ -348,8 +519,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 shuffleMethod: document.querySelector('input[name="shuffle-method"]:checked').value,
                 cardBack: document.querySelector('input[name="card-back"]:checked').value,
                 cloth: document.querySelector('input[name="cloth-pattern"]:checked').value,
-                customCount: ui.customCardCount.value,
-                customRows: ui.customRowCount.value
+                // ANNOTATION: Removed references to customCount and customRows which no longer exist.
             };
             localStorage.setItem(settingsKey, JSON.stringify(settings));
         }
@@ -358,82 +528,25 @@ document.addEventListener('DOMContentLoaded', () => {
             const saved = localStorage.getItem(settingsKey);
             if (!saved) return;
             const settings = JSON.parse(saved);
-
             const spreadButton = document.querySelector(`.spread-btn[data-spread-key="${settings.spread}"]`);
             if (spreadButton) spreadButton.click();
-
             if (ui.reversedCardsCheckbox) {
                 ui.reversedCardsCheckbox.checked = settings.reversed;
             }
-
             const shuffleMethodRadio = document.querySelector(`input[name="shuffle-method"][value="${settings.shuffleMethod}"]`);
             if (shuffleMethodRadio) shuffleMethodRadio.click();
-
             const cardBackRadio = document.querySelector(`input[name="card-back"][value="${settings.cardBack}"]`);
             if (cardBackRadio) cardBackRadio.click();
-
             const clothRadio = document.querySelector(`input[name="cloth-pattern"][value="${settings.cloth}"]`);
             if (clothRadio) clothRadio.click();
-
-            if (ui.customCardCount) {
-                ui.customCardCount.value = settings.customCount;
-            }
-            if (ui.customRowCount) {
-                ui.customRowCount.value = settings.customRows;
-            }
-        }
-
-        function drawSpreadBlueprint() {
-            let spread = { ...spreads[selectedSpreadKey] };
-            if (selectedSpreadKey === 'custom') {
-                spread.cardCount = parseInt(ui.customCardCount.value, 10) || 0;
-                const rowCount = parseInt(ui.customRowCount.value, 10) || spread.cardCount;
-                ui.readingCloth.style.gridTemplateColumns = `repeat(${rowCount > 0 ? rowCount : 1}, auto)`;
-                spread.positions = Array.from({ length: spread.cardCount }, (_, i) => ({ label: `Card ${i + 1}` }));
-            }
-            ui.readingCloth.innerHTML = '';
-            ui.readingCanvas.classList.add('blueprint-mode');
-            if (ui.canvasPlaceholder) ui.canvasPlaceholder.style.display = 'block';
-            ui.readingCloth.className = `reading-cloth ${spread.layoutClass || 'layout-custom'}`;
-
-            const placedIndices = new Set();
-            if (spread.overlapGroups) {
-                spread.overlapGroups.forEach(group => {
-                    const groupContainer = document.createElement('div');
-                    groupContainer.className = 'overlap-group';
-                    group.forEach(posIndex => {
-                        groupContainer.appendChild(createPositionElement(posIndex, spread));
-                        placedIndices.add(posIndex);
-                    });
-                    ui.readingCloth.appendChild(groupContainer);
-                });
-            }
-            for (let i = 1; i <= spread.cardCount; i++) {
-                if (!placedIndices.has(i)) {
-                    ui.readingCloth.appendChild(createPositionElement(i, spread));
-                }
-            }
-        }
-
-        function createPositionElement(index, spread) {
-            const position = document.createElement('div');
-            position.className = `position-container pos-${index}`;
-            if (spread.overlapGroups && spread.overlapGroups.some(g => g.includes(index))) {
-                position.classList.add(spread.overlapGroups.find(g => g.includes(index))[1] === index ? 'top-card' : 'bottom-card');
-            }
-            position.innerHTML = `
-                <div class="card-container card-placeholder"></div>
-                <div class="position-label">${spread.positions[index - 1]?.label || `Card ${index}`}</div>`;
-            return position;
+            // ANNOTATION: Removed logic for setting custom input values.
         }
 
         function updateShuffleExplanation() {
             const methodRadio = document.querySelector('input[name="shuffle-method"]:checked');
             if (!methodRadio) return;
-
             const method = methodRadio.value;
             let seedExplanationHTML = '';
-
             switch (method) {
                 case 'text':
                     seedExplanationHTML = `<p>Each character you type is converted to a numeric code. These codes are summed to produce a single number.</p>
@@ -447,7 +560,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     seedExplanationHTML = '<p>The current time, measured in milliseconds since Jan 1, 1970, is used as the base number.</p>';
                     break;
             }
-
             const fullExplanation = `
                 ${seedExplanationHTML}
                 <p>This base number is then multiplied by Pi (≈3.14159) to create the final, unique <strong>seed</strong>.</p>
@@ -460,99 +572,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 <p><strong>The "Shuffle Again" Button:</strong></p>
                 <p>This performs a digital version of a "wash" or "scramble" shuffle. The program iterates through the array of 78 cards, from the first card to the last. For each card, it swaps its position with another randomly selected card in the deck. This process significantly randomizes the entire deck order.</p>
             `;
-
             ui.shuffleExplanation.innerHTML = fullExplanation;
         }
 
-        function autoFitSpread() {
-            const content = ui.readingCloth;
-            const container = ui.readingCanvas;
-            // We must wait a "tick" for the browser to paint the final card positions
-            // before we can accurately measure them.
-            setTimeout(() => {
-                const cardElements = content.querySelectorAll('.position-container');
-                if (cardElements.length === 0) return;
-                // Find the bounding box of all cards combined
-                let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-                cardElements.forEach(card => {
-                    const rect = card.getBoundingClientRect();
-                    if (rect.left < minX) minX = rect.left;
-                    if (rect.top < minY) minY = rect.top;
-                    if (rect.right > maxX) maxX = rect.right;
-                    if (rect.bottom > maxY) maxY = rect.bottom;
-                });
-                const contentWidth = maxX - minX;
-                const contentHeight = maxY - minY;
-                
-                // Use clientWidth/Height for an accurate viewport size that ignores scrollbars
-                const containerWidth = container.clientWidth;
-                const containerHeight = container.clientHeight;
-                if (contentWidth === 0 || contentHeight === 0) return;
-                const PADDING = 60; // A more generous padding
-                const scaleX = (containerWidth - PADDING) / contentWidth;
-                const scaleY = (containerHeight - PADDING) / contentHeight;
-                const newScale = Math.min(scaleX, scaleY);
-                // Calculate the center of the content relative to the viewport
-                const contentCenterX = minX + contentWidth / 2;
-                const contentCenterY = minY + contentHeight / 2;
-                // Calculate the center of the container/viewport
-                const containerCenterX = container.getBoundingClientRect().left + containerWidth / 2;
-                const containerCenterY = container.getBoundingClientRect().top + containerHeight / 2;
-                // Calculate the translation needed to center the content
-                // We must account for the new scale when calculating the translation
-                const panX = containerCenterX - contentCenterX;
-                const panY = containerCenterY - contentCenterY;
-                // Apply the new pan and scale
-                scale = newScale;
-                currentTranslate = { x: panX, y: panY };
-                lastTranslate = { ...currentTranslate };
-                // Update the UI slider to reflect the new state
-                ui.sliderValue.textContent = `${Math.round(scale * 100)}%`;
-                ui.sizeSlider.value = scale * 100;
-                applyTransform();
-                if (isTouchDevice) {
-                const hint = document.querySelector('.canvas-hint');
-                if (hint) {
-                    // Step 1: Make the hint visible.
-                    hint.style.display = 'block';
-
-                    // Step 2: Set the fallback timer to hide it.
-                    hintDismissTimer = setTimeout(() => {
-                        if (!hint.classList.contains('hidden')) {
-                            console.log('[HINT] Dismissing via 5-second timer fallback.');
-                            hint.classList.add('hidden');
-                            // Clean up the tap listener if the timer fires first.
-                            ui.readingCanvas.removeEventListener('pointerdown', dismissHintOnTap, true);
-                        }
-                    }, 5000);
-                }
-            }
-
-    }, 100);
-}
-
-        // --- 3. Event Listeners ---
-        function onPointerDown(e) {
-            if (e.target.closest('.tarot-card')) return;
-            e.preventDefault();
-
-            // ANNOTATION: This new block finds the hint and hides it on first interaction.
-            if (ui.canvasHint && !ui.canvasHint.classList.contains('hidden')) {
-                ui.canvasHint.classList.add('hidden');
-            }
-
-            panning = true;
-            startPoint = { x: e.clientX || e.touches[0].clientX, y: e.clientY || e.touches[0].clientY };
-            lastTranslate = { ...currentTranslate };
-            if (e.touches && e.touches.length === 2) initialPinchDistance = getDistance(e.touches);
-        }
-
-        // --- Hint Logic ---
-        const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-        let hintDismissTimer = null;
-
         function dismissHintOnTap() {
-            const hint = document.querySelector('.canvas-hint');
+            const hint = ui.canvasHint;
             if (hint && !hint.classList.contains('hidden')) {
                 hint.classList.add('hidden');
                 if (hintDismissTimer) {
@@ -562,57 +586,73 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // Set up the listener, but do NOT show the hint here.
-        if (isTouchDevice) {
-            ui.readingCanvas.addEventListener('pointerdown', dismissHintOnTap, true);
-        }
+        // --- 3. Event Listeners ---
 
-        if (isTouchDevice && ui.canvasHint) {
-            // If it's a touch device, show the hint...
-            ui.canvasHint.style.display = 'block';
-            // ...and attach the "one-shot" tap listener.
-            // We use "capture: true" to make sure it fires before any other pointer events.
-            ui.readingCanvas.addEventListener('pointerdown', dismissHintOnTap, true);
-        }
-
-        function onPointerUp() {
-            panning = false;
-            initialPinchDistance = null;
+        function onPointerDown(e) {
+            if (e.target.closest('.tarot-card')) return;
+            e.preventDefault();
+            isPanning = true;
+            const point = e.touches ? e.touches[0] : e;
+            startPoint = { x: point.clientX, y: point.clientY };
+            lastPanPosition = { x: canvasState.x, y: canvasState.y };
         }
 
         function onPointerMove(e) {
-            if (!panning) return;
+            if (!isPanning) return;
             e.preventDefault();
-            if (e.touches && e.touches.length === 2) {
-                if (initialPinchDistance === null) return;
-                const newPinchDistance = getDistance(e.touches);
-                const scaleFactor = newPinchDistance / initialPinchDistance;
-                scale = Math.max(0.25, Math.min(scale * scaleFactor, 4));
-                initialPinchDistance = newPinchDistance;
-            } else if (!e.touches || e.touches.length === 1) {
-                const currentPoint = { x: e.clientX || e.touches[0].clientX, y: e.clientY || e.touches[0].clientY };
-                currentTranslate.x = lastTranslate.x + currentPoint.x - startPoint.x;
-                currentTranslate.y = lastTranslate.y + currentPoint.y - startPoint.y;
-            }
+            const point = e.touches ? e.touches[0] : e;
+            const dx = point.clientX - startPoint.x;
+            const dy = point.clientY - startPoint.y;
+            canvasState.x = lastPanPosition.x + dx;
+            canvasState.y = lastPanPosition.y + dy;
             applyTransform();
         }
 
+        function onPointerUp() {
+            isPanning = false;
+        }
+
+        function onWheel(e) {
+            e.preventDefault();
+
+            const oldScale = canvasState.scale;
+            const zoomFactor = 1.1; // Amount to zoom in/out
+            
+            // Determine new scale
+            let newScale = e.deltaY > 0 ? oldScale / zoomFactor : oldScale * zoomFactor;
+            newScale = Math.max(0.1, Math.min(newScale, 10)); // Clamp scale to min/max values
+
+            // Calculate mouse position relative to the canvas
+            const canvasRect = ui.readingCanvas.getBoundingClientRect();
+            const mouseX = e.clientX - canvasRect.left;
+            const mouseY = e.clientY - canvasRect.top;
+
+            // Calculate "world" coordinates (coordinates on the unscaled cloth) of the mouse point
+            const worldX = (mouseX - canvasState.x) / oldScale;
+            const worldY = (mouseY - canvasState.y) / oldScale;
+
+            // Calculate new pan positions to keep the world point under the mouse
+            canvasState.x = mouseX - (worldX * newScale);
+            canvasState.y = mouseY - (worldY * newScale);
+            canvasState.scale = newScale;
+
+            applyTransform();
+            ui.sliderValue.textContent = `${Math.round(canvasState.scale * 100)}%`;
+            ui.sizeSlider.value = canvasState.scale * 100;
+        }
+
         ui.readingCanvas.addEventListener("mousedown", onPointerDown);
-        ui.readingCanvas.addEventListener("touchstart", onPointerDown, { passive: false });
+        ui.readingCanvas.addEventListener("touchstart", onPointerDown);
         document.addEventListener("mouseup", onPointerUp);
         document.addEventListener("touchend", onPointerUp);
         document.addEventListener("mouseleave", onPointerUp);
         document.addEventListener("mousemove", onPointerMove);
-        document.addEventListener("touchmove", onPointerMove, { passive: false });
+        document.addEventListener("touchmove", onPointerMove);
+        ui.readingCanvas.addEventListener("wheel", onWheel);
 
-        ui.readingCanvas.addEventListener("wheel", (e) => {
-            e.preventDefault();
-            const delta = e.deltaY > 0 ? -0.1 : 0.1;
-            scale = Math.max(0.25, Math.min(scale + delta, 4));
-            ui.sliderValue.textContent = `${Math.round(scale * 100)}%`;
-            ui.sizeSlider.value = scale * 100;
-            applyTransform();
-        });
+        if (isTouchDevice) {
+            ui.readingCanvas.addEventListener('pointerdown', dismissHintOnTap, true);
+        }
 
         if (ui.mobileControlsTrigger) {
             ui.mobileControlsTrigger.addEventListener('click', () => ui.controlPanel.classList.add('is-open'));
@@ -634,9 +674,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.querySelectorAll('.spread-btn').forEach(btn => btn.classList.remove('selected'));
                 e.target.classList.add('selected');
                 selectedSpreadKey = e.target.dataset.spreadKey;
-                ui.customControls.classList.toggle('hidden', selectedSpreadKey !== 'custom');
+                // ANNOTATION: The line that referenced the null 'ui.customControls' has been removed.
                 ui.spreadInfoText.textContent = spreads[selectedSpreadKey].description;
                 drawSpreadBlueprint();
+                autoFitSpread();
                 saveSettings();
             }
         });
@@ -644,13 +685,9 @@ document.addEventListener('DOMContentLoaded', () => {
         ui.dealBtn.addEventListener('click', () => {
             const currentHash = window.location.hash;
             const targetHash = '#reading-room?deal=true';
-
-            // If we are already on the correct URL, the hashchange event won't fire.
-            // In this case, we manually call the router to force a re-render.
             if (currentHash === targetHash) {
                 router();
             } else {
-                // Otherwise, navigate normally to trigger the hashchange event.
                 window.location.hash = targetHash;
             }
         });
@@ -681,19 +718,45 @@ document.addEventListener('DOMContentLoaded', () => {
 
         ui.shuffleInput.addEventListener('input', updateShuffleExplanation);
 
-        ui.sizeSlider.addEventListener('input', () => {
-            scale = ui.sizeSlider.value / 100;
-            ui.sliderValue.textContent = `${ui.sizeSlider.value}%`;
+                ui.sizeSlider.addEventListener('input', (e) => {
+            // Trigger autoFitSpread to re-center and scale based on the new slider value
+            // We'll calculate the new scale based on the content bounds again to ensure centering.
+            const newPercentage = parseFloat(e.target.value);
+            const currentSpread = spreads[selectedSpreadKey];
+            const contentWidth = (Math.max(...currentSpread.positions.map(p => p.x)) - Math.min(...currentSpread.positions.map(p => p.x))) + 120; // Rough width
+            const contentHeight = (Math.max(...currentSpread.positions.map(p => p.y)) - Math.min(...currentSpread.positions.map(p => p.y))) + 210; // Rough height
+
+            const viewportWidth = ui.readingCanvas.clientWidth;
+            const viewportHeight = ui.readingCanvas.clientHeight;
+
+            const PADDING = 80;
+            const baseScaleX = (viewportWidth - PADDING) / contentWidth;
+            const baseScaleY = (viewportHeight - PADDING) / contentHeight;
+            const baseScale = Math.min(baseScaleX, baseScaleY);
+
+            // Calculate target scale relative to the base auto-fit scale
+            canvasState.scale = baseScale * (newPercentage / 100);
+
+            // Re-calculate x,y to keep the center of the spread in the center of the canvas
+            const minX = Math.min(...currentSpread.positions.map(p => p.x - (p.rotation === 90 || p.rotation === 270 ? 105 : 60))); // Card half-width/height
+            const minY = Math.min(...currentSpread.positions.map(p => p.y - (p.rotation === 90 || p.rotation === 270 ? 60 : 105))); // Card half-width/height
+            
+            const spreadOriginalWidth = Math.max(...currentSpread.positions.map(p => p.x + (p.rotation === 90 || p.rotation === 270 ? 105 : 60))) - minX;
+            const spreadOriginalHeight = Math.max(...currentSpread.positions.map(p => p.y + (p.rotation === 90 || p.rotation === 270 ? 60 : 105))) - minY;
+
+
+            const contentCenterX = minX + spreadOriginalWidth / 2;
+            const contentCenterY = minY + spreadOriginalHeight / 2;
+
+            canvasState.x = (viewportWidth / 2) - (contentCenterX * canvasState.scale);
+            canvasState.y = (viewportHeight / 2) - (contentCenterY * canvasState.scale);
+
             applyTransform();
+            ui.sliderValue.textContent = `${newPercentage}%`;
         });
 
         ui.resetSizeBtn.addEventListener('click', () => {
-            scale = 1;
-            currentTranslate = { x: 0, y: 0 };
-            lastTranslate = { x: 0, y: 0 };
-            ui.sliderValue.textContent = '100%';
-            ui.sizeSlider.value = 100;
-            applyTransform();
+            autoFitSpread(); // Resetting now just re-fits the spread
         });
 
         ui.readingActionBtn.addEventListener('click', () => {
@@ -733,12 +796,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-
         // --- 4. Initialization ---
         loadSettings();
         drawSpreadBlueprint();
         updateShuffleExplanation();
-        applyTransform();
+        autoFitSpread();
 
         const initialBack = document.querySelector('input[name="card-back"]:checked');
         if (initialBack && initialBack.value !== 'default') {
@@ -750,24 +812,24 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const urlParams = new URLSearchParams(window.location.hash.split('?')[1] || '');
-            if (urlParams.get('deal') === 'true') {
+        if (urlParams.get('deal') === 'true') {
+            history.replaceState(null, '', '#reading-room');
             setTimeout(async () => {
-                if (ui.dealBtn) {
-                    const deck = await loadDeck();
-                    const { shuffledDeck } = performShuffle(deck);
-                    const spread = spreads[selectedSpreadKey];
-                    const shuffleController = new ShuffleController(shuffledDeck, spread, autoFitSpread);
-
-                    // ANNOTATION: This is the key fix. It removes the dimming overlay
-                    // from the canvas just before the shuffle modal is created.
+                const deck = await loadDeck();
+                const { shuffledDeck } = performShuffle(deck);
+                const spread = spreads[selectedSpreadKey];
+                const shuffleController = new ShuffleController(shuffledDeck, spread, () => {
+                    autoFitSpread();
                     ui.readingCanvas.classList.remove('blueprint-mode');
+                    ui.revealAllContainer.classList.remove('hidden');
+                });
 
-                    if (ui.canvasPlaceholder) ui.canvasPlaceholder.style.display = 'none';
-                    if (ui.controlPanel && ui.controlPanel.classList.contains('is-open')) {
-                        ui.controlPanel.classList.remove('is-open');
-                    }
-                    shuffleController.start();
+                ui.readingCanvas.classList.remove('blueprint-mode');
+                if (ui.canvasPlaceholder) ui.canvasPlaceholder.style.display = 'none';
+                if (ui.controlPanel && ui.controlPanel.classList.contains('is-open')) {
+                    ui.controlPanel.classList.remove('is-open');
                 }
+                shuffleController.start();
             }, 50);
         }
     }
@@ -792,7 +854,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (allCards.length === 0) return;
 
             const term = searchInput.value.toLowerCase().trim();
-
             const filteredCards = allCards.filter(card => {
                 const matchesSearch = term === '' ||
                     card.name.toLowerCase().includes(term) ||
@@ -852,7 +913,6 @@ document.addEventListener('DOMContentLoaded', () => {
         renderCards();
     }
 
-
     // -----------------------------------------------------------------
     // |                 4. MAIN ROUTER & APP STARTUP                  |
     // -----------------------------------------------------------------
@@ -899,7 +959,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-
 
     window.addEventListener('hashchange', router);
     router();
