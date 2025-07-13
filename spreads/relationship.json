@@ -1,0 +1,13 @@
+{
+  "id": "relationship",
+  "name": "Relationship Spread",
+  "description": "Explores the dynamics between two people in a relationship.",
+  "cardCount": 5,
+  "positions": [
+    { "label": "1. You", "x": 600, "y": 600, "rotation": 0 },
+    { "label": "2. The Other Person", "x": 1000, "y": 600, "rotation": 0 },
+    { "label": "3. The Relationship", "x": 850, "y": 550, "rotation": 90 },
+    { "label": "4. The Past", "x": 800, "y": 820, "rotation": 0 },
+    { "label": "5. The Future", "x": 800, "y": 350, "rotation": 0 }
+  ]
+}

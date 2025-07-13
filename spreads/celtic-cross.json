@@ -1,0 +1,19 @@
+{
+  "id": "celtic-cross",
+  "name": "Celtic Cross",
+  "description": "A comprehensive spread for a deep analysis of a situation.",
+  "cardCount": 10,
+  "overlapGroups": [[1, 2]],
+  "positions": [
+    { "label": "1. Current energy", "x": 700, "y": 600, "rotation": 0 },
+    { "label": "2. The challenge", "x": 700, "y": 600, "rotation": 90 },
+    { "label": "3. Conscious beliefs", "x": 700, "y": 350, "rotation": 0 },
+    { "label": "4. Subconscious beliefs", "x": 700, "y": 850, "rotation": 0 },
+    { "label": "5. The past", "x": 500, "y": 600, "rotation": 0 },
+    { "label": "6. The future", "x": 900, "y": 600, "rotation": 0 },
+    { "label": "7. Best approach", "x": 1100, "y": 950, "rotation": 0 },
+    { "label": "8. External influences", "x": 1100, "y": 700, "rotation": 0 },
+    { "label": "9. Hopes and fears", "x": 1100, "y": 450, "rotation": 0 },
+    { "label": "10. The outcome", "x": 1100, "y": 200, "rotation": 0 }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "id": "horseshoe",
+  "name": "Horseshoe Spread",
+  "description": "A classic spread for a detailed overview of a situation's progression.",
+  "cardCount": 7,
+  "positions": [
+    { "label": "1. Past Influences", "x": 500, "y": 300, "rotation": 0 },
+    { "label": "2. Present Circumstances", "x": 500, "y": 550, "rotation": 0 },
+    { "label": "3. Upcoming Influences", "x": 600, "y": 800, "rotation": 0 },
+    { "label": "4. Best Course of Action", "x": 800, "y": 900, "rotation": 0 },
+    { "label": "5. The Attitude of Others", "x": 1000, "y": 800, "rotation": 0 },
+    { "label": "6. Possible Obstacles", "x": 1100, "y": 550, "rotation": 0 },
+    { "label": "7. Final Outcome", "x": 1100, "y": 300, "rotation": 0 }
+  ]
+}

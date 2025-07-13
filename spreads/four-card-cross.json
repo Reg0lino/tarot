@@ -1,0 +1,12 @@
+{
+  "id": "four-card-cross",
+  "name": "Four Card Cross",
+  "description": "A balanced spread for understanding a situation, its challenges, and its potential.",
+  "cardCount": 4,
+  "positions": [
+    { "label": "Position 1", "x": 650, "y": 600, "rotation": 0 },
+    { "label": "Position 2", "x": 800, "y": 470, "rotation": 0 },
+    { "label": "Position 3", "x": 950, "y": 600, "rotation": 0 },
+    { "label": "Position 4", "x": 800, "y": 720, "rotation": 0 }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "id": "chakra-spread",
+  "name": "Chakra Spread",
+  "description": "For the assessment of overall health and well-being.",
+  "cardCount": 7,
+  "positions": [
+    { "label": "1. Root Chakra: Foundation", "x": 800, "y": 1050, "rotation": 0 },
+    { "label": "2. Sacral Chakra: Resources & Relationships", "x": 800, "y": 800, "rotation": 0 },
+    { "label": "3. Solar Plexus Chakra: Identity", "x": 800, "y": 550, "rotation": 0 },
+    { "label": "4. Heart Chakra: Love", "x": 800, "y": 300, "rotation": 0 },
+    { "label": "5. Throat Chakra: Self Expression", "x": 800, "y": 50, "rotation": 0 },
+    { "label": "6. Third Eye: Wisdom", "x": 800, "y": -200, "rotation": 0 },
+    { "label": "7. Crown Chakra: Spiritual Awareness", "x": 800, "y": -450, "rotation": 0 }
+  ]
+}

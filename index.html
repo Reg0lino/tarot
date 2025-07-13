@@ -12,6 +12,7 @@
     <script src="js/tarot-deck.js"></script>
     <script src="js/main.js" defer></script>
     <script src="js/shuffle-animation.js" defer></script>
+    <script src="js/spread-creator.js" defer></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;700&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
@@ -201,6 +202,52 @@
                 <p id="grimoire-results-count"></p>
             </section>
             <div id="grimoire-grid" class="grimoire-grid"></div>
+        </div>
+    </template>
+
+    <template id="view-spread-creator">
+        <div id="spread-creator-view" class="reading-room-layout">
+            <aside class="control-panel">
+                <button id="drawer-close-btn" class="close-modal">×</button>
+                <section class="control-section">
+                    <h3>Create New Spread</h3>
+                    <button id="new-card-btn" class="glowing-btn">Add New Card</button>
+                    <div class="control-group">
+                        <h4>Selected Card Properties</h4>
+                        <label>Label: <input type="text" id="card-label"></label>
+                        <label>X: <input type="number" id="card-pos-x" step="10"></label>
+                        <label>Y: <input type="number" id="card-pos-y" step="10"></label>
+                        <label>Rotation: <input type="number" id="card-rotation" step="90" min="0" max="360"></label>
+                        <div class="nudge-buttons">
+                            <button id="nudge-up" title="Nudge Up">⬆️</button>
+                            <button id="nudge-left" title="Nudge Left">⬅️</button>
+                            <button id="nudge-right" title="Nudge Right">➡️</button>
+                            <button id="nudge-down" title="Nudge Down">⬇️</button>
+                        </div>
+                        <button id="delete-card-btn" class="glowing-btn" disabled>Delete Selected Card</button>
+                    </div>
+                </section>
+
+                <section class="control-section">
+                    <h3>Spread Info & Save</h3>
+                    <label>Spread Name: <input type="text" id="spread-name-input"></label>
+                    <label>Description: <textarea id="spread-description-input"></textarea></label>
+                    <button id="save-spread-btn" class="glowing-btn">Save Spread</button>
+                </section>
+
+                <section class="control-section">
+                    <h3>Saved Custom Spreads</h3>
+                    <ul id="custom-spreads-list" class="saved-spreads-list"></ul>
+                </section>
+            </aside>
+
+            <main id="creator-canvas-wrapper" class="reading-canvas">
+                <canvas id="creator-canvas"></canvas>
+                <div id="creator-card-container" class="reading-cloth"></div>
+            </main>
+            <div id="mobile-action-bar">
+                <button id="mobile-controls-trigger" class="glowing-btn">Creator Controls</button>
+            </div>
         </div>
     </template>
 </body>

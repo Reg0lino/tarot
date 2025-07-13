@@ -1,0 +1,16 @@
+{
+  "id": "safe-passage",
+  "name": "Safe Passage (Modern)",
+  "description": "A modern, fictional spread based on the pentagram spread in the show \"Agatha All Along\".",
+  "cardCount": 7,
+  "overlapGroups": [[1, 7]],
+  "positions": [
+    { "label": "1. The Traveler", "x": 800, "y": 600, "rotation": 0 },
+    { "label": "2. What's Missing", "x": 800, "y": 900, "rotation": 0 },
+    { "label": "3. The Path Behind", "x": 550, "y": 300, "rotation": 0 },
+    { "label": "4. The Path Ahead", "x": 1050, "y": 300, "rotation": 0 },
+    { "label": "5. Obstacles", "x": 450, "y": 600, "rotation": 0 },
+    { "label": "6. Potential Windfall", "x": 1150, "y": 600, "rotation": 0 },
+    { "label": "7. The Destination", "x": 800, "y": 600, "rotation": 90 }
+  ]
+}

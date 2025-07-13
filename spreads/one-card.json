@@ -1,0 +1,14 @@
+{
+  "id": "one-card",
+  "name": "One Card",
+  "description": "A single card for quick insight.",
+  "cardCount": 1,
+  "positions": [
+    {
+      "label": "1. The Card",
+      "x": 800,
+      "y": 600,
+      "rotation": 0
+    }
+  ]
+}

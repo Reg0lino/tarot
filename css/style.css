@@ -874,3 +874,152 @@ input[type="range"] { flex-grow: 1; }
     transform: translate(0, 0) rotate(0deg);
     opacity: 0;
 }
+
+/*
+===================================================================
+  10. SPREAD CREATOR STYLES
+===================================================================
+*/
+
+/* --- Creator Layout --- */
+#spread-creator-view #creator-canvas-wrapper {
+    position: relative;
+    overflow: hidden;
+}
+
+#spread-creator-view #creator-canvas,
+#spread-creator-view #creator-card-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1600px;
+    height: 1200px;
+    transform-origin: top left;
+    transition: transform 0.3s ease-out;
+}
+
+#spread-creator-view #creator-canvas {
+    z-index: 1;
+    pointer-events: auto;
+}
+
+#spread-creator-view #creator-card-container {
+    z-index: 2;
+    pointer-events: none;
+}
+
+/* --- Creator Card Placeholders --- */
+#spread-creator-view .creator-card-placeholder {
+    width: 120px;
+    height: 210px;
+    pointer-events: auto;
+    cursor: grab;
+}
+
+#spread-creator-view .creator-card-placeholder:active {
+    cursor: grabbing;
+    z-index: 100;
+}
+
+#spread-creator-view .creator-card-placeholder.selected .card-placeholder {
+    border-color: var(--accent-gold);
+    box-shadow: 0 0 15px var(--accent-gold);
+}
+
+/* --- Creator Sidebar Controls --- */
+#spread-creator-view .control-panel label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+#spread-creator-view .control-panel input[type="text"],
+#spread-creator-view .control-panel input[type="number"],
+#spread-creator-view .control-panel textarea {
+    width: 100%;
+    box-sizing: border-box;
+    background-color: var(--bg-dark);
+    border: 1px solid var(--border-light);
+    color: var(--text-light);
+    padding: 8px;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+#spread-creator-view .control-panel textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+#spread-creator-view .control-panel input:focus,
+#spread-creator-view .control-panel textarea:focus {
+    outline: none;
+    border-color: var(--accent-gold);
+    box-shadow: 0 0 10px var(--accent-gold);
+}
+
+#spread-creator-view .nudge-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0.5rem;
+    justify-items: center;
+}
+
+#spread-creator-view .nudge-buttons button {
+    background: var(--secondary-purple);
+    border: 1px solid var(--border-light);
+    color: var(--text-light);
+    border-radius: 4px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+}
+#spread-creator-view #nudge-up { grid-column: 2 / 3; }
+#spread-creator-view #nudge-left { grid-column: 1 / 2; grid-row: 2 / 3; }
+#spread-creator-view #nudge-right { grid-column: 3 / 4; grid-row: 2 / 3; }
+#spread-creator-view #nudge-down { grid-column: 2 / 3; grid-row: 3 / 4; }
+
+/* --- Saved Spreads List --- */
+#spread-creator-view .saved-spreads-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+#spread-creator-view .saved-spreads-list li {
+    background-color: rgba(0,0,0,0.2);
+    border: 1px solid var(--border-light);
+    border-radius: 4px;
+    padding: 0.75rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+#spread-creator-view .saved-spread-name {
+    font-weight: bold;
+}
+
+#spread-creator-view .saved-spread-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+#spread-creator-view .saved-spread-actions .glowing-btn {
+    padding: 0.4em 0.8em;
+    margin-top: 0;
+    font-size: 0.9rem;
+}
+
+#spread-creator-view .no-saved-spreads-text {
+    font-style: italic;
+    opacity: 0.7;
+    text-align: center;
+}

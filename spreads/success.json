@@ -1,0 +1,13 @@
+{
+  "id": "success",
+  "name": "Success Spread",
+  "description": "Provides insight on achieving a specific goal or ambition.",
+  "cardCount": 5,
+  "positions": [
+    { "label": "1. Central Issue", "x": 800, "y": 600, "rotation": 0 },
+    { "label": "2. Obstacles", "x": 500, "y": 600, "rotation": 0 },
+    { "label": "3. Assistance", "x": 800, "y": 300, "rotation": 0 },
+    { "label": "4. How to Improve", "x": 1100, "y": 600, "rotation": 0 },
+    { "label": "5. Underlying Factors", "x": 800, "y": 900, "rotation": 0 }
+  ]
+}
