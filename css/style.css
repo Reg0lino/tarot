@@ -258,6 +258,24 @@ header .nav-link:hover, header .nav-link.active { color: var(--accent-gold); tex
     margin-top: 1rem; 
 }
 
+/* --- System Selector --- */
+.system-select {
+    width: 100%;
+    padding: 10px;
+    background-color: var(--bg-dark);
+    border: 1px solid var(--border-light);
+    color: var(--accent-gold);
+    border-radius: 4px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    cursor: pointer;
+}
+.system-select:focus {
+    outline: none;
+    border-color: var(--accent-gold);
+    box-shadow: 0 0 10px var(--secondary-purple);
+}
+
 /* --- Styles for the Card Back Selector --- */
 .card-back {
     /*   Using specific properties instead of the 'background' shorthand
@@ -1022,4 +1040,15 @@ input[type="range"] { flex-grow: 1; }
     font-style: italic;
     opacity: 0.7;
     text-align: center;
+}
+
+.meaning-section.dimmed {
+    opacity: 0.5;
+    border-color: transparent;
+}
+.meaning-section.highlight {
+    opacity: 1;
+    background-color: rgba(74, 0, 127, 0.5); 
+    border: 1px solid var(--glow-blue);
+    box-shadow: 0 0 10px rgba(0, 191, 255, 0.2);
 }

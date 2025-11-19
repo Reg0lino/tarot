@@ -8,21 +8,17 @@ class ShuffleController {
         this.isAnimating = false;
         this.washAnimationType = 0;
 
-        // --- Component's UI elements, will be created dynamically ---
         this.modal = null;
         this.visualDeckContainer = null;
         this.cutBtn = null;
         this.washBtn = null;
         this.dealBtn = null;
 
-        // --- Pre-bind event handlers for proper removal ---
         this.boundCutHandler = this.handleCutClick.bind(this);
         this.boundWashHandler = this.handleWashClick.bind(this);
         this.boundDealHandler = this.handleDealClick.bind(this);
         this.boundCancelHandler = this.handleCancelClick.bind(this);
     }
-
-    // --- Core Lifecycle Methods ---
 
     start() {
         this._createModal();
@@ -34,15 +30,11 @@ class ShuffleController {
     cleanup() {
         this.removeEventListeners();
         this.hideModal();
-
-        // ANNOTATION: This is the new callback invocation.
-        // It triggers the auto-fit logic in main.js after the deal is complete.
         if (typeof this.onComplete === 'function') {
             this.onComplete();
         }
     }
 
-    // --- UI Creation and Management ---
     _createModal() {
         const modalContainer = document.createElement('div');
         modalContainer.id = 'shuffle-zone-modal';
@@ -67,21 +59,21 @@ class ShuffleController {
         this.cutBtn = this.modal.querySelector('#cut-deck-btn');
         this.washBtn = this.modal.querySelector('#wash-deck-btn');
         this.dealBtn = this.modal.querySelector('#begin-reading-btn');
-        this.cancelBtn = this.modal.querySelector('#cancel-shuffle-btn'); // Cache the new button
+        this.cancelBtn = this.modal.querySelector('#cancel-shuffle-btn'); 
     }
 
     addEventListeners() {
         this.cutBtn.addEventListener('click', this.boundCutHandler);
         this.washBtn.addEventListener('click', this.boundWashHandler);
         this.dealBtn.addEventListener('click', this.boundDealHandler);
-        this.cancelBtn.addEventListener('click', this.boundCancelHandler); // Add listener
+        this.cancelBtn.addEventListener('click', this.boundCancelHandler); 
     }
 
     removeEventListeners() {
         this.cutBtn.removeEventListener('click', this.boundCutHandler);
         this.washBtn.removeEventListener('click', this.boundWashHandler);
         this.dealBtn.removeEventListener('click', this.boundDealHandler);
-        this.cancelBtn.removeEventListener('click', this.boundCancelHandler); // Remove listener
+        this.cancelBtn.removeEventListener('click', this.boundCancelHandler); 
     }
 
     createVisualDeck() {
@@ -89,18 +81,19 @@ class ShuffleController {
     }
 
     showModal() {
-        // This is intentionally left blank for now as the modal starts visible.
-        // We could add fade-in logic here later if needed.
     }
 
     hideModal() {
         if (this.modal) {
             this.modal.classList.add('hidden');
+            setTimeout(() => {
+                if (this.modal && this.modal.parentNode) {
+                    this.modal.parentNode.removeChild(this.modal);
+                }
+                this.modal = null;
+            }, 300);
         }
     }
-
-
-    // --- User Action Handlers & Logic ---
 
     handleCutClick() {
         if (this.isAnimating) return;
@@ -122,8 +115,6 @@ class ShuffleController {
     }
 
     handleCancelClick() {
-    // Re-routing to the base hash triggers our reliable
-    // "disposable view" reset, returning the user to the blueprint.
         window.location.hash = '#reading-room';
         this.cleanup();
     }
@@ -143,9 +134,6 @@ class ShuffleController {
         }
         return washedDeck;
     }
-
-
-    // --- Animations ---
 
     animateCut() {
         this.isAnimating = true;
@@ -312,6 +300,9 @@ class ShuffleController {
             };
 
             const endRect = placeholder.getBoundingClientRect();
+            
+            // Use global helper to get the correct image path
+            const imgSrc = window.getCardImage(cardData.id, window.currentVisualDeck);
 
             const finalCardWrapper = document.createElement('div');
             finalCardWrapper.innerHTML = `
@@ -319,7 +310,7 @@ class ShuffleController {
                     <div class="tarot-card">
                         <div class="card-face card-back"></div>
                         <div class="card-face card-front">
-                            <img src="img/cards/${cardData.img}" alt="${cardData.name}" class="${cardData.isReversed ? 'reversed' : ''}">
+                            <img src="${imgSrc}" alt="${cardData.name}" class="${cardData.isReversed ? 'reversed' : ''}" data-card-id="${cardData.id}">
                         </div>
                     </div>
                 </div>`;
@@ -342,41 +333,31 @@ class ShuffleController {
                 });
             }, 100 * index);
 
-        finalCardWrapper.addEventListener('transitionend', () => {
-            // ANNOTATION: This is the surgical fix.
-            // 1. Find the specific placeholder *card* inside the position container.
-            const placeholderCard = placeholder.querySelector('.card-placeholder');
-            
-            // 2. Extract the new, fully-formed interactive card from its temporary wrapper.
-            const newCardContainer = finalCardWrapper.querySelector('.card-container');
-            
-            // 3. If both exist, replace the placeholder card with the new interactive card,
-            //    leaving the sibling .position-label element untouched.
-            if (placeholderCard && newCardContainer) {
-                placeholderCard.replaceWith(newCardContainer);
-            } else {
-                // Fallback for safety, though it shouldn't be needed.
-                placeholder.innerHTML = finalCardWrapper.innerHTML;
-            }
-            
-            // 4. Attach final listeners to the card now that it's in the DOM.
-            // Note: We query from 'placeholder' which is the permanent element on the page.
-            placeholder.querySelector('.card-container').addEventListener('click', (e) => e.currentTarget.classList.add('flipped'), {
+            finalCardWrapper.addEventListener('transitionend', () => {
+                const placeholderCard = placeholder.querySelector('.card-placeholder');
+                const newCardContainer = finalCardWrapper.querySelector('.card-container');
+                
+                if (placeholderCard && newCardContainer) {
+                    placeholderCard.replaceWith(newCardContainer);
+                } else {
+                    placeholder.innerHTML = finalCardWrapper.innerHTML;
+                }
+                
+                placeholder.querySelector('.card-container').addEventListener('click', (e) => e.currentTarget.classList.add('flipped'), {
+                    once: true
+                });
+                placeholder.querySelector('.card-front').addEventListener('click', () => showCardModal(cardData));
+                
+                finalCardWrapper.remove();
+
+                completedAnimations++;
+                if (completedAnimations === totalAnimations) {
+                    document.getElementById('reveal-all-container').classList.remove('hidden');
+                    this.cleanup();
+                }
+            }, {
                 once: true
             });
-            placeholder.querySelector('.card-front').addEventListener('click', () => showCardModal(cardData));
-            
-            // 5. Clean up the temporary flying card from the body.
-            finalCardWrapper.remove();
-
-            completedAnimations++;
-            if (completedAnimations === totalAnimations) {
-                document.getElementById('reveal-all-container').classList.remove('hidden');
-                this.cleanup();
-            }
-        }, {
-            once: true
-        });
         });
     }
 }

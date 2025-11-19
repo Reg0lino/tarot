@@ -4,22 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Open Tarot By Regs</title>
-    <!-- Link to the Coloris CSS file -->
+    
+    <!-- Styles -->
     <link rel="stylesheet" href="css/coloris.min.css">
     <link rel="stylesheet" href="css/style.css">
-    <!--  Link to the Coloris JS file -->
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;700&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+
+    <!-- Scripts -->
     <script src="js/coloris.min.js"></script>
     <script src="js/tarot-deck.js"></script>
     <script src="js/main.js" defer></script>
     <script src="js/shuffle-animation.js" defer></script>
     <script src="js/spread-creator.js" defer></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;700&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- Background Animation -->
     <canvas id="starfield-canvas"></canvas>
 
+    <!-- Navigation -->
     <header>
         <nav class="container">
             <a href="#home" class="logo">Open Tarot By Regs</a>
@@ -31,7 +37,10 @@
         </nav>
     </header>
 
+    <!-- Main App Container (Views are rendered here) -->
     <main id="app-container"></main>
+
+    <!-- Global Modal -->
     <div id="card-modal" class="modal-container hidden">
         <div class="modal-content">
             <button id="close-modal-btn" class="close-modal">×</button>
@@ -39,7 +48,11 @@
         </div>
     </div>
 
-    <!-- --------------------- VIEW TEMPLATES --------------------- -->
+    <!-- ================================================================= -->
+    <!--                           VIEW TEMPLATES                          -->
+    <!-- ================================================================= -->
+
+    <!-- 1. HOME VIEW -->
     <template id="view-home">
         <div class="container">
             <section id="hero">
@@ -47,6 +60,7 @@
                 <p class="subtitle">An interactive tool to explore the symbolism and systems of tarot. All card shuffling is user-influenced and transparent.</p>
                 <a href="#reading-room" class="glowing-btn">Start a New Reading</a>
             </section>
+            
             <section id="card-of-the-day">
                 <h2>Card of the Day</h2>
                 <p class="subtitle">A card is drawn daily from the deck. Click the card to reveal it.</p>
@@ -59,138 +73,184 @@
         </div>
     </template>
 
-        <template id="view-reading-room">
+    <!-- 2. READING ROOM VIEW -->
+    <template id="view-reading-room">
         <div class="reading-room-layout">
             <aside class="control-panel">
-    <button id="drawer-close-btn" class="close-modal">×</button>
+                <button id="drawer-close-btn" class="close-modal">×</button>
 
-    <section class="control-section">
-        <h3>1. Select a Spread</h3>
-        <div id="spread-selection" class="control-group"></div>
-        <!-- 
-            ANNOTATION: The custom spread controls are now commented out.
-            This effectively disables the feature from the UI until it is ready.
-        <div id="custom-spread-controls" class="control-group hidden">
-            <label>Number of Cards: <input type="number" id="custom-card-count" min="1" max="78" value="5"></label>
-            <label>Arrange in rows of: <input type="number" id="custom-row-count" min="1" max="20" value="5"></label>
-        </div>
-        -->
-        <p id="spread-info-text" class="spread-info-text"></p>
-    </section>
+                <!-- Section 1: Spreads -->
+                <section class="control-section">
+                    <h3>1. Select a Spread</h3>
+                    <div id="spread-selection" class="control-group"></div>
+                    <p id="spread-info-text" class="spread-info-text"></p>
+                </section>
 
-    <section class="control-section">
-        <!--   Text changed here -->
-        <h3>2. Shuffle Methods</h3>
-        <div class="control-group checkbox-group">
-            <label class="checkbox-label"><input type="checkbox" id="reversed-cards-checkbox" checked> Include Reversed Cards</label>
-        </div>
-        <div id="shuffle-methods" class="control-group">
-            <label><input type="radio" name="shuffle-method" value="text" checked> Shuffle with Text</label>
-            <label><input type="radio" name="shuffle-method" value="number"> Shuffle with Number</label>
-            <label><input type="radio" name="shuffle-method" value="timestamp"> Shuffle with Timestamp</label>
-        </div>
-        <div class="shuffle-input-group control-group">
-            <textarea id="shuffle-input" class="shuffle-input" placeholder="Type any text here..."></textarea>
-            <button id="generate-btn" class="generate-btn" title="Generate Random Number">🎲</button>
-        </div>
-        
-        <details class="shuffle-details-container">
-            <summary>How does the shuffle work?</summary>
-            <div id="shuffle-explanation" class="shuffle-explanation">
-                <p>A "seed" is like a unique instruction for a complex shuffle. Entering the same input will always produce the same shuffle order, which will be different from the order produced by any other input.</p>
-                <p id="shuffle-math-text" class="shuffle-math-text"></p>
+                <!-- Section 2: Shuffle -->
+                <section class="control-section">
+                    <h3>2. Shuffle Methods</h3>
+                    <div class="control-group checkbox-group">
+                        <label class="checkbox-label"><input type="checkbox" id="reversed-cards-checkbox" checked> Include Reversed Cards</label>
+                    </div>
+                    <div id="shuffle-methods" class="control-group">
+                        <label><input type="radio" name="shuffle-method" value="text" checked> Shuffle with Text</label>
+                        <label><input type="radio" name="shuffle-method" value="number"> Shuffle with Number</label>
+                        <label><input type="radio" name="shuffle-method" value="timestamp"> Shuffle with Timestamp</label>
+                    </div>
+                    <div class="shuffle-input-group control-group">
+                        <textarea id="shuffle-input" class="shuffle-input" placeholder="Type any text here..."></textarea>
+                        <button id="generate-btn" class="generate-btn" title="Generate Random Number">🎲</button>
+                    </div>
+                    
+                    <details class="shuffle-details-container">
+                        <summary>How does the shuffle work?</summary>
+                        <div id="shuffle-explanation" class="shuffle-explanation">
+                            <!-- Populated by JS -->
+                        </div>
+                    </details>
+                </section>
+
+                <!-- Section 3: Deck & Interpretations (NEW) -->
+                <section class="control-section">
+                    <h3>3. Deck & Interpretations</h3>
+                    
+                    <!-- Visual Deck Selector -->
+                    <div class="control-group">
+                        <label for="deck-selection" style="display:block; margin-bottom:0.25rem; font-weight:bold;">Visual Deck (Art):</label>
+                        <select id="deck-selection" class="system-select">
+                            <option value="rws">Rider-Waite-Smith (1909)</option>
+                            <option value="thoth">Thoth (Crowley)</option>
+                            <option value="marseille">Tarot de Marseille (French)</option>
+                            <option value="urban">Urban Tarot</option>
+                            <option value="renaissance">Renaissance</option>
+                            <option value="italian">Ancient Italian</option>
+                            <option value="learning">Learning Deck</option>
+                        </select>
+                    </div>
+
+                    <!-- Interpretation System Selector -->
+                    <div class="control-group" style="margin-top: 1rem;">
+                        <label for="system-selection" style="display:block; margin-bottom:0.25rem; font-weight:bold;">Book of Meanings:</label>
+                        <select id="system-selection" class="system-select">
+                            <option value="rws">Rider-Waite-Smith (Classic)</option>
+                            <option value="thoth">Thoth (Esoteric/Crowley)</option>
+                            <option value="marseille">Tarot de Marseille (Traditional)</option>
+                            <option value="anima">Anima (Nature & Animal)</option>
+                        </select>
+                        <p id="system-desc" style="font-size: 0.8rem; font-style: italic; opacity: 0.8; margin-top: 0.5rem;">
+                            The classic 1910 system focused on narrative scenes and duality.
+                        </p>
+                    </div>
+                </section>
+
+                <!-- Section 4: Card Backs -->
+                <section class="control-section">
+                    <details>
+                        <summary>4. Select a Card Back</summary>
+                        <div id="card-back-selection" class="card-back-selection-grid control-group">
+                            <div class="card-back-option">
+                                <input type="radio" name="card-back" id="back-artdeco" value="artdeco">
+                                <label for="back-artdeco" class="card-back-thumbnail">
+                                    <img src="img/backs/artdeco.jpg" alt="Art Deco Style Back">
+                                </label>
+                            </div>
+                            <div class="card-back-option">
+                                <input type="radio" name="card-back" id="back-botanical" value="botanical">
+                                <label for="back-botanical" class="card-back-thumbnail">
+                                    <img src="img/backs/botanical.jpg" alt="Botanical Style Back">
+                                </label>
+                            </div>
+                            <div class="card-back-option">
+                                <input type="radio" name="card-back" id="back-celestial" value="celestial" checked>
+                                <label for="back-celestial" class="card-back-thumbnail">
+                                    <img src="img/backs/celestial.jpg" alt="Celestial Style Back">
+                                </label>
+                            </div>
+                            <div class="card-back-option">
+                                <input type="radio" name="card-back" id="back-default" value="default">
+                                <label for="back-default" class="card-back-thumbnail default-back">
+                                    <span>Default</span>
+                                </label>
+                            </div>
+                        </div>
+                    </details>
+                </section>
+
+                <!-- Section 5: Cloths -->
+                <section class="control-section">
+                    <details>
+                        <summary>5. Select a Reading Cloth</summary>
+                        <div id="cloth-selection" class="card-back-selection-grid control-group">
+                            <div class="card-back-option">
+                                <input type="radio" name="cloth-pattern" id="cloth-default" value="default" checked>
+                                <label for="cloth-default" class="card-back-thumbnail default-back">
+                                    <span>None</span>
+                                </label>
+                            </div>
+                            <div class="card-back-option">
+                                <input type="radio" name="cloth-pattern" id="cloth-pattern1" value="pattern1">
+                                <label for="cloth-pattern1" class="card-back-thumbnail">
+                                    <img src="img/cloth/pattern.png" alt="Esoteric Pattern Cloth">
+                                </label>
+                            </div>
+                        </div>
+                    </details>
+                </section>
+
+                <!-- Section 6: Layout Size -->
+                <section class="control-section slider-group">
+                    <details>
+                        <summary>6. Adjust Layout</summary>
+                        <div class="control-group">
+                            <label for="layout-size-slider">Layout Size: <span id="slider-value">100%</span></label>
+                            <div class="slider-wrapper">
+                                <input type="range" id="layout-size-slider" min="50" max="400" value="100">
+                                <button id="reset-size-btn" class="reset-btn" title="Reset Layout Size">↻</button>
+                            </div>
+                        </div>
+                    </details>
+                </section>
+
+                <button id="deal-cards-btn" class="glowing-btn">Shuffle & Deal Cards</button>
+            </aside>
+
+            <!-- The Reading Canvas -->
+            <main id="reading-canvas" class="reading-canvas">
+                <div id="reading-cloth" class="reading-cloth"></div>
+                <p class="canvas-hint">Pinch to zoom, drag to pan</p>
+            </main>
+
+            <!-- Mobile Actions -->
+            <div id="mobile-action-bar">
+                <div id="reveal-all-container" class="reveal-all-container hidden">
+                    <button id="reading-action-btn" class="glowing-btn">Reveal All Cards</button>
+                </div>
+                <button id="mobile-controls-trigger" class="glowing-btn">Reading Controls</button>
             </div>
-        </details>
-    </section>
-
-    <section class="control-section">
-        <!--   The "open" attribute has been removed to make this collapsed by default -->
-        <details>
-            <summary>3. Select a Card Back</summary>
-            <div id="card-back-selection" class="card-back-selection-grid control-group">
-                    <div class="card-back-option">
-                    <input type="radio" name="card-back" id="back-artdeco" value="artdeco">
-                    <label for="back-artdeco" class="card-back-thumbnail">
-                        <img src="img/backs/artdeco.jpg" alt="Art Deco Style Back">
-                    </label>
-                </div>
-                <div class="card-back-option">
-                    <input type="radio" name="card-back" id="back-botanical" value="botanical">
-                    <label for="back-botanical" class="card-back-thumbnail">
-                        <img src="img/backs/botanical.jpg" alt="Botanical Style Back">
-                    </label>
-                </div>
-                <div class="card-back-option">
-                    <input type="radio" name="card-back" id="back-celestial" value="celestial" checked>
-                    <label for="back-celestial" class="card-back-thumbnail">
-                        <img src="img/backs/celestial.jpg" alt="Celestial Style Back">
-                    </label>
-                </div>
-                    <div class="card-back-option">
-                    <input type="radio" name="card-back" id="back-default" value="default">
-                    <label for="back-default" class="card-back-thumbnail default-back">
-                        <span>Default</span>
-                    </label>
-                </div>
-            </div>
-        </details>
-    </section>
-
-    <section class="control-section">
-        <details>
-            <summary>4. Select a Reading Cloth</summary>
-            <div id="cloth-selection" class="card-back-selection-grid control-group">
-                <div class="card-back-option">
-                    <input type="radio" name="cloth-pattern" id="cloth-default" value="default" checked>
-                    <label for="cloth-default" class="card-back-thumbnail default-back">
-                        <span>None</span>
-                    </label>
-                </div>
-                <div class="card-back-option">
-                    <input type="radio" name="cloth-pattern" id="cloth-pattern1" value="pattern1">
-                    <label for="cloth-pattern1" class="card-back-thumbnail">
-                        <img src="img/cloth/pattern.png" alt="Esoteric Pattern Cloth">
-                    </label>
-                </div>
-            </div>
-        </details>
-    </section>
-
-    <section class="control-section slider-group">
-            <details>
-            <summary>5. Adjust Layout</summary>
-            <div class="control-group">
-                <label for="layout-size-slider">Layout Size: <span id="slider-value">100%</span></label>
-                <div class="slider-wrapper">
-                    <input type="range" id="layout-size-slider" min="50" max="400" value="100">
-                    <button id="reset-size-btn" class="reset-btn" title="Reset Layout Size">↻</button>
-                </div>
-            </div>
-        </details>
-    </section>
-    <button id="deal-cards-btn" class="glowing-btn">Shuffle & Deal Cards</button>
-</aside>
-
-        <main id="reading-canvas" class="reading-canvas">
-            <div id="reading-cloth" class="reading-cloth"></div>
-            <!-- ANNOTATION: The hint is now a direct child of the canvas for better positioning. -->
-            <p class="canvas-hint">Pinch to zoom, drag to pan</p>
-        </main>
-        <div id="mobile-action-bar">
-            <div id="reveal-all-container" class="reveal-all-container hidden">
-                <button id="reading-action-btn" class="glowing-btn">Reveal All Cards</button>
-            </div>
-            <button id="mobile-controls-trigger" class="glowing-btn">Reading Controls</button>
         </div>
     </template>
 
+    <!-- 3. GRIMOIRE VIEW -->
     <template id="view-grimoire">
         <div class="container">
             <h1>Grimoire</h1>
             <p class="subtitle">An interactive encyclopedia of the Rider-Waite-Smith tarot deck.</p>
-            <!--  Added a wrapper and new elements for search, filtering, and results count to match the functionality in main.js. -->
             <section class="grimoire-controls">
-                <input type="text" id="grimoire-search" placeholder="Search by name, suit, or keyword (e.g., 'The Sun', 'Cups', 'love')...">
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <input type="text" id="grimoire-search" placeholder="Search meanings..." style="flex: 2;">
+                    
+                    <!-- NEW: Grimoire Deck Selector -->
+                    <select id="grimoire-deck-select" class="system-select" style="flex: 1; min-width: 200px;">
+                        <option value="rws">Rider-Waite-Smith</option>
+                        <option value="thoth">Thoth</option>
+                        <option value="marseille">Marseille</option>
+                        <option value="urban">Urban Tarot</option>
+                        <option value="renaissance">Renaissance</option>
+                        <option value="italian">Ancient Italian</option>
+                        <option value="learning">Learning Deck</option>
+                    </select>
+                </div>
+
                 <div class="grimoire-filters">
                     <button class="grimoire-filter-btn" data-filter="all">All</button>
                     <button class="grimoire-filter-btn" data-filter="major">Major Arcana</button>
@@ -205,10 +265,12 @@
         </div>
     </template>
 
+    <!-- 4. SPREAD CREATOR VIEW -->
     <template id="view-spread-creator">
         <div id="spread-creator-view" class="reading-room-layout">
             <aside class="control-panel">
                 <button id="drawer-close-btn" class="close-modal">×</button>
+                
                 <section class="control-section">
                     <h3>Create New Spread</h3>
                     <button id="new-card-btn" class="glowing-btn">Add New Card</button>
@@ -251,4 +313,4 @@
         </div>
     </template>
 </body>
-</html><div id="card-back
+</html>
